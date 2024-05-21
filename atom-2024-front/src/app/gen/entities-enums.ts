@@ -1,0 +1,15 @@
+
+export enum ComputationType {
+REST = 'REST',
+EMULATED = 'EMULATED'
+}
+
+export enum TestStatus {
+UNREGISTERED = 'UNREGISTERED',
+REGISTERED = 'REGISTERED',
+EXECUTING = 'EXECUTING',
+FINISHED = 'FINISHED',
+ERROR = 'ERROR',
+CANCELLED = 'CANCELLED'
+}
+

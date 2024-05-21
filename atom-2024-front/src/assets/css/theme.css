@@ -1,0 +1,91 @@
+* {
+  --primary-color: #0077ce;
+  --primary-alfa-color: rgba(0, 113, 194, 0.66);
+  --yellow-color: #FEBB02;
+  --white-color: #fff;
+  --red-color: rgba(227, 77, 77, 0.66);
+  --green-color: rgba(8, 206, 87, 0.66);
+  --border-color: #dfe7ef;
+  --text-dark: #4a5159;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-yellow {
+  color: var(--yellow-color) !important;
+}
+
+.text-white {
+  color: var(--white-color) !important;
+}
+
+.text-red {
+  color: var(--red-color) !important;
+}
+
+.text-green {
+  color: var(--green-color) !important;
+}
+
+/* BUTTONS */
+
+.p-button-text {
+  border: 1px solid var(--primary-color)
+}
+
+.button-clear {
+  background: none;
+  color: var(--primary-color);
+  border: none;
+  border-bottom: 1px solid transparent;
+}
+
+.button-white {
+  background: var(--white-color);
+  color: var(--primary-color);
+  border: none;
+}
+
+.bordered {
+  border: 1px solid var(--primary-color);
+}
+
+.button-clear:hover:not(.bordered), .button-clear:focus:not(.bordered) {
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.bordered:hover, .button-filled {
+  color: var(--white-color);
+  background: var(--primary-color);
+}
+
+.button-filled:hover {
+  color: var(--primary-color);
+  background: none;
+}
+
+.button-primary {
+  color: var(--white-color);
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.button-primary:hover {
+  background: var(--primary-alfa-color);
+}
+
+.button-mini {
+  width: 36px;
+  height: 36px;
+}
+
+/* TAB VIEW */
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  color: var(--primary-color);
+}

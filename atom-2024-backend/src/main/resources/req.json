@@ -1,0 +1,21 @@
+{
+  "comment": "фыв",
+  "tests": [
+    {
+      "standEndpointDto": {
+        "id": 5,
+        "stand": {
+          "id": 2
+        }
+      },
+      "inData": {
+        "height": 1,
+        "sqr": 2,
+        "temperature": 3
+      },
+      "product": {
+        "globalId": -1
+      }
+    }
+  ]
+}

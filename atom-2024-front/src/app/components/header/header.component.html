@@ -1,0 +1,47 @@
+<div class="header">
+  <a [routerLink]="logoRouterLink">
+    <img id="logo" src="/assets/images/logo.png" pTooltip="На главную" alt="ProLegacy">
+  </a>
+
+  <ng-container *ngIf="userService.user">
+    <div class="group" style="width: 100%">
+      <ng-container *ngIf="!isMobileMode">
+        <p-button label="Испытания" styleClass="button-clear" routerLink="test-list"></p-button>
+        <p-button label="Отчеты" styleClass="button-clear" routerLink="reports"></p-button>
+        <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления" styleClass="button-clear"
+                  routerLink="admin-panel"></p-button>
+      </ng-container>
+    </div>
+
+    <!--<div style="width: 100%"></div>-->
+
+    <span style="margin-right: 10px; flex: none" [pTooltip]="userRolesString">{{ userName }}</span>
+    <div class="group">
+      <p-button *ngIf="isMobileMode; else right"
+                [icon]="op.overlayVisible ? 'pi pi-times' : 'pi pi-bars'"
+                (click)="op.toggle($event)"
+                styleClass="button-clear bordered"></p-button>
+
+      <ng-template #right>
+        <p-button icon="pi pi-user" pTooltip="Настройка аккаунта" tooltipPosition="bottom"
+                  routerLink="user-panel" styleClass="button-clear bordered"></p-button>
+        <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout()" styleClass="button-filled"></p-button>
+      </ng-template>
+    </div>
+  </ng-container>
+</div>
+
+<p-overlayPanel #op>
+  <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
+    <p-button label="Испытания" styleClass="button-clear" routerLink="test-list" (click)="op.hide()"></p-button>
+    <p-button label="Отчеты" styleClass="button-clear" routerLink="reports" (click)="op.hide()"></p-button>
+    <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления" styleClass="button-clear"
+              routerLink="admin-panel" (click)="op.hide()">
+    </p-button>
+    <p-button icon="pi pi-user" label="Настройка аккаунта"
+              routerLink="user-panel" styleClass="button-clear" (click)="op.hide()">
+    </p-button>
+    <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout(); op.hide()" styleClass="button-filled">
+    </p-button>
+  </div>
+</p-overlayPanel>

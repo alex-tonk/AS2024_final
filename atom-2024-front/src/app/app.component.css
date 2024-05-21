@@ -1,0 +1,10 @@
+.toast-ok {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.toast-ok > div {
+  width: 100%;
+  text-align: center;
+}

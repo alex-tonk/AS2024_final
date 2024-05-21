@@ -1,0 +1,32 @@
+<ng-container *ngIf="loading; else content">
+  <app-loader></app-loader>
+</ng-container>
+
+<ng-template #content>
+  <app-header></app-header>
+  <router-outlet></router-outlet>
+</ng-template>
+
+<p-toast [breakpoints]="{'720px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+<p-toast position="center" key="{{MessageServiceKey.OK}}">
+  <ng-template let-message pTemplate="message">
+    <div class="toast-ok">
+      <div>
+        <i [class]="getToastIconClass(message)" style="font-size: 3em"></i>
+        <h3>{{ message.summary }}</h3>
+        <p>{{ message.detail }}</p>
+      </div>
+
+      <div>
+        <p-button label="OK" [severity]="getSeverity(message)"
+                  (click)="onToastButtonClick()">
+        </p-button>
+      </div>
+    </div>
+
+    <p-blockUI [blocked]="true"></p-blockUI>
+  </ng-template>
+</p-toast>
+
+<p-confirmPopup key="popup"></p-confirmPopup>
+<p-confirmDialog></p-confirmDialog>

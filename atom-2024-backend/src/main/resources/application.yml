@@ -1,0 +1,204 @@
+server:
+  port: 8085
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        default_schema: test
+    database: postgresql
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: prolegacytest@mail.ru
+    password: Wkemu4JiEptBvrsnM261
+    protocol: smtp
+    tls: true
+    debug: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+
+  devtools:
+    restart:
+      enabled: false
+auth:
+  admin-role: admin
+  default-role: user
+  jwt-secret: sTcIbJgW4pmMl9EHCpHnw+fUz/vX7dr6LpK2AdoPiLNrTT0fLyAga1dktkeqwiBg
+  jwt-expiration-minutes: 60
+  password-restoration-code-expiration-minutes: 15
+bot:
+  enabled: false
+  creator-id: 1661612746 # ??? ??, ?? ???????, ??? (??????)
+  name: ProLegacyBot
+  token: 6748231331:AAEN53y3TBQIjdG0SpogUafJcVHV6zpxMxs
+
+js-evaluator:
+  timeout-seconds: 86400
+
+
+default-user:
+  email: animegamer666@gmail.com
+  password: ag6x3
+  firstname: Админ
+  lastname: Админов
+  surname: Админович
+
+stands.json: >
+  [
+    {
+      "name": "антоха",
+      "description": "апи конечно такое",
+      "url": "http://localhost:1020",
+      "endpoints": [
+        {
+          "standEndpointType": {
+            "inMeta": {
+              "fields": {
+                "sampleType": {
+                  "nodeType": "SAMPLE_TYPE_ENUM",
+                  "label": "Тип образца"
+                },
+                "temperature": {
+                  "nodeType": "NUMBER",
+                  "label": "Температура"
+                },
+                "initialLength": {
+                  "nodeType": "NUMBER",
+                  "label": "Начальная длина"
+                },
+                "diameter": {
+                  "nodeType": "NUMBER",
+                  "label": "Диаметр сечения"
+                }
+              }
+            },
+            "outMeta": {
+              "fields": {
+                "endLength": {
+                  "nodeType": "NUMBER",
+                  "label": "Конечная длина"
+                },
+                "endDiameter": {
+                  "nodeType": "NUMBER",
+                  "label": "Диаметр сечения"
+                }
+              }
+            }
+          },
+          "name": "Изгиб",
+          "description": "Изгиб",
+          "url": "http://localhost:1060/test/curve"
+        },
+        {
+          "standEndpointType": {
+            "inMeta": {
+              "fields": {
+                "height": {
+                  "nodeType": "NUMBER",
+                  "label": "Высота образца"
+                },
+                "area": {
+                  "nodeType": "NUMBER",
+                  "label": "Площадь сечения"
+                },
+                "temperature": {
+                  "nodeType": "NUMBER",
+                  "label": "Температура"
+                }
+              }
+            },
+            "outMeta": {
+              "fields": {
+                "endHeigth": {
+                  "nodeType": "NUMBER",
+                  "label": "Высота образца"
+                },
+                "endSqr": {
+                  "nodeType": "NUMBER",
+                  "label": "Площадь сечения"
+                }
+              }
+            }
+          },
+          "name": "Растяжение",
+          "description": "Растяжение",
+          "url": "http://localhost:1050/test/stretch"
+        },
+        {
+          "standEndpointType": {
+            "inMeta": {
+              "fields": {
+                "height": {
+                  "nodeType": "NUMBER",
+                  "label": "Высота образца"
+                },
+                "area": {
+                  "nodeType": "NUMBER",
+                  "label": "Площадь сечения"
+                },
+                "temperature": {
+                  "nodeType": "NUMBER",
+                  "label": "Температура"
+                }
+              }
+            },
+            "outMeta": {
+      "fields": {
+        "endHeigth": {
+          "nodeType": "NUMBER",
+          "label": "Высота образца"
+        },
+        "endSqr": {
+          "nodeType": "NUMBER",
+          "label": "Площадь сечения"
+        }
+      }
+    }
+  },
+  "name": "Разрыв",
+  "description": "Разрыв",
+  "url": "http://localhost:1050/test/break"
+  },
+  {
+  "standEndpointType": {
+    "inMeta": {
+      "fields": {
+        "temperature": {
+          "nodeType": "NUMBER",
+          "label": "Температура"
+        },
+        "pressure": {
+          "nodeType": "NUMBER",
+          "label": "Давление"
+        }
+      }
+    },
+    "outMeta": {
+      "fields": {
+        "result": {
+          "nodeType": "RESULT_ENUM",
+          "label": "Признак окончания испытания"
+        }
+      }
+    }
+  },
+  "name": "Термобарокамера",
+  "description": "Термобарокамера",
+  "url": "http://localhost:8086/test/barocamera"
+  }
+  ]
+  }
+  ]

@@ -1,0 +1,80 @@
+<div class="form-row" style="gap: 5px" *ngFor="let variable of inputVariables; index as index; last as last">
+  <label *ngIf="isReadOnlyParams; else nameEditor" class="required" style="width: 160px">{{ variable.label }}</label>
+
+  <ng-template #nameEditor>
+    <input class="var-name" pInputText [name]="'varName'+index"
+           [(ngModel)]="variable.name" [maxLength]="20"
+           (ngModelChange)="onInputValueChange()"
+           placeholder="Имя переменной" required>
+    <!--TODO NEED PATTERN REGEX-->
+  </ng-template>
+
+
+  <div *ngIf="!isReadOnlyParams; else values" class="row-with-config-and-value">
+    <ng-container *ngTemplateOutlet="labelInput"></ng-container>
+  </div>
+
+  <ng-template #values>
+    @switch (variable.type) {
+      @case (MetadataNodeType.DATE) {
+        <p-calendar [name]="'varValue'+index" dateFormat="dd.mm.yy" appendTo="body" [showButtonBar]="true"
+                    [(ngModel)]="variable.value" [required]="true"
+                    placeholder="Укажите дату" (ngModelChange)="onInputValueChange()">
+        </p-calendar>
+      }
+      @case (MetadataNodeType.NUMBER) {
+        <p-inputNumber [name]="'varValue'+index" [(ngModel)]="variable.value" [useGrouping]="false"
+                       mode="decimal" [maxFractionDigits]="6" [required]="true"
+                       placeholder="Введите число" (ngModelChange)="onInputValueChange()">
+        </p-inputNumber>
+      }
+      @case (MetadataNodeType.BOOLEAN) {
+        <p-checkbox [name]="'varValue'+index" [(ngModel)]="variable.value" [binary]="true"
+                    (ngModelChange)="onInputValueChange()"
+                    [required]="true"></p-checkbox>
+      }
+      @case (MetadataNodeType.RESULT_ENUM) {
+        <p-dropdown [name]="'varValue'+index" [(ngModel)]="variable.value"
+                    [options]="resultOptions"
+                    (ngModelChange)="onInputValueChange()"
+                    [required]="true"></p-dropdown>
+      }
+      @case (MetadataNodeType.SAMPLE_TYPE_ENUM) {
+        <p-dropdown [name]="'varValue'+index"
+                    [(ngModel)]="variable.value"
+                    [options]="sampleTypeOptions"
+                    (ngModelChange)="onInputValueChange()"
+                    [required]="true"></p-dropdown>
+      }
+      @default {
+        <input pInputText [name]="'varValue'+index" [(ngModel)]="variable.value"
+               (ngModelChange)="onInputValueChange()"
+               placeholder="Введите значение"
+               required/>
+      }
+    }
+  </ng-template>
+
+  <ng-template #labelInput>
+    <input class="var-name" pInputText [name]="'varLabel'+index"
+           [(ngModel)]="variable.label" [maxLength]="20"
+           (ngModelChange)="onInputValueChange()"
+           placeholder="Заголовок" required>
+  </ng-template>
+
+  <ng-container *ngIf="!isReadOnlyParams">
+    <p-dropdown [name]="'varType'+index"
+                [(ngModel)]="variable.type"
+                [options]="inputVariableTypes"
+                [style]="{width: '160px'}"
+                (onChange)="variable.value = null; onInputValueChange()"
+                placeholder="Тип переменной" appendTo="body" [required]="true">
+    </p-dropdown>
+
+    <p-button *ngIf="variablesCount > 1" pTooltip="Удалить переменную" icon="pi pi-minus"
+              (click)="removeVariable(index)"
+              styleClass="button-clear bordered button-mini"></p-button>
+    <p-button *ngIf="last" pTooltip="Добавить переменную" icon="pi pi-plus" (click)="addVariable()"
+              styleClass="button-clear bordered button-mini"></p-button>
+  </ng-container>
+</div>

@@ -1,0 +1,70 @@
+<div class="full-width-center">
+  <div class="margin-t-60">
+    <p-card *ngIf="!isEditMode">
+      <h3 class="no-margin">Регистрация пользователя</h3>
+    </p-card>
+
+    <p-card [style]="{marginTop: '20px'}" [class.content-disabled]="loading">
+      <form #form="ngForm" [class.content-disabled]="loading">
+        <input maxlength="20" name="lastName" pInputText
+               pattern="^[a-zA-Zа-яА-Я]*$"
+               [(ngModel)]="user.lastname" placeholder="Введите фамилию" required>
+
+        <input maxlength="15" name="firstName" pInputText
+               pattern="^[a-zA-Zа-яА-Я]*$"
+               [(ngModel)]="user.firstname" placeholder="Введите имя" required>
+
+        <input maxlength="20" name="surname"
+               pInputText
+               [(ngModel)]="user.surname"
+               pattern="^[a-zA-Zа-яА-Я]*$"
+               placeholder="Введите отчество (если есть)">
+
+        <input maxlength="40" name="email" type="email"
+               pInputText [(ngModel)]="user.email"
+               pattern="^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$"
+               placeholder="Введите email" required [disabled]="isEditMode">
+
+        <ng-container *ngIf="isEditMode; else passwordForm">
+          <div class="form-row margin-t-10" style="text-align: left">
+            <label style="width: auto">Сменить пароль: </label>
+            <div style="padding-left: 5px; padding-top: 5px">
+              <p-inputSwitch name="changePassword" [(ngModel)]="changePassword"></p-inputSwitch>
+            </div>
+          </div>
+
+          <ng-container *ngIf="changePassword">
+            <app-password-form></app-password-form>
+          </ng-container>
+
+          <hr class="margin-t-10">
+
+          <p-password name="currentPassword"
+                      [(ngModel)]="currentPassword" [autocomplete]="'new-password'"
+                      [toggleMask]="true" [feedback]="false"
+                      placeholder="Введите текущий пароль"
+                      [maxLength]="50" required>
+          </p-password>
+        </ng-container>
+
+        <ng-template #passwordForm>
+          <app-password-form></app-password-form>
+        </ng-template>
+      </form>
+
+      <p-footer>
+        <p-button *ngIf="isEditMode; else createButton" styleClass="button-filled"
+                  [label]="loading ? 'ПОДОЖДИТЕ...' : 'СОХРАНИТЬ'"
+                  (onClick)="saveUser()" [disabled]="!!form.invalid || (changePassword && !passwordEquals)">
+        </p-button>
+
+        <ng-template #createButton>
+          <p-button styleClass="button-filled" [label]="loading ? 'ПОДОЖДИТЕ...' : 'ЗАРЕГИСТРИРОВАТЬСЯ'"
+                    (onClick)="createUser()" [disabled]="!!form.invalid || !passwordEquals">
+          </p-button>
+        </ng-template>
+
+      </p-footer>
+    </p-card>
+  </div>
+</div>

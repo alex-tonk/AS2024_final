@@ -1,0 +1,10 @@
+<p-tabView [scrollable]="true">
+  <p-tabPanel header="Пользователи">
+    <app-user-list></app-user-list>
+  </p-tabPanel>
+  <p-tabPanel header="Моделируемые испытания">
+    <ng-template pTemplate="content">
+      <app-virtual-test-list></app-virtual-test-list>
+    </ng-template>
+  </p-tabPanel>
+</p-tabView>

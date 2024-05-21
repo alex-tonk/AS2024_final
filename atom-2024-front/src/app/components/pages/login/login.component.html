@@ -1,0 +1,32 @@
+<div class="full-width-center">
+  <div class="margin-t-60">
+    <p-card>
+      <h3 class="no-margin">Здравствуйте, добро пожаловать в систему проведения испытаний ProLegacy</h3>
+    </p-card>
+
+    <p-card [style]="{marginTop: '20px'}" [class.content-disabled]="loading">
+      <!--<h3 class="no-margin">Войдите или <a class="text-primary link" (click)="createUser()">создайте аккаунт</a></h3>-->
+      <h3 class="no-margin">Выполните вход</h3>
+      <form #loginForm="ngForm" class="margin-t-20">
+        <input [(ngModel)]="email" name="username" pInputText
+               placeholder="Введите адрес электронной почты"
+               pattern="^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$" required
+               maxlength="50" type="email" [autofocus]="true">
+
+        <p-password name="password" [(ngModel)]="password" [toggleMask]="true"
+                    [feedback]="false" placeholder="Введите пароль" [maxLength]="50" required>
+        </p-password>
+      </form>
+
+      <p-footer>
+        <p-button styleClass="button-filled" [label]="loading ? 'ВЫПОЛНЯЕТСЯ ВХОД...' : 'ВОЙТИ'"
+                  (onClick)="login()" [disabled]="!!loginForm.invalid">
+        </p-button>
+
+        <div style="margin: 20px 0 0 0">
+          <span class="send-link-wrapper" (click)="restorePassword()">Забыли пароль?</span>
+        </div>
+      </p-footer>
+    </p-card>
+  </div>
+</div>

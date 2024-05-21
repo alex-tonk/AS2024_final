@@ -1,0 +1,12 @@
+<div class="full-width-height-center chart-content-wrapper">
+  <div id="printArea">
+    <h1>ОДИН</h1>
+    <p-chart type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+    <h1>ВТОРОЙ</h1>
+    <p-chart type="pie" [data]="basicData" [options]="basicOptions"></p-chart>
+  </div>
+
+  <div class="full-width-center margin-t-20">
+    <p-button label="Печать" icon="pi pi-print" (click)="print()" severity="success"></p-button>
+  </div>
+</div>

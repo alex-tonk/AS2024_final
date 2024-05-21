@@ -1,0 +1,59 @@
+<p-dialog [header]="isEditMode ? 'Редактирование пользователя' : 'Добавление нового пользователя'"
+          [style]="{width: '600px'}"
+          [(visible)]="visible" [modal]="true" [resizable]="false" [closable]="true" (onHide)="onHide()">
+  <form #form="ngForm" [class.content-disabled]="loading">
+    <div class="form-row">
+      <label class="required">Фамилия:</label>
+      <input maxlength="20" pattern="^[a-zA-Zа-яА-Я]*$" name="lastName" pInputText
+             [(ngModel)]="user.lastname" placeholder="Введите фамилию" required>
+    </div>
+
+    <div class="form-row">
+      <label class="required">Имя:</label>
+      <input maxlength="15" pattern="^[a-zA-Zа-яА-Я]*$" name="firstName" pInputText
+             [(ngModel)]="user.firstname" placeholder="Введите имя" required>
+    </div>
+
+    <div class="form-row">
+      <label>Отчество:</label>
+      <input maxlength="20" pattern="^[a-zA-Zа-яА-Я]*$" name="surname" pInputText
+             [(ngModel)]="user.surname" placeholder="Введите отчество (если есть)">
+    </div>
+
+    <div class="form-row" *ngIf="!isEditMode">
+      <label class="required">Email:</label>
+      <input maxlength="40" name="email" type="email"
+             pInputText [(ngModel)]="user.email"
+             [disabled]="userId != null"
+             pattern="^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$"
+             placeholder="Введите email" required>
+    </div>
+
+    <div class="form-row">
+      <label class="required">Роль:</label>
+      <p-dropdown name="role" [options]="roles" [(ngModel)]="selectedRole"
+                  optionLabel="localeName" appendTo="body"
+                  [style]="{width: '100%', display: 'inline-flex'}"
+                  placeholder="Выберите роль" (onChange)="user.availableStandEndpoints = []" [required]="true">
+      </p-dropdown>
+    </div>
+
+    <div class="form-row" *ngIf="selectedRole?.name === 'ROLE_user'">
+      <label>Типы испытаний:</label>
+      <p-multiSelect name="testTypes" [options]="standEndpoints" [(ngModel)]="user.availableStandEndpoints"
+                     [filter]="false" [style]="{width: '100%'}"
+                     dataKey="id"
+                     placeholder="Выберите типы испытаний"
+                     selectedItemsLabel="Выбрано: {0}"
+                     [maxSelectedLabels]="1"
+                     optionLabel="name" appendTo="body">
+      </p-multiSelect>
+    </div>
+  </form>
+
+  <p-footer [class.content-disabled]="loading">
+    <p-button [label]="loading ? 'Подождите...' : 'Сохранить'" [disabled]="!!form.invalid"
+              (click)="save()"></p-button>
+    <p-button label="Отмена" styleClass="button-clear bordered" (click)="onHide()"></p-button>
+  </p-footer>
+</p-dialog>

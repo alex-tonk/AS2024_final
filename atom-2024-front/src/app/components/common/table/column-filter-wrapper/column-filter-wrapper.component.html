@@ -1,0 +1,25 @@
+<p-columnFilter #columnFilter [showClearButton]="false" [type]="column.type ?? 'text'" [field]="column.field">
+  <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+    @switch (column.type) {
+      @case ("date") {
+        <p-calendar #calendar dateFormat="dd.mm.yy" appendTo="body" [showButtonBar]="true"
+                    [ngModel]="value" (onSelect)="filter(convertDateToUtc($event))"
+                    (keydown.enter)="calendar.writeValue(calendar.value); filter(convertDateToUtc(calendar.value))">
+        </p-calendar>
+      }
+      @case ("numeric") {
+        <p-inputNumber #inputNumber [ngModel]="value" [useGrouping]="false" mode="decimal" [maxFractionDigits]="6"
+                       (keydown.enter)="filter(inputNumber.value)" (focusout)="filter(inputNumber.value)">
+        </p-inputNumber>
+      }
+      @case ("boolean") {
+        <p-selectButton #selectButton [ngModel]="value" [options]="booleanValues"
+                        (onChange)="filter(selectButton.value)"></p-selectButton>
+      }
+      @default {
+        <input #input pInputText [ngModel]="value" (keydown.enter)="filter(input.value)"
+               (focusout)="filter(input.value)"/>
+      }
+    }
+  </ng-template>
+</p-columnFilter>

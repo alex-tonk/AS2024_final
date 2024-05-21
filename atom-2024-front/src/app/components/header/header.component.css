@@ -1,0 +1,28 @@
+.header {
+  width: 100%;
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  top: 0;
+}
+#logo {
+  height: 50px;
+  margin-right: 5px;
+}
+#logo:hover {
+  transform: scale(1.1);
+}
+
+a {
+  cursor: pointer;
+}
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

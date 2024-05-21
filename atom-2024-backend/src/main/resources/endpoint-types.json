@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Изгиб",
+    "inMeta": {
+      "fields": {
+        "sampleType": "STRING",
+        "temperature": "NUMBER",
+        "initialLength": "NUMBER",
+        "diameter": "NUMBER"
+      }
+    },
+    "outMeta": {
+      "fields": {
+        "endLength": "NUMBER",
+        "endDiameter": "NUMBER"
+      }
+    }
+  },
+  {
+    "name": "Растяжение",
+    "inMeta": {
+      "fields": {
+        "height": "NUMBER",
+        "area": "NUMBER",
+        "temperature": "NUMBER"
+      }
+    },
+    "outMeta": {
+      "fields": {
+        "height": "NUMBER",
+        "area": "NUMBER"
+      }
+    }
+  },
+  {
+    "name": "Разрыв",
+    "inMeta": {
+      "fields": {
+        "height": "NUMBER",
+        "sqr": "NUMBER",
+        "temperature": "NUMBER"
+      }
+    },
+    "outMeta": {
+      "fields": {
+        "endHeigth": "NUMBER",
+        "endSqr": "NUMBER"
+      }
+    }
+  },
+  {
+    "name": "Термобарокамера",
+    "inMeta": {
+      "fields": {
+        "temperature": "NUMBER",
+        "pressure": "NUMBER"
+      }
+    },
+    "outMeta": {
+      "fields": {
+        "success": "STRING"
+      }
+    }
+  }
+]

@@ -1,0 +1,127 @@
+<!--Все поля для Lazy-->
+<!--[rows]="50" - размер пачки-->
+<!--[lazy]="true"-->
+<!--[virtualScroll]="true"-->
+<!--[virtualScrollDelay]="0" - хз что это за говно, но если не поставить 0, то хуёво работает-->
+<!--[virtualScrollItemSize]="45" - размер одной строки в пикселях, надо также вхерачить в tr-->
+<!--(onLazyLoad)="onLazyLoad($event)"-->
+<!---->
+
+<p-table #table
+         sortMode="multiple"
+         scrollHeight="flex"
+         [value]="users"
+         [scrollable]="true"
+         [loading]="loading"
+         [selectionMode]="'single'"
+         [(selection)]="selectedUser"
+         [globalFilterFields]="columnFields"
+         (onFilter)="selectedUser=null"
+         [resizableColumns]="true"
+         [columns]="selectedColumns"
+         [reorderableColumns]="true"
+         [rows]="50"
+         [lazy]="true"
+         [virtualScroll]="true"
+         [virtualScrollDelay]="0"
+         [virtualScrollItemSize]="45"
+         (onLazyLoad)="onLazyLoad($event)"
+         styleClass="p-datatable-gridlines"
+         dataKey="id">
+  <!--TABLE TOOLBAR-->
+  <ng-template pTemplate="caption">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        <p-button pTooltip="Обновить таблицу" icon="pi pi-sync" (click)="table.reset(); globalSearch.value = '';"
+                  styleClass="button-primary"></p-button>
+        <p-button pTooltip="Показать / Скрыть фильтры" icon="pi pi-filter" (click)="filter=!filter"
+                  styleClass="button-primary"></p-button>
+
+        <div class="splitter"></div>
+
+        <p-button pTooltip="Добавить пользователя" icon="pi pi-plus" severity="success"
+                  (click)="createUser()">
+        </p-button>
+
+        <p-button pTooltip="Редактировать выбранного пользователя" icon="pi pi-pencil"
+                  styleClass="button-primary" [disabled]="!selectedUser" (click)="editeUser()">
+        </p-button>
+
+        <p-button pTooltip="Удалить выбранного пользователя" icon="pi pi-trash" severity="danger"
+                  [disabled]="!selectedUser" (click)="confirmDelete($event)">
+        </p-button>
+      </div>
+
+      <div class="table-toolbar-right">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input #globalSearch pInputText type="text" placeholder="Быстрый поиск"
+                   (input)="table.filterGlobal(globalSearch.value, 'contains')"/>
+        </span>
+      </div>
+    </div>
+  </ng-template>
+
+  <!--TABLE COLUMNS-->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" pResizableColumn pReorderableColumn>
+          {{ col.header }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </ng-container>
+    </tr>
+    <!--TABLE FILTER-->
+    <tr *ngIf="filter">
+      <th *ngFor="let col of columns">
+        <app-column-filter-wrapper [column]="col"></app-column-filter-wrapper>
+      </th>
+    </tr>
+  </ng-template>
+
+  <!--TABLE DATA-->
+  <ng-template pTemplate="body" let-row let-columns="columns">
+    <tr style="height: 45px;" [pSelectableRow]="row">
+      <ng-container *ngFor="let col of columns">
+        @switch (col.type) {
+          @case ("boolean") {
+            <td style="text-align: center">
+              <p-checkbox [binary]="true" [readonly]="true" [style]="{pointerEvents: 'none'}"
+                          [(ngModel)]="row[col.fieldGetter ?? col.field]">
+              </p-checkbox>
+            </td>
+          }
+          @case ("date") {
+            <td style="text-align: center">{{ row[col.fieldGetter ?? col.field] }}</td>
+          }
+          @default {
+            <td [class.cell-center]="col.field == 'id'">{{ row[col.fieldGetter ?? col.field] }}</td>
+          }
+        }
+      </ng-container>
+    </tr>
+  </ng-template>
+
+  <!--TABLE SUMMARY-->
+  <ng-template pTemplate="summary">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        Всего записей: {{ users.length }}
+      </div>
+      <div class="table-toolbar-right">
+        <p-multiSelect [options]="colDefs" [(ngModel)]="selectedColumns" optionLabel="header"
+                       [style]="{'min-width': '200px'}" appendTo="body"
+                       selectedItemsLabel="Колонок выбрано: {0}" placeholder="Выберите колонки">
+        </p-multiSelect>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="99">Ничего не найдено</td>
+    </tr>
+  </ng-template>
+</p-table>
+

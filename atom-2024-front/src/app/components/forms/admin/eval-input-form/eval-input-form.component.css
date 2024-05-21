@@ -1,0 +1,16 @@
+.meta-wrapper {
+  width: 720px;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  flex: none;
+}
+
+.eval-button-wrapper {
+  display: inline-flex;
+  gap: 5px;
+  padding: 5px;
+  align-self: center;
+}

@@ -1,0 +1,25 @@
+.content-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding-left: 10px;
+}
+
+.code-wrapper {
+  height: 100%;
+  border: 1px solid var(--border-color);
+}
+
+#editor {
+  height: 100%;
+}
+
+.footer {
+  justify-content: center;
+  padding: 10px;
+  display: inline-flex;
+  gap: 10px
+}

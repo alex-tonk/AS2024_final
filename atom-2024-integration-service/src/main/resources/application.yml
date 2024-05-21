@@ -1,0 +1,17 @@
+server:
+  port: 8086
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/nwd-atomskills-2024
+    username: sys
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        ddl-auto: none
+    database: postgresql
+
+  devtools:
+    restart:
+      enabled: false

@@ -1,0 +1,8 @@
+<div class="content-wrapper" [class.content-disabled]="loading">
+  <h4 class="header">JavaScript код для моделирования</h4>
+  <div class="code-wrapper">
+    <ngx-monaco-editor id="editor" [options]="options" [(ngModel)]="code"
+                       (ngModelChange)="onCodeChange()">
+    </ngx-monaco-editor>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<p-dialog [header]="header"
+          [(visible)]="visible" [modal]="true" [resizable]="false"
+          [style]="style" [closable]="true" (onHide)="onHide()">
+  <form #form="ngForm" [class.content-disabled]="loading">
+    <div class="form-row">
+      <label class="required">Описание испытания:</label>
+      <input maxlength="50" name="comment" pInputText
+             [(ngModel)]="testGroup.comment" placeholder="Укажите описание испытания" required>
+    </div>
+
+    <hr *ngIf="isMultiple">
+
+    <div class="form-row">
+      <label class="required">Тип испытания:</label>
+      <p-dropdown name="type" [options]="testTypes" [(ngModel)]="test.standEndpoint"
+                  optionLabel="name" appendTo="body"
+                  [style]="{width: '100%', display: 'inline-flex'}"
+                  placeholder="Выберите тип испытания" [required]="true"
+                  (onChange)="setInputVariables()">
+      </p-dropdown>
+    </div>
+    <ng-container *ngIf="!!test.standEndpoint">
+      <div class="form-row">
+        <label class="required">ДСЕ:</label>
+        <p-dropdown name="product" [options]="products" [(ngModel)]="test.product"
+                    optionLabel="caption" appendTo="body"
+                    [virtualScroll]="true" [virtualScrollItemSize]="44"
+                    [filter]="true"
+                    [style]="{width: '100%', display: 'inline-flex'}"
+                    placeholder="Выберите ДСЕ" [required]="true">
+        </p-dropdown>
+      </div>
+      <app-meta-params-form [inputVariables]="inputVariables" (result)="setParams($event)"></app-meta-params-form>
+    </ng-container>
+  </form>
+
+
+  <ng-container *ngIf="isMultiple && !!test.standEndpoint">
+    <div style="width: 100%; padding: 10px; text-align: center">
+      <p-button label="Добавить в состав" icon="pi pi-plus" (click)="addToGroup()"
+                [disabled]="!!form.invalid"></p-button>
+      <hr>
+    </div>
+
+    <div class="form-row">
+      <label>Состав испытания: </label>
+      <div>
+        <div *ngIf="testGroup.tests!.length === 0; else group">ничего не добавлено</div>
+        <ng-template #group>
+          <div *ngFor="let test of testGroup.tests; index as index" style="padding: 5px; display: inline-table">
+            <p-chip [label]="test.standEndpoint.name" [removable]="true" (onRemove)="onRemove(index)"></p-chip>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </ng-container>
+
+  <p-footer [class.content-disabled]="loading">
+    <div style="padding: 5px; display: inline-flex">
+      <p-button [label]="loading ? 'Подождите...' : 'Запустить испытание'"
+                [disabled]="(!!form.invalid && !isMultiple) || (isMultiple && testGroup.tests!.length === 0)"
+                severity="success" icon="pi pi-play" (click)="initTest()">
+      </p-button>
+      <p-button label="Отмена" styleClass="button-clear bordered" (click)="onHide()"></p-button>
+    </div>
+  </p-footer>
+</p-dialog>

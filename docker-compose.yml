@@ -1,0 +1,191 @@
+services:
+  rest:
+    image: localhost:5000/pro-legacy_backend
+    container_name: pro-legacy_backend
+    build:
+      dockerfile: Dockerfile
+      target: rest
+    environment:
+
+      spring.datasource.url: jdbc:postgresql://postgres:5432/postgres
+      spring.jpa.properties.hibernate.default_schema: public
+      spring.datasource.username: postgres
+      spring.datasource.password: postgres
+      stands.json: >
+        [
+          {
+            "name": "Основной стенд",
+            "description": "api",
+            "url": "http://localhost:1020",
+            "endpoints": [
+              {
+                "standEndpointType": {
+                  "inMeta": {
+                    "fields": {
+                      "sampleType": {
+                        "nodeType": "SAMPLE_TYPE_ENUM",
+                        "label": "Тип образца"
+                      },
+                      "temperature": {
+                        "nodeType": "NUMBER",
+                        "label": "Температура"
+                      },
+                      "initialLength": {
+                        "nodeType": "NUMBER",
+                        "label": "Начальная длина"
+                      },
+                      "diameter": {
+                        "nodeType": "NUMBER",
+                        "label": "Диаметр сечения"
+                      }
+                    }
+                  },
+                  "outMeta": {
+                    "fields": {
+                      "endLength": {
+                        "nodeType": "NUMBER",
+                        "label": "Конечная длина"
+                      },
+                      "endDiameter": {
+                        "nodeType": "NUMBER",
+                        "label": "Диаметр сечения"
+                      }
+                    }
+                  }
+                },
+                "name": "Изгиб",
+                "description": "Изгиб",
+                "url": "http://localhost:1060/test/curve"
+              },
+              {
+                "standEndpointType": {
+                  "inMeta": {
+                    "fields": {
+                      "height": {
+                        "nodeType": "NUMBER",
+                        "label": "Высота образца"
+                      },
+                      "area": {
+                        "nodeType": "NUMBER",
+                        "label": "Площадь сечения"
+                      },
+                      "temperature": {
+                        "nodeType": "NUMBER",
+                        "label": "Температура"
+                      }
+                    }
+                  },
+                  "outMeta": {
+                    "fields": {
+                      "endHeigth": {
+                        "nodeType": "NUMBER",
+                        "label": "Высота образца"
+                      },
+                      "endSqr": {
+                        "nodeType": "NUMBER",
+                        "label": "Площадь сечения"
+                      }
+                    }
+                  }
+                },
+                "name": "Растяжение",
+                "description": "Растяжение",
+                "url": "http://localhost:1050/test/stretch"
+              },
+              {
+                "standEndpointType": {
+                  "inMeta": {
+                    "fields": {
+                      "height": {
+                        "nodeType": "NUMBER",
+                        "label": "Высота образца"
+                      },
+                      "area": {
+                        "nodeType": "NUMBER",
+                        "label": "Площадь сечения"
+                      },
+                      "temperature": {
+                        "nodeType": "NUMBER",
+                        "label": "Температура"
+                      }
+                    }
+                  },
+                  "outMeta": {
+                    "fields": {
+                      "endHeigth": {
+                        "nodeType": "NUMBER",
+                        "label": "Высота образца"
+                      },
+                      "endSqr": {
+                        "nodeType": "NUMBER",
+                        "label": "Площадь сечения"
+                      }
+                    }
+                  }
+                },
+                "name": "Разрыв",
+                "description": "Разрыв",
+                "url": "http://localhost:1050/test/break"
+              },
+              {
+                "standEndpointType": {
+                  "inMeta": {
+                    "fields": {
+                      "temperature": {
+                        "nodeType": "NUMBER",
+                        "label": "Температура"
+                      },
+                      "pressure": {
+                        "nodeType": "NUMBER",
+                        "label": "Давление"
+                      }
+                    }
+                  },
+                  "outMeta": {
+                    "fields": {
+                      "result": {
+                        "nodeType": "RESULT_ENUM",
+                        "label": "Признак окончания испытания"
+                      }
+                    }
+                  }
+                },
+                "name": "Термобарокамера",
+                "description": "Термобарокамера",
+                "url": "http://integration:8086/test/barocamera"
+              }
+            ]
+          }
+        ]
+    ports:
+      - 8085:8085
+  web:
+    image: localhost:5000/pro-legacy_front
+    container_name: pro-legacy_front
+    build:
+      dockerfile: Dockerfile
+      target: front
+    environment:
+      baseUrl: http://localhost:8085
+    ports:
+      - 4963:80
+  integration:
+    image: localhost:5000/pro-legacy_integration
+    container_name: pro-legacy_integration
+    build:
+      dockerfile: Dockerfile
+      target: integration
+    environment:
+      spring.datasource.url: jdbc:postgresql://172.30.8.124:5433/nwd-atomskills-2024
+      spring.datasource.username: sys
+      spring.datasource.password: postgres
+  
+  # Стереть всё, что ниже при использовании своего PostgreSQL
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5496:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres

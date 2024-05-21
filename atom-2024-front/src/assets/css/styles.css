@@ -1,0 +1,318 @@
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+/* BASIC */
+* {
+  --header-height: 70px;
+  --min-app-width: 360px;
+  --card-max-width: 480px;
+  --card-input-and-button-height: 50px;
+  --button-height: 42px;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  color: var(--text-dark);
+  position: relative;
+  min-width: var(--min-app-width);
+}
+
+body {
+  padding-top: var(--header-height);
+}
+
+div, span, input {
+  text-overflow: ellipsis;
+}
+
+.p-overflow-hidden {
+  padding-right: 0;
+}
+
+.full-width-height-center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-width-center {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.full-width-height {
+  width: 100%;
+  height: 100%;
+}
+
+.link {
+  cursor: pointer;
+  border-bottom: 1px solid var(--primary-color)
+}
+
+/* MARGIN / PADDING */
+
+.margin-t-5 {
+  margin-top: 5px;
+}
+
+.margin-t-10 {
+  margin-top: 10px;
+}
+
+.margin-t-20 {
+  margin-top: 20px;
+}
+
+.margin-t-60 {
+  margin-top: 60px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.v-splitter-5 {
+  height: 5px;
+}
+
+.v-splitter-10 {
+  height: 10px;
+}
+
+.v-splitter-20 {
+  height: 20px;
+}
+
+/* COMMON */
+
+.content-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.splitter {
+  height: calc(var(--button-height) / 2);
+  display: inline-block;
+  width: 1px;
+  background-color: #b5b5b5;
+  margin: 0 0.35em;
+}
+
+/* BUTTONS */
+
+.p-button.p-fileupload-choose {
+  background: var(--primary-color);
+}
+
+.p-button.p-fileupload-choose:hover {
+  background: var(--primary-alfa-color);
+}
+
+/* CARD & FORM */
+
+hr {
+  height: 1px;
+  border: none;
+  background-color: var(--border-color);
+}
+
+.p-card {
+  text-align: center;
+  box-shadow: none;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: var(--card-max-width);
+}
+
+.p-card .p-card-body {
+  padding: 0.8rem 1.25em
+}
+
+.p-card .p-inputtext {
+  width: 100%;
+  height: var(--card-input-and-button-height);
+  margin-top: 10px;
+}
+
+.p-card .p-password {
+  width: 100%;
+}
+
+.p-password .p-icon-wrapper {
+  margin-top: 0;
+  transform: scale(1.6);
+}
+
+.form-row .p-password .p-icon-wrapper {
+  margin-top: -0.5rem;
+}
+
+.p-card button {
+  width: 100%;
+  height: var(--card-input-and-button-height);
+}
+
+.form-row {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+}
+
+.form-row label {
+  width: 120px;
+  flex: none;
+}
+
+.form-row > :nth-child(2) {
+  flex: 1;
+}
+
+label.required:after {
+  content: ' *';
+  color: red;
+}
+
+.p-dialog-footer {
+  text-align: center;
+}
+
+/* TABVIEW */
+
+.p-tabview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.p-tabview .p-tabview-panels {
+  flex: auto;
+  overflow: auto;
+  padding: 0;
+}
+
+.p-tabview .p-tabview-panels .p-tabview-panel {
+  height: 100%;
+}
+
+/* TABLE */
+
+.p-datatable .p-datatable-loading-overlay {
+  background: white;
+  opacity: 0.3;
+}
+
+.p-datatable-loading-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.p-datatable-thead > tr > th {
+  text-align: center;
+}
+
+.table-toolbar {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.table-toolbar, .table-toolbar-left, .table-toolbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-body-wrapper {
+  overflow: auto;
+  flex: auto;
+}
+
+.cell-center {
+  text-align: center;
+}
+
+.p-datatable-wrapper > p-scroller {
+  height: 100%;
+}
+
+.p-datatable-wrapper > p-scroller > div {
+  height: 100% !important;
+}
+
+/* CONFIRM */
+
+.p-confirm-popup-footer {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  float: right;
+  gap: 8px;
+}
+
+/* INPUT NUBMER */
+
+.p-inputnumber-button-group button {
+  width: unset !important;
+  height: unset !important;
+  min-width: 40px !important;
+}
+
+.p-inputnumber {
+  width: 100%;
+}
+
+/* PASSWORD */
+.password-tip {
+  text-align: left;
+  margin-top: 2px;
+  font-size: small;
+  color: var(--yellow-color);
+}
+
+.password-tip.red {
+  color: var(--red-color) !important;
+}
+
+/* CODE EDITOR */
+.monaco-editor .decorationsOverviewRuler {
+  display: none !important;
+}
+
+.monaco-editor .minimap {
+  border-left: 1px solid var(--border-color)
+}
+
+.monaco-editor .editor-container {
+  height: 100%;
+}
+
+/* DATA VIEW */
+
+.p-dataview-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.p-dataview-content {
+  overflow: auto;
+}
