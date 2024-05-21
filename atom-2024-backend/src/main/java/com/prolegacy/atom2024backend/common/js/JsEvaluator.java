@@ -9,7 +9,6 @@ import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.io.IOAccess;
 
 import java.util.concurrent.*;
-import java.util.function.BiFunction;
 
 public class JsEvaluator {
 

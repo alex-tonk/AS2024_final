@@ -97,7 +97,6 @@ public class DtoProjections {
                 if (fieldValue instanceof EntityPath<?> subEntityPath) {
                     this.addEntityPath(subEntityPath);
                 } else if (fieldValue instanceof CollectionPath<?, ?> collectionPath) {
-                    return;
                 } else if (fieldValue instanceof Path<?> path) {
                     this.subExpressions.put(path.getMetadata().getName(), path);
                 }

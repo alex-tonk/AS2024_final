@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.List;
+import java.util.Collections;
 
 @Configuration
 @Order(InitializationOrder.ROLE_GENERATOR + 100)
@@ -66,7 +66,7 @@ public class InitialUserGenerator implements ApplicationRunner {
                         this.lastname,
                         this.surname,
                         null,
-                        Arrays.asList(role)
+                        Collections.singletonList(role)
                 )
         );
     }

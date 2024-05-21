@@ -82,7 +82,7 @@ public class Rest2tsGenerator {
                                     .stream().map(TSScopedElement::getModule)
                                     .filter(m -> Objects.equals(m.getName(), importFrom))
                                     .findFirst()
-                                    .orElseGet(() -> new TSModule(importFrom, (Path) null, true));
+                                    .orElseGet(() -> new TSModule(importFrom, null, true));
                             return new TSClass(className, tsModule, null, templateClassParameters);
                         }
                 );

@@ -15,7 +15,7 @@ public class JPAQuery<T> extends AbstractJPAQuery<T, JPAQuery<T>> {
     private EntityPath<?> mainPath = null;
 
     public JPAQuery() {
-        super((EntityManager) null, JPQLTemplates.DEFAULT, new DefaultQueryMetadata());
+        super(null, JPQLTemplates.DEFAULT, new DefaultQueryMetadata());
     }
 
     public JPAQuery(EntityManager em) {

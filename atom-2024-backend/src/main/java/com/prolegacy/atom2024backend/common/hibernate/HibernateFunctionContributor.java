@@ -7,9 +7,6 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.SqlTypes;
 import org.hibernate.type.StandardBasicTypes;
 
-import java.math.BigInteger;
-import java.time.Instant;
-
 public class HibernateFunctionContributor implements FunctionContributor {
     @Override
     public void contributeFunctions(FunctionContributions functionContributions) {

@@ -3,8 +3,6 @@ package com.prolegacy.atom2024backend.common.auth.entities;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
-import com.prolegacy.atom2024backend.entities.StandEndpoint;
-import com.prolegacy.atom2024backend.entities.ids.StandEndpointId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,13 +33,6 @@ public class User {
     private String surname;
     private String phoneNumber;
     private Instant registrationDate;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "UserStandEndpoint",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "stand_endpoint_id")
-    )
-    private List<StandEndpoint> availableStandEndpoints = new ArrayList<>();
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean archived = false;
 
@@ -68,20 +59,16 @@ public class User {
 
     public User(@NonNull UserDto userDto,
                 @NonNull String encodedPassword,
-                @NonNull List<Role> roles,
-                @NonNull List<StandEndpoint> availableStandEndpoints) {
+                @NonNull List<Role> roles) {
         this.registrationDate = Instant.now();
         this.email = formatAndValidateEmail(userDto.getEmail());
         this.roles = roles;
-        this.availableStandEndpoints = availableStandEndpoints;
         this.update(userDto, encodedPassword);
     }
 
     public void adminUpdate(@NonNull UserDto userDto,
-                            @NonNull List<Role> roles,
-                            @NonNull List<StandEndpoint> availableStandEndpoints) {
+                            @NonNull List<Role> roles) {
         this.roles = roles;
-        this.availableStandEndpoints = availableStandEndpoints;
         this.update(userDto, null);
     }
 
@@ -131,9 +118,5 @@ public class User {
                     : surname;
         }
         return shortName;
-    }
-
-    public List<StandEndpointId> getAvailableEndpointsId() {
-        return this.availableStandEndpoints.stream().map(StandEndpoint::getId).toList();
     }
 }

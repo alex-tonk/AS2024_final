@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         show_sql: true
-        default_schema: test
+        default_schema: pro_legacy
     database: postgresql
   mail:
     host: smtp.mail.ru

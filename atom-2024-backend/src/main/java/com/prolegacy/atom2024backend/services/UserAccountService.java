@@ -50,6 +50,6 @@ public class UserAccountService {
 
         user.update(userDto, newPassword);
 
-        return userReader.getUser(userId, true, false);
+        return userReader.getUser(userId, true);
     }
 }

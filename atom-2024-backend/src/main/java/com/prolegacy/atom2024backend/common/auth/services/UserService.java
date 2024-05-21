@@ -12,9 +12,6 @@ import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
-import com.prolegacy.atom2024backend.dto.StandEndpointDto;
-import com.prolegacy.atom2024backend.entities.StandEndpoint;
-import com.prolegacy.atom2024backend.repositories.StandEndpointRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +47,6 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-    private StandEndpointRepository standEndpointRepository;
-
     /**
      * Регистрация юзера (для бичей)
      */
@@ -63,7 +57,7 @@ public class UserService {
                 .flatMap(roleWithoutPrefix -> roleRepository.findByName("ROLE_" + roleWithoutPrefix))
                 .orElseThrow(() -> new BusinessLogicException("Не найдена дефолтная роль"));
 
-        User user = new User(userDto, encodeAndValidatePassword(userDto.getPassword()), List.of(defaultRole), new ArrayList<>());
+        User user = new User(userDto, encodeAndValidatePassword(userDto.getPassword()), List.of(defaultRole));
         userRepository.save(user);
 
         return userReader.getUser(user.getId());
@@ -78,8 +72,7 @@ public class UserService {
         User user = new User(
                 userDto,
                 encodeAndValidatePassword(userDto.getPassword()),
-                getAndValidateRoles(userDto),
-                getStandEndpoints(userDto)
+                getAndValidateRoles(userDto)
         );
         userRepository.save(user);
 
@@ -96,13 +89,10 @@ public class UserService {
         if (user.getRoles().stream().map(Role::getName).anyMatch(roleName -> Objects.equals(roleName, adminRoleWithPrefix))
                 && userDto.getRoles().stream().map(RoleDto::getName).noneMatch(roleName -> Objects.equals(roleName, adminRoleWithPrefix))) {
             this.validateIsntLastAdmin(userId, "Невозможно забрать роль администратора у последнего пользователя с ролью администратора");
-            this.validateIsntSelfChange(userId, "Невозможно забрать роль администратора у текущего пользователя");
+            this.validateIsNotSelfChange(userId, "Невозможно забрать роль администратора у текущего пользователя");
         }
-        user.adminUpdate(
-                userDto,
-                getAndValidateRoles(userDto),
-                getStandEndpoints(userDto)
-        );
+
+        user.adminUpdate(userDto, getAndValidateRoles(userDto));
 
         return userReader.getUser(user.getId());
     }
@@ -112,7 +102,7 @@ public class UserService {
         User user = Optional.ofNullable(userId)
                 .flatMap(uId -> userRepository.findById(uId))
                 .orElseThrow(UserNotFoundException::new);
-        validateIsntSelfChange(userId, "Невозможно сбросить пароль текущего пользователя");
+        validateIsNotSelfChange(userId, "Невозможно сбросить пароль текущего пользователя");
         user.setPassword(this.encodeAndValidatePassword(Base64.getEncoder().encodeToString(DigestUtils.sha256(user.getEmail()))));
 
         return userReader.getUser(user.getId());
@@ -129,8 +119,9 @@ public class UserService {
         );
 
         UserDto userDto = userReader.getUserByEmail(email);
+        assert userDto != null;
         if (userDto.getArchived()) {
-            throw new BusinessLogicException("Пользователя с таким email в архиве, обратитесь к администратору");
+            throw new BusinessLogicException("Пользователь с таким email в архиве, обратитесь к администратору");
         }
 
         user.update(userDto, passwordEncoder.encode(password));
@@ -138,7 +129,7 @@ public class UserService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserDto archiveUser(UserId userId) {
-        validateIsntSelfChange(userId, "Невозможно заархивировать текущего пользователя");
+        validateIsNotSelfChange(userId, "Невозможно заархивировать текущего пользователя");
         validateIsntLastAdmin(userId, "Невозможно заархивировать последнего пользователя с ролью администратора");
         User user = Optional.ofNullable(userId)
                 .flatMap(uId -> userRepository.findById(uId))
@@ -157,7 +148,7 @@ public class UserService {
         }
     }
 
-    private void validateIsntSelfChange(UserId userId, String errorMessage) {
+    private void validateIsNotSelfChange(UserId userId, String errorMessage) {
         if (Optional.ofNullable(userProvider.get()).map(User::getId).map(userId1 -> Objects.equals(userId, userId1)).orElse(false)) {
             throw new BusinessLogicException(errorMessage);
         }
@@ -208,22 +199,5 @@ public class UserService {
             throw new BusinessLogicException("Пользователь должен иметь хотя бы одну роль");
         }
         return roles;
-    }
-
-    private List<StandEndpoint> getStandEndpoints(UserDto userDto) {
-        return Optional.ofNullable(userDto.getAvailableStandEndpoints())
-                .map(standEndpointDtos -> {
-                    if (standEndpointDtos.isEmpty()) {
-                        return new ArrayList<StandEndpoint>();
-                    }
-
-                    return standEndpointRepository.findAllById(
-                            standEndpointDtos.stream().map(StandEndpointDto::getId).peek(standEndpointId -> {
-                                if (Objects.isNull(standEndpointId)) {
-                                    throw new BusinessLogicException("Некорректный тип испытаний");
-                                }
-                            }).toList()
-                    );
-                }).orElseGet(ArrayList::new);
     }
 }

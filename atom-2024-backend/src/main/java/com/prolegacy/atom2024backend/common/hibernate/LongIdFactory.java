@@ -25,7 +25,7 @@ public class LongIdFactory<T extends LongId> {
     }
 
     public T valueOf(int value) {
-        return newInstance((long) value);
+        return newInstance(value);
     }
 
     public T valueOf(float value) {

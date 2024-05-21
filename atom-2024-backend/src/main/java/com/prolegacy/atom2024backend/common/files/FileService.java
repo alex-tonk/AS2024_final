@@ -54,11 +54,11 @@ public class FileService {
     }
 
     public boolean fileExists(String path,
-                           String ip,
-                           String dir,
-                           String userName,
-                           String password,
-                           String domain) throws IOException {
+                              String ip,
+                              String dir,
+                              String userName,
+                              String password,
+                              String domain) throws IOException {
         try (SMBClient client = new SMBClient()) {
             try (Connection connection = client.connect(ip)) {
                 AuthenticationContext ac = new AuthenticationContext(

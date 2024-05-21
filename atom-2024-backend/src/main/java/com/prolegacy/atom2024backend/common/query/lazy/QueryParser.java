@@ -1,6 +1,5 @@
 package com.prolegacy.atom2024backend.common.query.lazy;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.hibernate.LongId;
 import com.prolegacy.atom2024backend.common.hibernate.LongIdFactory;
@@ -21,7 +20,6 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;

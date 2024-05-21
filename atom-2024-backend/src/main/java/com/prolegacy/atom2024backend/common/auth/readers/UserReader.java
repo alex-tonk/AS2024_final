@@ -11,10 +11,7 @@ import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
-import com.prolegacy.atom2024backend.dto.StandEndpointDto;
-import com.prolegacy.atom2024backend.entities.QStandEndpoint;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +29,7 @@ public class UserReader {
     private static final QUser user = QUser.user;
     private static final QUser dummyUser = new QUser("dummyUser");
     private static final QRole role = QRole.role;
-    private static final QStandEndpoint standEndpoint = QStandEndpoint.standEndpoint;
     private static final QRole userRole = new QRole("userRole");
-    private static final QStandEndpoint userEndpoint = new QStandEndpoint("userEndpoint");
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -58,34 +53,28 @@ public class UserReader {
     }
 
     public UserDto getUser(UserId userId) {
-        return getUser(userId, false, false);
+        return getUser(userId, false);
     }
 
-    public UserDto getUser(UserId userId, boolean joinRoles, boolean joinAvailableEndpoints) {
+    public UserDto getUser(UserId userId, boolean joinRoles) {
         UserDto userDto = baseQuery()
                 .where(user.id.eq(userId))
                 .fetchFirst();
         if (joinRoles) {
             setRoles(userDto);
         }
-        if (joinAvailableEndpoints) {
-            setAvailableStandEndpoints(userDto);
-        }
 
         return userDto;
     }
 
     public List<UserDto> getUsers() {
-        return getUsers(false, false);
+        return getUsers(false);
     }
 
-    public List<UserDto> getUsers(boolean joinRoles, boolean joinAvailableStandEndpoints) {
+    public List<UserDto> getUsers(boolean joinRoles) {
         List<UserDto> userDtoList = baseQuery().orderBy(user.id.asc()).fetch();
         if (joinRoles) {
             setRoles(userDtoList);
-        }
-        if (joinAvailableStandEndpoints) {
-            setAvailableStandEndpoints(userDtoList);
         }
         return userDtoList;
     }
@@ -107,20 +96,6 @@ public class UserReader {
         );
     }
 
-    private void setAvailableStandEndpoints(UserDto userDto) {
-        if (userDto == null) return;
-        userDto.setAvailableStandEndpoints(
-                queryFactory
-                        .from(user)
-                        .innerJoin(user.availableStandEndpoints, userEndpoint)
-                        .innerJoin(standEndpoint).on(userEndpoint.id.eq(standEndpoint.id))
-                        .where(user.id.eq(userDto.getId()))
-                        .selectDto(StandEndpointDto.class, standEndpoint)
-                        .fetch()
-        );
-
-    }
-
     private void setRoles(List<UserDto> userDtoList) {
         JPAQuery<?> rolesQuery = queryFactory
                 .from(user)
@@ -132,20 +107,6 @@ public class UserReader {
         );
         userDtoList.forEach(
                 user -> user.setRoles(rolesByUser.getOrDefault(user.getId(), new ArrayList<>()))
-        );
-    }
-
-    private void setAvailableStandEndpoints(List<UserDto> userDtoList) {
-        JPAQuery<?> rolesQuery = queryFactory
-                .from(user)
-                .innerJoin(user.availableStandEndpoints, userEndpoint)
-                .innerJoin(standEndpoint).on(userEndpoint.id.eq(standEndpoint.id));
-        Map<UserId, List<StandEndpointDto>> rolesByUser = rolesQuery.transform(
-                GroupBy.groupBy(user.id)
-                        .as(GroupBy.list(DtoProjections.constructDto(rolesQuery, StandEndpointDto.class, standEndpoint)))
-        );
-        userDtoList.forEach(
-                user -> user.setAvailableStandEndpoints(rolesByUser.getOrDefault(user.getId(), new ArrayList<>()))
         );
     }
 
@@ -173,12 +134,6 @@ public class UserReader {
                 .where(dummyUser.id.eq(user.id))
                 .select(Expressions.stringTemplate("function('stringAgg', {0}, ', ')", role.localeName).stringValue());
 
-        JPAQuery<String> availableStandEndpointsAsString = queryFactory
-                .from(dummyUser)
-                .innerJoin(dummyUser.availableStandEndpoints, userEndpoint)
-                .innerJoin(standEndpoint).on(userEndpoint.id.eq(standEndpoint.id))
-                .where(dummyUser.id.eq(user.id))
-                .select(Expressions.stringTemplate("function('stringAgg', {0}, ', ')", standEndpoint.name).stringValue());
 
         return queryFactory
                 .from(user)
@@ -187,8 +142,7 @@ public class UserReader {
                         Expressions.as(Expressions.nullExpression(String.class), "password"),
                         shortName.as("shortName"),
                         fullName.as("fullName"),
-                        Expressions.as(rolesAsString, "rolesAsString"),
-                        Expressions.as(availableStandEndpointsAsString, "availableStandEndpointsAsString")
+                        Expressions.as(rolesAsString, "rolesAsString")
                 );
     }
 }
