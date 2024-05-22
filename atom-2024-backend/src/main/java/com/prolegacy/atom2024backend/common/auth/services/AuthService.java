@@ -44,9 +44,6 @@ public class AuthService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private UserProvider userProvider;
-
-    @Autowired
     private EmailService emailService;
 
     @Value("${auth.password-restoration-code-expiration-minutes:15}")

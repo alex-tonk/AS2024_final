@@ -23,8 +23,6 @@ public class UserAccountService {
     @Autowired
     private UserReader userReader;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private UserProvider userProvider;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

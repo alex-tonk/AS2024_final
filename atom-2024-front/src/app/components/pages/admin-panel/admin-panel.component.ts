@@ -5,7 +5,6 @@ import {UserListLazyComponent} from "./user-list-lazy/user-list-lazy.component";
 import {RestorePasswordComponent} from "../login/restore-password/restore-password.component";
 import {UserRegistrationComponent} from "../login/user-registration/user-registration.component";
 import {CodeEditorComponent} from "../../common/code-editor/code-editor.component";
-import {VirtualTestListComponent} from "./virtual-test-list/virtual-test-list.component";
 
 @Component({
   selector: 'app-admin-panel',
@@ -16,8 +15,7 @@ import {VirtualTestListComponent} from "./virtual-test-list/virtual-test-list.co
     UserListLazyComponent,
     RestorePasswordComponent,
     UserRegistrationComponent,
-    CodeEditorComponent,
-    VirtualTestListComponent
+    CodeEditorComponent
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css'

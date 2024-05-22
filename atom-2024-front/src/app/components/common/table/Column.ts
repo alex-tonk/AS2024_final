@@ -1,4 +1,3 @@
-import {MetadataNodeType} from "../../../gen/parsing-enums";
 
 export class Column {
  header: string;
@@ -7,14 +6,14 @@ export class Column {
  type?: string; // 'text' | 'date' | 'numeric' | 'boolean'
  width?: number;
 
-  static getColumnType(value: MetadataNodeType): string {
+  static getColumnType(value: string): string {
     switch (value){
-      case MetadataNodeType.NULL:
-      case MetadataNodeType.STRING: return 'text';
-      case MetadataNodeType.BOOLEAN: return 'boolean';
-      case MetadataNodeType.NUMBER: return 'numeric';
-      case MetadataNodeType.DATE:
-      case MetadataNodeType.INSTANT: return 'date';
+      case 'NULL':
+      case 'STRING': return 'text';
+      case 'BOOLEAN': return 'boolean';
+      case 'NUMBER': return 'numeric';
+      case 'DATE':
+      case 'INSTANT': return 'date';
       default: return 'text';
     }
   }

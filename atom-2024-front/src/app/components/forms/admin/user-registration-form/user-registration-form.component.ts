@@ -5,7 +5,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import {StandService, UserAdminService} from "../../../../gen/atom2024backend-controllers";
+import { UserAdminService} from "../../../../gen/atom2024backend-controllers";
 import {lastValueFrom} from "rxjs";
 import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
@@ -16,7 +16,6 @@ import {Cryptic} from "../../../common/Cryptic";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {DropdownModule} from "primeng/dropdown";
 import {FakeService} from "../../../../services/fake.service";
-import {StandEndpointDto} from "../../../../gen/atom2024backend-dto";
 
 @Component({
   selector: 'app-user-registration-form',
@@ -43,7 +42,6 @@ export class UserRegistrationFormComponent implements OnInit {
   isEditMode = false;
   user = new UserDto();
   roles: RoleDto[] = [];
-  standEndpoints: StandEndpointDto[];
 
   selectedRole?: RoleDto;
 
@@ -52,18 +50,15 @@ export class UserRegistrationFormComponent implements OnInit {
 
 
   constructor(private userAdminService: UserAdminService,
-              private messageService: MessageService,
-              private standService: StandService,
-              private fakeService: FakeService) {
+              private messageService: MessageService) {
   }
 
   async ngOnInit() {
     this.loading = true;
     try {
       this.roles = await lastValueFrom(this.userAdminService.getRoles());
-      this.standEndpoints = await lastValueFrom(this.standService.getAllStandEndpoints());
       if (this.userId) {
-        this.user = await lastValueFrom(this.userAdminService.getUser(this.userId, true, true));
+        this.user = await lastValueFrom(this.userAdminService.getUser(this.userId, true));
         this.selectedRole = this.user.roles.length > 0 ? this.user.roles[0] : undefined;
         this.isEditMode = true;
       }

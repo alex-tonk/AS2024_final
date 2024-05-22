@@ -24,9 +24,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class TypescriptEndpointGeneratorPlugin {
-
     public static void main(String[] args) throws IOException {
-
         if (args.length == 0) {
             throw new IllegalArgumentException("Provide directory path for typescript generation");
         }

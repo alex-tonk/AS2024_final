@@ -7,9 +7,6 @@ import {RestorePasswordComponent} from "./components/pages/login/restore-passwor
 import {UserPanelComponent} from "./components/pages/user-panel/user-panel.component";
 import {adminGuard} from "./services/guards/admin.guard";
 import {unauthorizedGuard} from "./services/guards/unauthorized.guard";
-import {CharsComponent} from "./components/pages/chars/chars.component";
-import {TestListComponent} from "./components/pages/test-list/test-list.component";
-import {ReportsComponent} from "./components/pages/reports/reports.component";
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -22,7 +19,5 @@ export const routes: Routes = [
   },
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [adminGuard]},
   {path: 'user-panel', component: UserPanelComponent},
-  {path: 'reports', component: ReportsComponent},
-  {path: 'test-list', component: TestListComponent},
   {path: '**', redirectTo: ''}
 ];

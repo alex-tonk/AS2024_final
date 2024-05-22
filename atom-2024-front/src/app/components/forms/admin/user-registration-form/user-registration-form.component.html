@@ -34,20 +34,8 @@
       <p-dropdown name="role" [options]="roles" [(ngModel)]="selectedRole"
                   optionLabel="localeName" appendTo="body"
                   [style]="{width: '100%', display: 'inline-flex'}"
-                  placeholder="Выберите роль" (onChange)="user.availableStandEndpoints = []" [required]="true">
+                  placeholder="Выберите роль" [required]="true">
       </p-dropdown>
-    </div>
-
-    <div class="form-row" *ngIf="selectedRole?.name === 'ROLE_user'">
-      <label>Типы испытаний:</label>
-      <p-multiSelect name="testTypes" [options]="standEndpoints" [(ngModel)]="user.availableStandEndpoints"
-                     [filter]="false" [style]="{width: '100%'}"
-                     dataKey="id"
-                     placeholder="Выберите типы испытаний"
-                     selectedItemsLabel="Выбрано: {0}"
-                     [maxSelectedLabels]="1"
-                     optionLabel="name" appendTo="body">
-      </p-multiSelect>
     </div>
   </form>
 
