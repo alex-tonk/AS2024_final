@@ -35,7 +35,6 @@ import java.util.*;
 
 public class Rest2tsGenerator {
     static Logger logger = LoggerFactory.getLogger("gen-logger");
-    public static boolean generateAmbientModules = false;
     @Getter
     private final Map<Class<?>, TSType> customTypeMapping = new HashMap<>();
     @Getter
@@ -235,30 +234,16 @@ public class Rest2tsGenerator {
 
     private void convertTypes(Set<Class<?>> javaTypes, JavaPackageToTsModuleConverter tsModuleSortedMap, ComplexTypeConverter complexTypeConverter) {
         Set<Class<?>> preConvertedTypes = new HashSet<>();
-        Iterator<Class<?>> var5 = javaTypes.iterator();
-
-        Class<?> javaType;
-        while (var5.hasNext()) {
-            javaType = var5.next();
+        for (Class<?> javaType : javaTypes) {
             if (complexTypeConverter.preConverted(tsModuleSortedMap, javaType)) {
                 preConvertedTypes.add(javaType);
             }
         }
 
-        var5 = preConvertedTypes.iterator();
-
-        while (var5.hasNext()) {
-            javaType = var5.next();
+        for (Class<?> javaType : preConvertedTypes) {
             complexTypeConverter.convertInheritance(javaType);
+            complexTypeConverter.convert(javaType, nullableTypesStrategy);
         }
-
-        var5 = preConvertedTypes.iterator();
-
-        while (var5.hasNext()) {
-            javaType = var5.next();
-            complexTypeConverter.convert(javaType, this.nullableTypesStrategy);
-        }
-
     }
 
     private void exploreModelClasses() {
@@ -345,26 +330,22 @@ public class Rest2tsGenerator {
 
     private List<Class<?>> loadClasses(Set<String> packageSet) throws IOException {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        List<Class<?>> classList = new ArrayList<>();
 
+        List<Class<?>> classList = new ArrayList<>();
         for (String packageName : packageSet) {
             Enumeration<URL> urlEnumeration = classLoader.getResources(packageName.replace(".", "/"));
-
             while (urlEnumeration.hasMoreElements()) {
                 URL url = urlEnumeration.nextElement();
                 URI uri;
-
                 try {
                     uri = url.toURI();
-                } catch (URISyntaxException var11) {
-                    throw new IllegalStateException(var11);
+                } catch (URISyntaxException e) {
+                    throw new IllegalStateException(e);
                 }
-
                 Path path = Paths.get(uri);
-                this.scanPackagesRecursively(classLoader, path, packageName, classList);
+                scanPackagesRecursively(classLoader, path, packageName, classList);
             }
         }
-
         return classList;
     }
 
@@ -373,18 +354,17 @@ public class Rest2tsGenerator {
         try (DirectoryStream<Path> paths = Files.newDirectoryStream(currentPath)) {
             for (Path nextPath : paths) {
                 if (Files.isDirectory(nextPath)) {
-                    this.scanPackagesRecursively(classLoader, nextPath, packageName + "." + nextPath.getFileName(), classList);
+                    scanPackagesRecursively(classLoader, nextPath, packageName + "." + nextPath.getFileName(), classList);
                 } else if (nextPath.toString().endsWith(".class")) {
                     String className = (packageName + "/" + nextPath.getFileName().toString()).replace(".class", "").replace("/", ".");
-
                     try {
                         Class<?> loadedClass = classLoader.loadClass(className);
                         if (!loadedClass.isAnnotation()) {
-                            this.addNestedClasses(loadedClass.getDeclaredClasses(), classList);
+                            addNestedClasses(loadedClass.getDeclaredClasses(), classList);
                             classList.add(loadedClass);
                         }
-                    } catch (Exception | Error var9) {
-                        System.out.printf("Failed to load class %s due to error %s:%s%n", className, var9.getClass().getSimpleName(), var9.getMessage());
+                    } catch (Error | Exception e) {
+                        System.out.printf("Failed to load class %s due to error %s:%s%n", className, e.getClass().getSimpleName(), e.getMessage());
                     }
                 }
             }
