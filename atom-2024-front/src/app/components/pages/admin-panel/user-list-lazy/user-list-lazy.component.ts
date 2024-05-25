@@ -149,16 +149,16 @@ export class UserListLazyComponent {
         return;
       }
       const result: PageResponse<UserDto> = await firstValueFrom(this.userAdminService.searchUsers(event));
-      const loadedUsers = result.items.map(u => {
+      const loadedUsers = result.items!.map(u => {
         const user = new UserDto();
         Object.assign(user, u);
         return user;
       });
       // этому хуесосу надо, чтобы массив был длины как total (первоначально заполням всё undefined)
       if (event.rows == 0 || result.total != this.users.length) {
-        this.users = Array.from({length: result.total});
+        this.users = Array.from({length: result.total!});
       }
-      this.total = result.total;
+      this.total = result.total!;
       // заполняем пачку данных
       // TODO: мб чистить когда-нибудь?
       Array.prototype.splice.apply(this.users, [event.first, event.rows, ...loadedUsers]);

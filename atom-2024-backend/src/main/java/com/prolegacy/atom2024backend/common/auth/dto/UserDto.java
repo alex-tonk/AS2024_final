@@ -25,7 +25,6 @@ public class UserDto {
     private String fullName;
     private String shortName;
     private String rolesAsString;
-    private String availableStandEndpointsAsString;
 
     private List<RoleDto> roles;
 }

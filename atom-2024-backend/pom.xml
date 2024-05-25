@@ -247,6 +247,12 @@
             <artifactId>smbj</artifactId>
             <version>0.13.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.instancio</groupId>
+            <artifactId>instancio-core</artifactId>
+            <version>4.6.0</version>
+        </dependency>
         <!-- added dependencies -->
 
     </dependencies>

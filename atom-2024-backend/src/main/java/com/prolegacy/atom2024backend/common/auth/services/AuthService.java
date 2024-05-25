@@ -3,7 +3,6 @@ package com.prolegacy.atom2024backend.common.auth.services;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
-import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.util.JwtTokenUtil;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
