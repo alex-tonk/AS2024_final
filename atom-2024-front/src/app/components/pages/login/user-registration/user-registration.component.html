@@ -22,7 +22,7 @@
 
         <input maxlength="40" name="email" type="email"
                pInputText [(ngModel)]="user.email"
-               pattern="^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$"
+               pattern="^[\w-\.]+@([\w-]+\\.)+[\w-]{2,4}$"
                placeholder="Введите email" required [disabled]="isEditMode">
 
         <ng-container *ngIf="isEditMode; else passwordForm">

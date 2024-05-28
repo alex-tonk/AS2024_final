@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class TutorWithCourseDto {
+public class TutorInCourseDto {
     StudyGroupDto studyGroup;
-    TutorDto tutor;
     CourseDto course;
+    TutorDto tutor;
 }

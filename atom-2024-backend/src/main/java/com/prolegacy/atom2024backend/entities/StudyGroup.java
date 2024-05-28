@@ -3,12 +3,14 @@ package com.prolegacy.atom2024backend.entities;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
 import com.prolegacy.atom2024backend.entities.ids.*;
+import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
 import io.jsonwebtoken.lang.Collections;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +25,10 @@ public class StudyGroup {
     @GeneratedValue(generator = "typed-sequence")
     private StudyGroupId id;
 
+    private String name;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TutorWithCourse> tutors = new ArrayList<>();
+    private List<CourseWithTutors> courses = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentInGroup> students = new ArrayList<>();
 
@@ -37,7 +41,7 @@ public class StudyGroup {
     }
 
     public void update(StudyGroupDto studyGroupDto) {
-
+        this.name = studyGroupDto.getName();
     }
 
     public StudentInGroup addStudent(Student student) {
@@ -54,17 +58,36 @@ public class StudyGroup {
         this.students.removeIf(s -> studentsIds.contains(s.getId().getStudentId()));
     }
 
-    public TutorWithCourse addTutor(Tutor tutor, Course course) {
-        if (tutors.stream().map(TutorWithCourse::getId).anyMatch(id -> id.getCourseId().equals(course.getId()) && id.getTutorId().equals(tutor.getId()))) {
-            throw new BusinessLogicException("Преподаватель с таким предметом уже назначен в эту группу");
+    public CourseWithTutors addCourse(Course course) {
+        if (this.courses.stream()
+                .map(CourseWithTutors::getCourse)
+                .map(Course::getId)
+                .anyMatch(course.getId()::equals)) {
+            throw new BusinessLogicException("Курс [id=%s] уже добален в учебную группу [id=%s]".formatted(course.getId(), id));
         }
+        CourseWithTutors courseWithTutors = new CourseWithTutors(this, course);
+        courses.add(courseWithTutors);
+        return courseWithTutors;
+    }
 
-        TutorWithCourse tutorWithCourse = new TutorWithCourse(this, tutor, course);
-        this.tutors.add(tutorWithCourse);
-        return tutorWithCourse;
+    public void removeCourse(CourseId courseId) {
+        throw new NotImplementedException("Пока не уверен, как удалять/архивировать");
+    }
+
+    public TutorInCourse addTutor(CourseId courseId, Tutor tutor) {
+        CourseWithTutors course = this.courses.stream().filter(c -> c.getId().getCourseId().equals(courseId)).findFirst()
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        return course.addTutor(tutor);
     }
 
     public void removeTutor(TutorId tutorId, CourseId courseId) {
-        this.tutors.removeIf(t -> t.getId().getTutorId().equals(tutorId) && t.getId().getCourseId().equals(courseId));
+        this.courses.stream().filter(c -> c.getId().getCourseId().equals(courseId))
+                .findFirst()
+                .ifPresentOrElse(
+                        courseWithTeachers -> courseWithTeachers.removeTutor(tutorId),
+                        () -> {
+                            throw new CourseNotFoundException(courseId);
+                        }
+                );
     }
 }

@@ -5,6 +5,12 @@ export class CourseDto {
   name?: string;
 }
 
+export class CourseWithTutorsDto {
+  course?: CourseDto;
+  studyGroup?: StudyGroupDto;
+  tutors?: TutorDto[];
+}
+
 export class StudentDto {
   id?: number;
   user?: UserDto;
@@ -16,9 +22,10 @@ export class StudentInGroupDto {
 }
 
 export class StudyGroupDto {
+  courses?: CourseWithTutorsDto[];
   id?: number;
+  name?: string;
   students?: StudentInGroupDto[];
-  tutors?: TutorWithCourseDto[];
 }
 
 export class TutorDto {
@@ -26,7 +33,7 @@ export class TutorDto {
   user?: UserDto;
 }
 
-export class TutorWithCourseDto {
+export class TutorInCourseDto {
   course?: CourseDto;
   studyGroup?: StudyGroupDto;
   tutor?: TutorDto;

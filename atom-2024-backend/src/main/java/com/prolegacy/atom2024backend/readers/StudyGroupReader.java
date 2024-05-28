@@ -5,15 +5,18 @@ import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
+import com.prolegacy.atom2024backend.dto.CourseWithTutorsDto;
 import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
-import com.prolegacy.atom2024backend.dto.TutorWithCourseDto;
+import com.prolegacy.atom2024backend.dto.TutorInCourseDto;
+import com.prolegacy.atom2024backend.entities.QCourseWithTutors;
 import com.prolegacy.atom2024backend.entities.QStudentInGroup;
 import com.prolegacy.atom2024backend.entities.QStudyGroup;
-import com.prolegacy.atom2024backend.entities.QTutorWithCourse;
+import com.prolegacy.atom2024backend.entities.QTutorInCourse;
+import com.prolegacy.atom2024backend.entities.ids.CourseWithTutorsId;
 import com.prolegacy.atom2024backend.entities.ids.StudentInGroupId;
 import com.prolegacy.atom2024backend.entities.ids.StudyGroupId;
-import com.prolegacy.atom2024backend.entities.ids.TutorWithCourseId;
+import com.prolegacy.atom2024backend.entities.ids.TutorInCourseId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +28,8 @@ import java.util.List;
 public class StudyGroupReader {
     private static final QStudyGroup studyGroup = QStudyGroup.studyGroup;
     private static final QStudentInGroup studentInGroup = QStudentInGroup.studentInGroup;
-    private static final QTutorWithCourse tutorWithCourse = QTutorWithCourse.tutorWithCourse;
+    private static final QCourseWithTutors courseWithTutors = QCourseWithTutors.courseWithTutors;
+    private static final QTutorInCourse tutorInCourse = QTutorInCourse.tutorInCourse;
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -59,36 +63,43 @@ public class StudyGroupReader {
         return pageHelper.paginate(baseQuery(), pageQuery);
     }
 
-    public TutorWithCourseDto getTutor(TutorWithCourseId tutorWithCourseId) {
-        return tutorQuery()
-                .where(tutorWithCourse.id.studyGroupId.eq(tutorWithCourseId.getStudyGroupId()))
-                .where(tutorWithCourse.id.tutorId.eq(tutorWithCourseId.getTutorId()))
-                .where(tutorWithCourse.id.courseId.eq(tutorWithCourseId.getCourseId()))
-                .fetchFirst();
+    public CourseWithTutorsDto getCourse(CourseWithTutorsId courseWithTutorsId) {
+        return courseQuery().where(courseWithTutors.id.eq(courseWithTutorsId)).fetchFirst();
     }
 
-    public List<TutorWithCourseDto> getTutors(StudyGroupId studyGroupId) {
-        return tutorQuery()
-                .where(tutorWithCourse.id.studyGroupId.eq(studyGroupId))
-                .fetch();
+    public List<CourseWithTutorsDto> getCourses(StudyGroupId studyGroupId) {
+        return courseQuery().where(courseWithTutors.id.studyGroupId.eq(studyGroupId)).fetch();
     }
 
-    public PageResponse<TutorWithCourseDto> searchTutors(StudyGroupId studyGroupId, PageQuery pageQuery) {
-        return pageHelper.paginate(tutorQuery().where(tutorWithCourse.id.studyGroupId.eq(studyGroupId)), pageQuery);
+    public PageResponse<CourseWithTutorsDto> searchCourses(StudyGroupId studyGroupId, PageQuery pageQuery) {
+        return pageHelper.paginate(courseQuery().where(courseWithTutors.id.studyGroupId.eq(studyGroupId)), pageQuery);
+    }
+
+    public TutorInCourseDto getTutor(TutorInCourseId tutorInCourseId) {
+        return tutorQuery().where(tutorInCourse.id.eq(tutorInCourseId)).fetchFirst();
+    }
+
+    public List<TutorInCourseDto> getTutors(CourseWithTutorsId courseWithTutorsId) {
+        return tutorQuery().where(tutorInCourse.id.courseWithTutorsId.eq(courseWithTutorsId)).fetch();
+    }
+
+    public PageResponse<TutorInCourseDto> searchTutors(CourseWithTutorsId courseWithTutorsId, PageQuery pageQuery) {
+        return pageHelper.paginate(tutorQuery().where(tutorInCourse.id.courseWithTutorsId.eq(courseWithTutorsId)), pageQuery);
     }
 
     private JPAQuery<StudyGroupDto> baseQuery() {
-        return queryFactory.from(studyGroup)
-                .selectDto(StudyGroupDto.class);
+        return queryFactory.from(studyGroup).selectDto(StudyGroupDto.class);
     }
 
     private JPAQuery<StudentInGroupDto> studentQuery() {
-        return queryFactory.from(studentInGroup)
-                .selectDto(StudentInGroupDto.class);
+        return queryFactory.from(studentInGroup).selectDto(StudentInGroupDto.class);
     }
 
-    private JPAQuery<TutorWithCourseDto> tutorQuery() {
-        return queryFactory.from(tutorWithCourse)
-                .selectDto(TutorWithCourseDto.class);
+    private JPAQuery<CourseWithTutorsDto> courseQuery() {
+        return queryFactory.from(courseWithTutors).selectDto(CourseWithTutorsDto.class);
+    }
+
+    private JPAQuery<TutorInCourseDto> tutorQuery() {
+        return queryFactory.from(tutorInCourse).selectDto(TutorInCourseDto.class);
     }
 }

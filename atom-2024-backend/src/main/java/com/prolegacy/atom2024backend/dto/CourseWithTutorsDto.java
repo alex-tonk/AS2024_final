@@ -1,6 +1,5 @@
 package com.prolegacy.atom2024backend.dto;
 
-import com.prolegacy.atom2024backend.entities.ids.StudyGroupId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class StudyGroupDto {
-    StudyGroupId id;
-    String name;
-    List<CourseWithTutorsDto> courses;
-    List<StudentInGroupDto> students;
+public class CourseWithTutorsDto {
+    StudyGroupDto studyGroup;
+    CourseDto course;
+    List<TutorDto> tutors;
 }

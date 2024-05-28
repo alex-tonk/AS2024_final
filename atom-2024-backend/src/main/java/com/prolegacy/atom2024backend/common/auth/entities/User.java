@@ -85,7 +85,7 @@ public class User {
     private String formatAndValidateEmail(String email) {
         return Optional.ofNullable(email)
                 .map(e -> {
-                            boolean matches = Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+                            boolean matches = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
                                     .matcher(e)
                                     .matches();
                             if (!matches) {

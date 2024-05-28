@@ -3,10 +3,12 @@ package com.prolegacy.atom2024backend.controllers;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
+import com.prolegacy.atom2024backend.dto.CourseWithTutorsDto;
 import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
-import com.prolegacy.atom2024backend.dto.TutorWithCourseDto;
+import com.prolegacy.atom2024backend.dto.TutorInCourseDto;
 import com.prolegacy.atom2024backend.entities.ids.*;
+import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
 import com.prolegacy.atom2024backend.exceptions.StudentNotFoundException;
 import com.prolegacy.atom2024backend.exceptions.StudyGroupNotFoundException;
 import com.prolegacy.atom2024backend.exceptions.TutorNotFoundException;
@@ -80,35 +82,54 @@ public class StudyGroupController {
         studyGroupService.removeStudent(studyGroupId, studentId);
     }
 
-    @GetMapping("{studyGroupId}/tutors/{tutorId}/{courseId}")
-    public TutorWithCourseDto getTutor(@PathVariable StudyGroupId studyGroupId,
-                                       @PathVariable TutorId tutorId,
-                                       @PathVariable CourseId courseId) {
-        return Optional.ofNullable(studyGroupReader.getTutor(new TutorWithCourseId(studyGroupId, tutorId, courseId)))
+    @GetMapping("{studyGroupId}/courses/{courseId}")
+    public CourseWithTutorsDto getCourse(@PathVariable StudyGroupId studyGroupId, @PathVariable CourseId courseId) {
+        return Optional.ofNullable(studyGroupReader.getCourse(new CourseWithTutorsId(studyGroupId, courseId)))
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+    }
+
+    @GetMapping("{studyGroupId}/courses")
+    public List<CourseWithTutorsDto> getCourses(@PathVariable StudyGroupId studyGroupId) {
+        return studyGroupReader.getCourses(studyGroupId);
+    }
+
+    @PostMapping("{studyGroupId}/courses/search")
+    public PageResponse<CourseWithTutorsDto> searchTutors(@PathVariable StudyGroupId studyGroupId, @RequestBody PageQuery pageQuery) {
+        return studyGroupReader.searchCourses(studyGroupId, pageQuery);
+    }
+
+    @PostMapping("{studyGroupId}/courses/{courseId}")
+    public CourseWithTutorsDto addCourse(@PathVariable StudyGroupId studyGroupId, @PathVariable CourseId courseId) {
+        return studyGroupService.addCourse(studyGroupId, courseId);
+    }
+
+    @DeleteMapping("{studyGroupId}/courses/{courseId}")
+    public void removeCourse(@PathVariable StudyGroupId studyGroupId, @PathVariable CourseId courseId) {
+        studyGroupService.removeCourse(studyGroupId, courseId);
+    }
+
+    @GetMapping("{studyGroupId}/courses/{courseId}/tutors/{tutorId}")
+    public TutorInCourseDto getTutor(@PathVariable StudyGroupId studyGroupId,
+                                     @PathVariable CourseId courseId,
+                                     @PathVariable TutorId tutorId) {
+        return Optional.ofNullable(studyGroupReader.getTutor(new TutorInCourseId(studyGroupId, courseId, tutorId)))
                 .orElseThrow(() -> new TutorNotFoundException(tutorId));
     }
 
-    @GetMapping("{studyGroupId}/tutors")
-    public List<TutorWithCourseDto> getTutors(@PathVariable StudyGroupId studyGroupId) {
-        return studyGroupReader.getTutors(studyGroupId);
+    @GetMapping("{studyGroupId}/courses/{courseId}/tutors")
+    public List<TutorInCourseDto> getTutors(@PathVariable StudyGroupId studyGroupId, @PathVariable CourseId courseId) {
+        return studyGroupReader.getTutors(new CourseWithTutorsId(studyGroupId, courseId));
     }
 
-    @PostMapping("{studyGroupId}/tutors/search")
-    public PageResponse<TutorWithCourseDto> searchTutors(@PathVariable StudyGroupId studyGroupId, @RequestBody PageQuery pageQuery) {
-        return studyGroupReader.searchTutors(studyGroupId, pageQuery);
+    @PostMapping("{studyGroupId}/courses/{courseId}/tutors/search")
+    public PageResponse<TutorInCourseDto> getTutors(@PathVariable StudyGroupId studyGroupId, @PathVariable CourseId courseId, @RequestBody PageQuery pageQuery) {
+        return studyGroupReader.searchTutors(new CourseWithTutorsId(studyGroupId, courseId), pageQuery);
     }
 
-    @PostMapping("{studyGroupId}/tutors/{tutorId}/{courseId}")
-    public TutorWithCourseDto addTutor(@PathVariable StudyGroupId studyGroupId,
-                                       @PathVariable TutorId tutorId,
-                                       @PathVariable CourseId courseId) {
-        return studyGroupService.addTutor(studyGroupId, tutorId, courseId);
-    }
-
-    @DeleteMapping("{studyGroupId}/tutors/{tutorId}/{courseId}")
+    @DeleteMapping("{studyGroupId}/courses/{courseId}/tutors/{tutorId}")
     public void removeTutor(@PathVariable StudyGroupId studyGroupId,
-                            @PathVariable TutorId tutorId,
-                            @PathVariable CourseId courseId) {
-        studyGroupService.removeTutor(studyGroupId, tutorId, courseId);
+                            @PathVariable CourseId courseId,
+                            @PathVariable TutorId tutorId) {
+        studyGroupService.removeTutor(studyGroupId, courseId, tutorId);
     }
 }

@@ -2,7 +2,7 @@ import {RoleDto} from '../models/RoleDto';
 import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {CourseDto, StudentDto, StudentInGroupDto, StudyGroupDto, TutorDto, TutorWithCourseDto} from './atom2024backend-dto';
+import {CourseDto, CourseWithTutorsDto, StudentDto, StudentInGroupDto, StudyGroupDto, TutorDto, TutorInCourseDto} from './atom2024backend-dto';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
 import {Observable} from 'rxjs';
@@ -87,12 +87,12 @@ export class StudyGroupService {
   httpService: HttpClient;
 
 
- public addStudent(studyGroupId: number, studentId: number): Observable<StudentInGroupDto>  {
-    return this.httpService.post<StudentInGroupDto>('study-groups/' + studyGroupId + '/students/' + studentId + '', null , {responseType: 'json'});
+ public addCourse(studyGroupId: number, courseId: number): Observable<CourseWithTutorsDto>  {
+    return this.httpService.post<CourseWithTutorsDto>('study-groups/' + studyGroupId + '/courses/' + courseId + '', null , {responseType: 'json'});
   }
 
- public addTutor(studyGroupId: number, tutorId: number, courseId: number): Observable<TutorWithCourseDto>  {
-    return this.httpService.post<TutorWithCourseDto>('study-groups/' + studyGroupId + '/tutors/' + tutorId + '/' + courseId + '', null , {responseType: 'json'});
+ public addStudent(studyGroupId: number, studentId: number): Observable<StudentInGroupDto>  {
+    return this.httpService.post<StudentInGroupDto>('study-groups/' + studyGroupId + '/students/' + studentId + '', null , {responseType: 'json'});
   }
 
  public constructor(httpService: HttpClient) {
@@ -102,6 +102,14 @@ export class StudyGroupService {
  public createStudyGroup(studyGroupDto: StudyGroupDto): Observable<StudyGroupDto>  {
     const headers = new HttpHeaders().set('Content-type', 'application/json');
     return this.httpService.post<StudyGroupDto>('study-groups', JSON.stringify(studyGroupDto) , {headers, responseType: 'json'});
+  }
+
+ public getCourse(studyGroupId: number, courseId: number): Observable<CourseWithTutorsDto>  {
+    return this.httpService.get<CourseWithTutorsDto>('study-groups/' + studyGroupId + '/courses/' + courseId + '', {responseType: 'json'});
+  }
+
+ public getCourses(studyGroupId: number): Observable<CourseWithTutorsDto[]>  {
+    return this.httpService.get<CourseWithTutorsDto[]>('study-groups/' + studyGroupId + '/courses', {responseType: 'json'});
   }
 
  public getStudent(studyGroupId: number, studentId: number): Observable<StudentInGroupDto>  {
@@ -120,20 +128,29 @@ export class StudyGroupService {
     return this.httpService.get<StudyGroupDto[]>('study-groups', {responseType: 'json'});
   }
 
- public getTutor(studyGroupId: number, tutorId: number, courseId: number): Observable<TutorWithCourseDto>  {
-    return this.httpService.get<TutorWithCourseDto>('study-groups/' + studyGroupId + '/tutors/' + tutorId + '/' + courseId + '', {responseType: 'json'});
+ public getTutor(studyGroupId: number, courseId: number, tutorId: number): Observable<TutorInCourseDto>  {
+    return this.httpService.get<TutorInCourseDto>('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors/' + tutorId + '', {responseType: 'json'});
   }
 
- public getTutors(studyGroupId: number): Observable<TutorWithCourseDto[]>  {
-    return this.httpService.get<TutorWithCourseDto[]>('study-groups/' + studyGroupId + '/tutors', {responseType: 'json'});
+ public getTutorsGET(studyGroupId: number, courseId: number): Observable<TutorInCourseDto[]>  {
+    return this.httpService.get<TutorInCourseDto[]>('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors', {responseType: 'json'});
+  }
+
+ public getTutorsPOST(studyGroupId: number, courseId: number, pageQuery: TableLazyLoadEvent): Observable<PageResponse<TutorInCourseDto> >  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.post<PageResponse<TutorInCourseDto> >('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors/search', JSON.stringify(pageQuery) , {headers, responseType: 'json'});
+  }
+
+ public removeCourse(studyGroupId: number, courseId: number): Observable<void>  {
+    return this.httpService.delete<void>('study-groups/' + studyGroupId + '/courses/' + courseId + '');
   }
 
  public removeStudent(studyGroupId: number, studentId: number): Observable<void>  {
     return this.httpService.delete<void>('study-groups/' + studyGroupId + '/students/' + studentId + '');
   }
 
- public removeTutor(studyGroupId: number, tutorId: number, courseId: number): Observable<void>  {
-    return this.httpService.delete<void>('study-groups/' + studyGroupId + '/tutors/' + tutorId + '/' + courseId + '');
+ public removeTutor(studyGroupId: number, courseId: number, tutorId: number): Observable<void>  {
+    return this.httpService.delete<void>('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors/' + tutorId + '');
   }
 
  public searchStudents(studyGroupId: number, pageQuery: TableLazyLoadEvent): Observable<PageResponse<StudentInGroupDto> >  {
@@ -146,9 +163,9 @@ export class StudyGroupService {
     return this.httpService.post<PageResponse<StudyGroupDto> >('study-groups/search', JSON.stringify(pageQuery) , {headers, responseType: 'json'});
   }
 
- public searchTutors(studyGroupId: number, pageQuery: TableLazyLoadEvent): Observable<PageResponse<TutorWithCourseDto> >  {
+ public searchTutors(studyGroupId: number, pageQuery: TableLazyLoadEvent): Observable<PageResponse<CourseWithTutorsDto> >  {
     const headers = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpService.post<PageResponse<TutorWithCourseDto> >('study-groups/' + studyGroupId + '/tutors/search', JSON.stringify(pageQuery) , {headers, responseType: 'json'});
+    return this.httpService.post<PageResponse<CourseWithTutorsDto> >('study-groups/' + studyGroupId + '/courses/search', JSON.stringify(pageQuery) , {headers, responseType: 'json'});
   }
 
  public updateStudyGroup(studyGroupId: number, studyGroupDto: StudyGroupDto): Observable<StudyGroupDto>  {

@@ -1,8 +1,9 @@
 package com.prolegacy.atom2024backend.services;
 
+import com.prolegacy.atom2024backend.dto.CourseWithTutorsDto;
 import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
-import com.prolegacy.atom2024backend.dto.TutorWithCourseDto;
+import com.prolegacy.atom2024backend.dto.TutorInCourseDto;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.CourseId;
 import com.prolegacy.atom2024backend.entities.ids.StudentId;
@@ -23,9 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 @Service
 @Transactional(isolation = Isolation.SERIALIZABLE)
 public class StudyGroupService {
@@ -43,10 +41,6 @@ public class StudyGroupService {
 
     public StudyGroupDto createStudyGroup(StudyGroupDto studyGroupDto) {
         StudyGroup studyGroup = studyGroupRepository.save(new StudyGroup(studyGroupDto));
-        for (StudentInGroupDto studentInGroupDto : Optional.ofNullable(studyGroupDto.getStudents()).orElseGet(ArrayList::new)) {
-            addStudent(studyGroup.getId(), studentInGroupDto.getStudent().getId());
-        }
-
         return studyGroupReader.getStudyGroup(studyGroup.getId());
     }
 
@@ -73,17 +67,31 @@ public class StudyGroupService {
         studyGroup.removeStudents(Collections.of(studentId));
     }
 
-    public TutorWithCourseDto addTutor(StudyGroupId studyGroupId, TutorId tutorId, CourseId courseId) {
+    public CourseWithTutorsDto addCourse(StudyGroupId studyGroupId, CourseId courseId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId).orElseThrow(() -> new StudyGroupNotFoundException(studyGroupId));
-        Tutor tutor = tutorRepository.findById(tutorId).orElseThrow(() -> new TutorNotFoundException(tutorId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
 
-        TutorWithCourse tutorWithCourse = studyGroup.addTutor(tutor, course);
+        CourseWithTutors tutorWithCourse = studyGroup.addCourse(course);
 
-        return studyGroupReader.getTutor(tutorWithCourse.getId());
+        return studyGroupReader.getCourse(tutorWithCourse.getId());
     }
 
-    public void removeTutor(StudyGroupId studyGroupId, TutorId tutorId, CourseId courseId) {
+    public void removeCourse(StudyGroupId studyGroupId, CourseId courseId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId).orElseThrow(() -> new StudyGroupNotFoundException(studyGroupId));
+
+        studyGroup.removeCourse(courseId);
+    }
+
+    public TutorInCourseDto addTutor(StudyGroupId studyGroupId, CourseId courseId, TutorId tutorId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId).orElseThrow(() -> new StudyGroupNotFoundException(studyGroupId));
+        Tutor tutor = tutorRepository.findById(tutorId).orElseThrow(() -> new TutorNotFoundException(tutorId));
+
+        TutorInCourse tutorInCourse = studyGroup.addTutor(courseId, tutor);
+
+        return studyGroupReader.getTutor(tutorInCourse.getId());
+    }
+
+    public void removeTutor(StudyGroupId studyGroupId, CourseId courseId, TutorId tutorId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId).orElseThrow(() -> new StudyGroupNotFoundException(studyGroupId));
         studyGroup.removeTutor(tutorId, courseId);
     }
