@@ -3,6 +3,8 @@ package com.prolegacy.atom2024backend.common.auth.entities;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.querydsl.core.annotations.PropertyType;
+import com.querydsl.core.annotations.QueryType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +26,7 @@ public class User {
     private String email;
     @Setter(AccessLevel.PUBLIC)
     @Column(nullable = false)
+    @QueryType(PropertyType.NONE)
     private String password;
 
     @Column(nullable = false)

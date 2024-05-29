@@ -3,10 +3,42 @@ import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {CourseDto, CourseWithTutorsDto, StudentDto, StudentInGroupDto, StudyGroupDto, TutorDto, TutorInCourseDto} from './atom2024backend-dto';
+import {ChatDto, MessageDto} from './dto-chat';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+
+@Injectable({
+providedIn:'root'
+})
+export class ChatService {
+  httpService: HttpClient;
+
+
+ public addMessage(chatId: number, messageDto: MessageDto): Observable<MessageDto>  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.put<MessageDto>('chats/' + chatId + '', JSON.stringify(messageDto) , {headers, responseType: 'json'});
+  }
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+ public createChat(chatDto: ChatDto): Observable<ChatDto>  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.post<ChatDto>('chats', JSON.stringify(chatDto) , {headers, responseType: 'json'});
+  }
+
+ public getChats(): Observable<ChatDto[]>  {
+    return this.httpService.get<ChatDto[]>('chats', {responseType: 'json'});
+  }
+
+ public getMessages(chatId: number): Observable<MessageDto[]>  {
+    return this.httpService.get<MessageDto[]>('chats/' + chatId + '', {responseType: 'json'});
+  }
+
+}
 
 @Injectable({
 providedIn:'root'

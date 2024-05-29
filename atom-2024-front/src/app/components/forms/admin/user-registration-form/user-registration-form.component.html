@@ -25,7 +25,7 @@
       <input maxlength="40" name="email" type="email"
              pInputText [(ngModel)]="user.email"
              [disabled]="userId != null"
-             pattern="^[\w-\.]+@([\w-]+\\.)+[\w-]{2,4}$"
+             [pattern]="'^[\\w-\.]+@([\\w-]+\.)+[\\w-]{2,4}$'"
              placeholder="Введите email" required>
     </div>
 

@@ -9,8 +9,8 @@
       <h3 class="no-margin">Выполните вход</h3>
       <form #loginForm="ngForm" class="margin-t-20">
         <input [(ngModel)]="email" name="username" pInputText
+               [pattern]="'^[\\w-\.]+@([\\w-]+\.)+[\\w-]{2,4}$'" required
                placeholder="Введите адрес электронной почты"
-               pattern="^[\w-\.]+@([\w-]+\\.)+[\w-]{2,4}$" required
                maxlength="50" type="email" [autofocus]="true">
 
         <p-password name="password" [(ngModel)]="password" [toggleMask]="true"

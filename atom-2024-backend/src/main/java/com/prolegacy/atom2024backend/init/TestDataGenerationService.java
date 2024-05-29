@@ -18,6 +18,7 @@ import com.prolegacy.atom2024backend.services.CourseService;
 import com.prolegacy.atom2024backend.services.StudentService;
 import com.prolegacy.atom2024backend.services.StudyGroupService;
 import com.prolegacy.atom2024backend.services.TutorService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.instancio.Gen;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Configuration
@@ -68,8 +70,11 @@ public class TestDataGenerationService implements ApplicationRunner {
                 .generate(Select.allStrings(), gen -> gen.text().loremIpsum().words(1))
                 .generate(Select.field(UserDto::getPhoneNumber), gen -> gen.text().pattern("+7-9#d#d-#d#d#d-#d#d-#d#d"))
                 .generate(Select.field(UserDto::getEmail), gen -> gen.net().email())
+                .ignore(Select.field(UserDto::getPassword))
                 .set(Select.field(UserDto::getRoles), roles)
                 .create()
+                .stream()
+                .peek(userDto -> userDto.setPassword(Base64.getEncoder().encodeToString(DigestUtils.sha256(userDto.getEmail()))))
                 .forEach(userService::createUser);
 
         List<UserDto> users = userReader.getUsers();
