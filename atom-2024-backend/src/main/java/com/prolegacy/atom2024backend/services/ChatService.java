@@ -7,7 +7,6 @@ import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
 import com.prolegacy.atom2024backend.entities.chat.Chat;
-import com.prolegacy.atom2024backend.entities.chat.Message;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import com.prolegacy.atom2024backend.exceptions.ChatNotFoundException;
 import com.prolegacy.atom2024backend.readers.ChatReader;
@@ -48,9 +47,18 @@ public class ChatService {
         return chatReader.getChat(chat.getId());
     }
 
-    public MessageDto addMessage(ChatId chatId, MessageDto messageDto) {
+    public void addMessage(ChatId chatId, MessageDto messageDto) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
-        Message message = chat.addMessage(userProvider.get(), messageDto);
-        return chatReader.getMessage(chatId, message.getId());
+        chat.addMessage(userProvider.get(), messageDto);
+    }
+
+    public void leaveChat(ChatId chatId) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
+        User user = userProvider.get();
+
+        chat.removeUser(user);
+        if (chat.getMembers().isEmpty()) {
+            chatRepository.delete(chat);
+        }
     }
 }

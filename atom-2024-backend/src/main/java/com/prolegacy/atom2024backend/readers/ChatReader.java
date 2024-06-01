@@ -13,6 +13,7 @@ import com.prolegacy.atom2024backend.entities.chat.QChat;
 import com.prolegacy.atom2024backend.entities.chat.QMessage;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import com.prolegacy.atom2024backend.entities.ids.chat.MessageId;
+import com.querydsl.jpa.JPAExpressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class ChatReader {
     private static final QChat chat = QChat.chat;
     private static final QMessage message = QMessage.message;
+    private static final QMessage lastMessage = new QMessage("lastMessage");
     private static final QAttachment attachment = QAttachment.attachment;
     private static final QUser user = QUser.user;
 
@@ -41,7 +43,11 @@ public class ChatReader {
     }
 
     public List<ChatDto> getChats(UserId userId) {
-        return baseQuery().innerJoin(chat.members, user).where(user.id.eq(userId)).fetch();
+        return baseQuery()
+                .innerJoin(chat.members, user).where(user.id.eq(userId))
+                .orderBy(lastMessage.createdDate.desc().nullsLast())
+                .orderBy(chat.id.desc())
+                .fetch();
     }
 
     public MessageDto getMessage(ChatId chatId, MessageId messageId) {
@@ -70,7 +76,17 @@ public class ChatReader {
     }
 
     private JPAQuery<ChatDto> baseQuery() {
-        return queryFactory.from(chat).selectDto(ChatDto.class);
+        QUser lastMessage$author = new QUser("lastMessage$author");
+        return queryFactory.from(chat)
+                .leftJoin(lastMessage).on(lastMessage.chat.id.eq(chat.id)
+                        .and(lastMessage.id.eq(
+                                JPAExpressions.select(message.id.max())
+                                        .from(message)
+                                        .where(message.chat.id.eq(chat.id))
+                        ))
+                )
+                .leftJoin(lastMessage$author).on(lastMessage$author.id.eq(lastMessage.author.id))
+                .selectDto(ChatDto.class);
     }
 
     private JPAQuery<MessageDto> messageQuery() {

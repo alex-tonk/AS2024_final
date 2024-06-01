@@ -18,4 +18,5 @@ public class ChatDto {
     String name;
     List<MessageDto> messages;
     List<UserDto> members;
+    MessageDto lastMessage;
 }

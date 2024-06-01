@@ -50,6 +50,7 @@ public class CourseWithTutors {
         }
         TutorInCourse tutorInCourse = new TutorInCourse(this, tutor);
         tutors.add(tutorInCourse);
+        studyGroup.getChat().addMember(tutor.getUser());
         return tutorInCourse;
     }
 

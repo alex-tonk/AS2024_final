@@ -31,8 +31,8 @@ public class ChatController {
     }
 
     @GetMapping("{chatId}")
-    public List<MessageDto> getMessages(@PathVariable ChatId chatId) {
-        return chatReader.getMessages(chatId);
+    public ChatDto getChat(@PathVariable ChatId chatId) {
+        return chatReader.getChat(chatId);
     }
 
     @PostMapping
@@ -41,7 +41,12 @@ public class ChatController {
     }
 
     @PutMapping("{chatId}")
-    public MessageDto addMessage(@PathVariable ChatId chatId, @RequestBody MessageDto messageDto) {
-        return chatService.addMessage(chatId, messageDto);
+    public void addMessage(@PathVariable ChatId chatId, @RequestBody MessageDto messageDto) {
+        chatService.addMessage(chatId, messageDto);
+    }
+
+    @DeleteMapping("{chatId}/leave")
+    public void leaveChat(@PathVariable ChatId chatId) {
+        chatService.leaveChat(chatId);
     }
 }

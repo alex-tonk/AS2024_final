@@ -9,6 +9,7 @@
         <p-button label="Мое обучение" styleClass="button-clear" routerLink="user-education"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
                   styleClass="button-clear" routerLink="admin-panel"></p-button>
+        <p-button label="Чаты" styleClass="button-clear" routerLink="chat"></p-button>
       </ng-container>
     </div>
 

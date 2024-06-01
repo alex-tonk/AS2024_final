@@ -1,0 +1,26 @@
+<p-dialog header="Новый чат" [modal]="true" [(visible)]="visible"
+          [class.content-disabled]="loading" (onHide)="result.emit(null);">
+  <form #form="ngForm">
+    <div class="form-row">
+      <label class="required">Название</label>
+      <input name="name" pInputText required [(ngModel)]="chat.name">
+    </div>
+    <div class="form-row">
+      <label class="required">Пользователи</label>
+      <p-multiSelect name="users"
+                     appendTo="body"
+                     optionLabel="fullName"
+                     placeholder="Выберите участников чата"
+                     [options]="options"
+                     [virtualScroll]="true" [virtualScrollItemSize]="43"
+                     [(ngModel)]="chat.members">
+      </p-multiSelect>
+    </div>
+  </form>
+  <p-footer>
+    <button pButton label="Создать" class="p-button-success"
+            [disabled]="form.invalid || chat.members?.length == 0"
+            (click)="result.emit(chat)"></button>
+    <button pButton label="Отмена" class="p-button-secondary" (click)="result.emit(null)"></button>
+  </p-footer>
+</p-dialog>

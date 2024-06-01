@@ -2,6 +2,8 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
+import com.prolegacy.atom2024backend.dto.chat.ChatDto;
+import com.prolegacy.atom2024backend.entities.chat.Chat;
 import com.prolegacy.atom2024backend.entities.ids.*;
 import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
 import io.jsonwebtoken.lang.Collections;
@@ -32,12 +34,21 @@ public class StudyGroup {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentInGroup> students = new ArrayList<>();
 
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    private Chat chat;
+
     public List<StudentInGroup> getStudents() {
         return Collections.immutable(students);
     }
 
     public StudyGroup(StudyGroupDto studyGroupDto) {
         update(studyGroupDto);
+        this.chat = new Chat(
+                ChatDto.builder()
+                        .name("Чат группы %s".formatted(this.name))
+                        .build(),
+                this
+        );
     }
 
     public void update(StudyGroupDto studyGroupDto) {
@@ -51,6 +62,7 @@ public class StudyGroup {
 
         StudentInGroup studentInGroup = new StudentInGroup(this, student);
         students.add(studentInGroup);
+        chat.addMember(student.getUser());
         return studentInGroup;
     }
 

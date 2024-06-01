@@ -16,9 +16,9 @@ export class ChatService {
   httpService: HttpClient;
 
 
- public addMessage(chatId: number, messageDto: MessageDto): Observable<MessageDto>  {
+ public addMessage(chatId: number, messageDto: MessageDto): Observable<void>  {
     const headers = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpService.put<MessageDto>('chats/' + chatId + '', JSON.stringify(messageDto) , {headers, responseType: 'json'});
+    return this.httpService.put<void>('chats/' + chatId + '', JSON.stringify(messageDto) , {headers});
   }
 
  public constructor(httpService: HttpClient) {
@@ -30,12 +30,16 @@ export class ChatService {
     return this.httpService.post<ChatDto>('chats', JSON.stringify(chatDto) , {headers, responseType: 'json'});
   }
 
+ public getChat(chatId: number): Observable<ChatDto>  {
+    return this.httpService.get<ChatDto>('chats/' + chatId + '', {responseType: 'json'});
+  }
+
  public getChats(): Observable<ChatDto[]>  {
     return this.httpService.get<ChatDto[]>('chats', {responseType: 'json'});
   }
 
- public getMessages(chatId: number): Observable<MessageDto[]>  {
-    return this.httpService.get<MessageDto[]>('chats/' + chatId + '', {responseType: 'json'});
+ public leaveChat(chatId: number): Observable<void>  {
+    return this.httpService.delete<void>('chats/' + chatId + '/leave');
   }
 
 }

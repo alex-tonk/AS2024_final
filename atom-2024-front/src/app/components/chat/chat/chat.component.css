@@ -1,0 +1,125 @@
+.main-area {
+  width: 100%;
+  height: 100%;
+  min-width: 520px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.room-list {
+  width: 30%;
+  height: 100%;
+  border: 1px solid lightgray;
+  margin-right: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px 5px 0 5px;
+}
+
+.room-list hr {
+  width: 100%
+}
+
+.chatRoom {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.chatRoom:hover {
+  background-color: lightgray;
+}
+
+.active-chat {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.last-message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+}
+
+.chat-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-feed-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 1px solid lightgray;
+  background: white;
+  overflow: auto;
+  padding: 10px;
+}
+
+.message-wrapper {
+  justify-self: right;
+  background: rgba(163, 245, 152, 0.4);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  margin-top: 5px;
+}
+
+.not-my-message {
+  justify-self: left;
+  background: rgba(131, 185, 248, 0.4);
+}
+
+input {
+  height: 50px;
+}
+
+#sent-button {
+  width: 50px;
+  margin-left: 10px;
+}
+
+/* tabview flexbox layout */
+.v-flex-grow {
+  flex: 1;
+  min-height: 0;
+}
+
+.tabview-flex .ui-tabview {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  padding: 0;
+  border: 0 !important;
+  background: none;
+}
+
+.tabview-flex .ui-tabview-panels {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.tabview-flex .ui-tabview-panel {
+  height: 100%;
+  padding: 0 !important;
+}
+
+.tabPanel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

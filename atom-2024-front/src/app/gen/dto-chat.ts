@@ -8,6 +8,7 @@ export class AttachmentDto {
 
 export class ChatDto {
   id?: number;
+  lastMessage?: MessageDto;
   members?: UserDto[];
   messages?: MessageDto[];
   name?: string;
