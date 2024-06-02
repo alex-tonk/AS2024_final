@@ -1,11 +1,22 @@
 <p-tabView [scrollable]="true">
   <p-tabPanel header="Пользователи">
-    <app-user-list></app-user-list>
+    <ng-template pTemplate="content">
+      <app-user-list></app-user-list>
+    </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Ученики">
-    <app-student-list></app-student-list>
+    <ng-template pTemplate="content">
+      <app-student-list></app-student-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Преподаватели">
+    <ng-template pTemplate="content">
+      <app-tutor-list></app-tutor-list>
+    </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Курсы">
-    <app-course-list></app-course-list>
+    <ng-template pTemplate="content">
+      <app-course-list></app-course-list>
+    </ng-template>
   </p-tabPanel>
 </p-tabView>

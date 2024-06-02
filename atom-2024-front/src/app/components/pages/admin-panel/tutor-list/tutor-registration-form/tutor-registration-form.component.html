@@ -1,0 +1,24 @@
+<p-dialog [header]="isEditMode ? 'Редактирование преподавателя' : 'Добавление нового преподавателя'"
+          [style]="{width: '600px'}"
+          [(visible)]="visible" [modal]="true" [resizable]="false" [closable]="true" (onHide)="onHide()">
+  <form #form="ngForm" [class.content-disabled]="loading">
+    <div class="form-row">
+      <label class="required">ФИО:</label>
+      <input *ngIf="isEditMode; else userList" pInputText [value]="fullName" disabled>
+      <ng-template #userList>
+        <p-dropdown name="role" [options]="users" [(ngModel)]="tutor.user"
+                    optionLabel="fullName" appendTo="body" [filter]="true"
+                    [style]="{width: '100%', display: 'inline-flex'}"
+                    placeholder="Выберите пользователя" [required]="true">
+        </p-dropdown>
+      </ng-template>
+
+    </div>
+  </form>
+
+  <p-footer [class.content-disabled]="loading">
+    <p-button [label]="loading ? 'Подождите...' : 'Сохранить'" [disabled]="!!form.invalid"
+              (click)="save()"></p-button>
+    <p-button label="Отмена" styleClass="button-clear bordered" (click)="onHide()"></p-button>
+  </p-footer>
+</p-dialog>

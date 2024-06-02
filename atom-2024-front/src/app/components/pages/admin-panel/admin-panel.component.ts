@@ -6,6 +6,7 @@ import {RestorePasswordComponent} from "../login/restore-password/restore-passwo
 import {UserRegistrationComponent} from "../login/user-registration/user-registration.component";
 import {CourseListComponent} from "./course-list/course-list.component";
 import {StudentListComponent} from "./student-list/student-list.component";
+import {TutorListComponent} from "./tutor-list/tutor-list.component";
 
 @Component({
   selector: 'app-admin-panel',
@@ -17,7 +18,8 @@ import {StudentListComponent} from "./student-list/student-list.component";
     RestorePasswordComponent,
     UserRegistrationComponent,
     CourseListComponent,
-    StudentListComponent
+    StudentListComponent,
+    TutorListComponent
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css'

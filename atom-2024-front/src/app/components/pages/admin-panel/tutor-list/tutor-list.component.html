@@ -1,4 +1,4 @@
-<p-table #table [value]="students" [scrollable]="true" scrollHeight="flex" sortMode="multiple"
+<p-table #table [value]="tutors" [scrollable]="true" scrollHeight="flex" sortMode="multiple"
          [loading]="loading"
          [selectionMode]="'single'"
          [(selection)]="selected"
@@ -14,19 +14,19 @@
   <ng-template pTemplate="caption">
     <div class="table-toolbar">
       <div class="table-toolbar-left">
-        <p-button pTooltip="Обновить таблицу" icon="pi pi-sync" (click)="getStudentsFromApi()"
+        <p-button pTooltip="Обновить таблицу" icon="pi pi-sync" (click)="getTutorsFromApi()"
                   styleClass="button-primary"></p-button>
         <p-button pTooltip="Показать / Скрыть фильтры" icon="pi pi-filter" (click)="filter=!filter"
                   styleClass="button-primary"></p-button>
 
         <div class="splitter"></div>
 
-        <p-button pTooltip="Добавить ученика" icon="pi pi-plus" severity="success"
-                  (click)="createStudent()">
+        <p-button pTooltip="Добавить преподавателя" icon="pi pi-plus" severity="success"
+                  (click)="createTutor()">
         </p-button>
 
-        <p-button pTooltip="Редактировать ученика" icon="pi pi-pencil"
-                  styleClass="button-primary" [disabled]="!selected" (click)="editStudent()">
+        <p-button pTooltip="Редактировать преподавателя" icon="pi pi-pencil"
+                  styleClass="button-primary" [disabled]="!selected" (click)="editTutor()">
         </p-button>
 
         <div class="splitter"></div>
@@ -89,7 +89,7 @@
   <ng-template pTemplate="summary">
     <div class="table-toolbar">
       <div class="table-toolbar-left">
-        Всего записей: {{ students.length }}
+        Всего записей: {{ tutors.length }}
       </div>
     </div>
   </ng-template>
@@ -101,12 +101,12 @@
   </ng-template>
 </p-table>
 
-<app-student-registration-form *ngIf="!!studentFormData"
-                               [studentId]="studentFormData.studentId"
-                               (result)="onStudentFormResult($event)">
-</app-student-registration-form>
+<app-tutor-registration-form *ngIf="!!tutorFormData"
+                               [tutorId]="tutorFormData.tutorId"
+                               (result)="onTutorFormResult($event)">
+</app-tutor-registration-form>
 
 <p-menu #menu [model]="(ExportTable.exportMenu | async)!" [popup]="true"
-        (onShow)="ExportTable.showMenu(table, columns, students)"
+        (onShow)="ExportTable.showMenu(table, columns, tutors)"
         appendTo="body">
 </p-menu>

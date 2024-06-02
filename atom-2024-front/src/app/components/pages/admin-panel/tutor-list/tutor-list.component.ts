@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {StudentDto} from "../../../../gen/atom2024backend-dto";
+import {TutorDto} from "../../../../gen/atom2024backend-dto";
 import {Column} from "../../../common/table/Column";
-import {StudentService} from "../../../../gen/atom2024backend-controllers";
+import {TutorService} from "../../../../gen/atom2024backend-controllers";
 import {lastValueFrom} from "rxjs";
 import {Object} from "core-js";
 import {ExportTable} from "../../../common/table/ExportTable";
@@ -16,10 +16,10 @@ import {MenuModule} from "primeng/menu";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {FormsModule} from "@angular/forms";
-import {StudentRegistrationFormComponent} from "./student-registration-form/student-registration-form.component";
+import {TutorRegistrationFormComponent} from "./tutor-registration-form/tutor-registration-form.component";
 
 @Component({
-  selector: 'app-student-list',
+  selector: 'app-tutor-list',
   standalone: true,
   imports: [
     TableModule,
@@ -30,17 +30,17 @@ import {StudentRegistrationFormComponent} from "./student-registration-form/stud
     NgForOf,
     CheckboxModule,
     FormsModule,
-    StudentRegistrationFormComponent,
+    TutorRegistrationFormComponent,
     MenuModule,
     AsyncPipe,
     NgIf
   ],
-  templateUrl: './student-list.component.html',
-  styleUrl: './student-list.component.css'
+  templateUrl: './tutor-list.component.html',
+  styleUrl: './tutor-list.component.css'
 })
-export class StudentListComponent implements OnInit {
-  students: StudentDto[] = [];
-  selected?: StudentDto;
+export class TutorListComponent implements OnInit {
+  tutors: TutorDto[] = [];
+  selected?: TutorDto;
   loading = false;
   filter = false;
 
@@ -59,7 +59,7 @@ export class StudentListComponent implements OnInit {
     width: 10
   }]
 
-  studentFormData: { studentId?: number } | null;
+  tutorFormData: { tutorId?: number } | null;
 
   get columnFields(): string[] {
     const arr = this.columns
@@ -70,7 +70,7 @@ export class StudentListComponent implements OnInit {
   }
 
   constructor(
-    private studentService: StudentService) {
+    private tutorService: TutorService) {
   }
 
   async ngOnInit() {
@@ -78,38 +78,38 @@ export class StudentListComponent implements OnInit {
   }
 
   async initTable() {
-    await this.getStudentsFromApi();
+    await this.getTutorsFromApi();
   }
 
-  async getStudentsFromApi() {
-    this.students = [];
+  async getTutorsFromApi() {
+    this.tutors = [];
     this.selected = undefined;
     this.loading = true;
     try {
-      this.students = (await lastValueFrom(this.studentService.getStudents()))
+      this.tutors = (await lastValueFrom(this.tutorService.getTutors()))
         .map(s => {
-          const student = Object.assign(new StudentDto(), s);
+          const tutor = Object.assign(new TutorDto(), s);
           // TODO маппинг ФИО
-          if (student.user) {
-            student.fullName = `${student.user.lastname} ${student.user.firstname} ${student.user.surname}`
+          if (tutor.user) {
+            tutor.fullName = `${tutor.user.lastname} ${tutor.user.firstname} ${tutor.user.surname}`
           }
-          return student;
+          return tutor;
         });
     } finally {
       this.loading = false;
     }
   }
 
-  createStudent() {
-    this.studentFormData = {};
+  createTutor() {
+    this.tutorFormData = {};
   }
 
-  editStudent() {
-    this.studentFormData = {studentId: this.selected?.id};
+  editTutor() {
+    this.tutorFormData = {tutorId: this.selected?.id};
   }
 
-  async onStudentFormResult(result: StudentDto | null) {
-    this.studentFormData = null;
+  async onTutorFormResult(result: TutorDto | null) {
+    this.tutorFormData = null;
     if (result) {
       await this.initTable();
     }
