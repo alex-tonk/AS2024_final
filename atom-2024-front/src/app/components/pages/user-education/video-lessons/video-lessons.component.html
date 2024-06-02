@@ -1,0 +1,13 @@
+<p-accordion [multiple]="true" (onOpen)="setActiveIndex($event.index)">
+  <p-accordionTab [header]="lesson.title" *ngFor="let lesson of lessons; index as index;">
+    <div class="lesson-wrapper" (click)="setActiveIndex(index)">
+      <div class="video-wrapper">
+        <app-video-player [mp4SourceUrl]="lesson.videoSource" [isActive]="index === activeIndex"></app-video-player>
+      </div>
+
+      <div class="description-wrapper">
+        {{lesson.description}}
+      </div>
+    </div>
+  </p-accordionTab>
+</p-accordion>
