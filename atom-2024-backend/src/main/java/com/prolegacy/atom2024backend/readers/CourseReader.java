@@ -40,6 +40,7 @@ public class CourseReader {
 
     private JPAQuery<CourseDto> baseQuery() {
         return queryFactory.from(course)
+                .orderBy(course.id.desc())
                 .selectDto(CourseDto.class);
     }
 }

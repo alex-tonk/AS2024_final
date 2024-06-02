@@ -20,7 +20,7 @@ import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
 import {MultiSelectModule} from "primeng/multiselect";
 import {
   UserRegistrationFormComponent
-} from "../../../forms/admin/user-registration-form/user-registration-form.component";
+} from "./user-registration-form/user-registration-form.component";
 import {UserService} from "../../../../services/user.service";
 import {MenuModule} from "primeng/menu";
 import {ExportTable} from "../../../common/table/ExportTable";

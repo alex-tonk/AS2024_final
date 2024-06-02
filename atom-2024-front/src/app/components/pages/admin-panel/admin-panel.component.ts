@@ -4,6 +4,7 @@ import {UserListComponent} from "./user-list/user-list.component";
 import {UserListLazyComponent} from "./user-list-lazy/user-list-lazy.component";
 import {RestorePasswordComponent} from "../login/restore-password/restore-password.component";
 import {UserRegistrationComponent} from "../login/user-registration/user-registration.component";
+import {CourseListComponent} from "./course-list/course-list.component";
 
 @Component({
   selector: 'app-admin-panel',
@@ -13,7 +14,8 @@ import {UserRegistrationComponent} from "../login/user-registration/user-registr
     UserListComponent,
     UserListLazyComponent,
     RestorePasswordComponent,
-    UserRegistrationComponent
+    UserRegistrationComponent,
+    CourseListComponent
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css'

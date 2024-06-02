@@ -1,18 +1,18 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogModule} from "primeng/dialog";
-import {UserDto} from "../../../../models/UserDto";
+import {UserDto} from "../../../../../models/UserDto";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
+import {UserAdminService} from "../../../../../gen/atom2024backend-controllers";
 import {lastValueFrom} from "rxjs";
 import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
 import {MessageService} from "primeng/api";
 import {MultiSelectModule} from "primeng/multiselect";
-import {RoleDto} from "../../../../models/RoleDto";
-import {Cryptic} from "../../../common/Cryptic";
+import {RoleDto} from "../../../../../models/RoleDto";
+import {Cryptic} from "../../../../common/Cryptic";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {DropdownModule} from "primeng/dropdown";
 
