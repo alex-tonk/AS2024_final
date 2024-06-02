@@ -1,5 +1,5 @@
 <p-tabView [scrollable]="true">
-  <p-tabPanel header="Карточка обучаемого" leftIcon="pi pi-graduation-cap">
+  <p-tabPanel header="Ваша карточка" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
       <div>Общий дашбоард какой-то, статистика</div>
     </ng-template>
@@ -14,9 +14,9 @@
       <app-presentation-lessons></app-presentation-lessons>
     </ng-template>
   </p-tabPanel>
-  <p-tabPanel header="Онлайн лекции" leftIcon="pi pi-play-circle">
+  <p-tabPanel #onlineLessons header="Онлайн лекции" leftIcon="pi pi-play-circle">
     <ng-template pTemplate="content">
-      <div>Возможно айфрейм с зумом</div>
+      <app-online-lessons [isActive]="onlineLessons.selected"></app-online-lessons>
     </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Тесты" leftIcon="pi pi-verified">
