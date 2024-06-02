@@ -6,14 +6,11 @@
   <ng-container *ngIf="userService.user">
     <div class="group" style="width: 100%">
       <ng-container *ngIf="!isMobileMode">
-        <p-button label="Испытания" styleClass="button-clear" routerLink="test-list"></p-button>
-        <p-button label="Отчеты" styleClass="button-clear" routerLink="reports"></p-button>
-        <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления" styleClass="button-clear"
-                  routerLink="admin-panel"></p-button>
+        <p-button label="Мое обучение" styleClass="button-clear" routerLink="user-education"></p-button>
+        <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
+                  styleClass="button-clear" routerLink="admin-panel"></p-button>
       </ng-container>
     </div>
-
-    <!--<div style="width: 100%"></div>-->
 
     <span style="margin-right: 10px; flex: none" [pTooltip]="userRolesString">{{ userName }}</span>
     <div class="group">
@@ -23,6 +20,13 @@
                 styleClass="button-clear bordered"></p-button>
 
       <ng-template #right>
+        <div class="alert-wrapper" (click)="isAlertPanel = !isAlertPanel">
+          <div>
+            <i class="pi pi-bell text-primary" [class.ring]="!!alertsCount" pTooltip="Уведомления" tooltipPosition="bottom"></i>
+            <span class="badge-wrapper" pBadge [value]="alertsCount" [badgeDisabled]="!alertsCount"></span>
+          </div>
+        </div>
+
         <p-button icon="pi pi-user" pTooltip="Настройка аккаунта" tooltipPosition="bottom"
                   routerLink="user-panel" styleClass="button-clear bordered"></p-button>
         <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout()" styleClass="button-filled"></p-button>
@@ -33,15 +37,22 @@
 
 <p-overlayPanel #op>
   <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
-    <p-button label="Испытания" styleClass="button-clear" routerLink="test-list" (click)="op.hide()"></p-button>
-    <p-button label="Отчеты" styleClass="button-clear" routerLink="reports" (click)="op.hide()"></p-button>
-    <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления" styleClass="button-clear"
-              routerLink="admin-panel" (click)="op.hide()">
+    <p-button label="Мое обучение" styleClass="button-clear" routerLink="user-education" (click)="op.hide()"></p-button>
+    <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
+              styleClass="button-clear" routerLink="admin-panel" (click)="op.hide()">
     </p-button>
     <p-button icon="pi pi-user" label="Настройка аккаунта"
               routerLink="user-panel" styleClass="button-clear" (click)="op.hide()">
     </p-button>
-    <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout(); op.hide()" styleClass="button-filled">
-    </p-button>
+    <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout(); op.hide()" styleClass="button-filled"></p-button>
   </div>
 </p-overlayPanel>
+
+<p-sidebar [(visible)]="isAlertPanel" [position]="'right'">
+  <ng-template pTemplate="header">
+    <h3>Ваши уведомления</h3>
+  </ng-template>
+  <div *ngFor="let alert of alerts">
+    ✔ {{alert}}
+  </div>
+</p-sidebar>

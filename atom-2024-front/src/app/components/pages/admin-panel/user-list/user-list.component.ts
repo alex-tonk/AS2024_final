@@ -79,10 +79,6 @@ export class UserListComponent implements OnInit {
     header: 'Роль',
     field: 'rolesAsString'
   }, {
-    header: 'Типы испытаний',
-    field: 'availableStandEndpointsAsString',
-    width: 25
-  }, {
     header: 'Архив',
     field: 'archived',
     type: 'boolean'

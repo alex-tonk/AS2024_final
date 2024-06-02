@@ -5,7 +5,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import { UserAdminService} from "../../../../gen/atom2024backend-controllers";
+import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
 import {lastValueFrom} from "rxjs";
 import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
@@ -15,7 +15,6 @@ import {RoleDto} from "../../../../models/RoleDto";
 import {Cryptic} from "../../../common/Cryptic";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {DropdownModule} from "primeng/dropdown";
-import {FakeService} from "../../../../services/fake.service";
 
 @Component({
   selector: 'app-user-registration-form',

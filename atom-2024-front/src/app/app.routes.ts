@@ -7,6 +7,7 @@ import {RestorePasswordComponent} from "./components/pages/login/restore-passwor
 import {UserPanelComponent} from "./components/pages/user-panel/user-panel.component";
 import {adminGuard} from "./services/guards/admin.guard";
 import {unauthorizedGuard} from "./services/guards/unauthorized.guard";
+import {UserEducationComponent} from "./components/pages/user-education/user-education.component";
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -19,5 +20,6 @@ export const routes: Routes = [
   },
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [adminGuard]},
   {path: 'user-panel', component: UserPanelComponent},
+  {path: 'user-education', component: UserEducationComponent},
   {path: '**', redirectTo: ''}
 ];
