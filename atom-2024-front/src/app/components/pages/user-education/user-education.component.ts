@@ -3,6 +3,7 @@ import {TabViewModule} from "primeng/tabview";
 import {UserListComponent} from "../admin-panel/user-list/user-list.component";
 import {VideoPlayerComponent} from "../../common/video-player/video-player.component";
 import {VideoLessonsComponent} from "./video-lessons/video-lessons.component";
+import {PresentationLessonsComponent} from "./presentation-lessons/presentation-lessons.component";
 
 @Component({
   selector: 'app-user-education',
@@ -11,7 +12,8 @@ import {VideoLessonsComponent} from "./video-lessons/video-lessons.component";
     TabViewModule,
     UserListComponent,
     VideoPlayerComponent,
-    VideoLessonsComponent
+    VideoLessonsComponent,
+    PresentationLessonsComponent
   ],
   templateUrl: './user-education.component.html',
   styleUrl: './user-education.component.css'

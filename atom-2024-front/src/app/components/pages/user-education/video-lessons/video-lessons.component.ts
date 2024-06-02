@@ -1,7 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {AccordionModule} from "primeng/accordion";
 import {NgForOf, NgIf} from "@angular/common";
 import {VideoPlayerComponent} from "../../../common/video-player/video-player.component";
+import _default from "chart.js/dist/core/core.interaction";
+import index = _default.modes.index;
 
 @Component({
   selector: 'app-video-lessons',
@@ -16,7 +18,7 @@ import {VideoPlayerComponent} from "../../../common/video-player/video-player.co
   styleUrl: './video-lessons.component.css'
 })
 export class VideoLessonsComponent {
-  activeIndex: any;
+  activeIndex: number;
 
   lessons = [
     {
@@ -26,6 +28,18 @@ export class VideoLessonsComponent {
     },
     {title: 'Урок 2', videoSource: '/assets/videos/lesson2.mp4', description: 'Когда ничего не понял в первом уроке.'}
   ]
+
+  private _isActive = false;
+  @Input() get isActive(): boolean {
+    return this._isActive;
+  }
+
+  set isActive(value: boolean) {
+    this._isActive = value;
+    if (!value) {
+      this.activeIndex = -1;
+    }
+  }
 
   setActiveIndex(index: number) {
     this.activeIndex = index;

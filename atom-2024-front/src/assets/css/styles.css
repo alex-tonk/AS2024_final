@@ -208,6 +208,10 @@ label.required:after {
   height: 100%;
 }
 
+.p-tabview-nav-container {
+  flex: none;
+}
+
 /* TABLE */
 
 .p-datatable .p-datatable-loading-overlay {

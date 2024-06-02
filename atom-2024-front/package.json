@@ -28,6 +28,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "monaco-editor": "^0.44.0",
+    "ngx-doc-viewer": "^15.0.1",
     "ngx-monaco-editor-v2": "^17.0.1",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.0",

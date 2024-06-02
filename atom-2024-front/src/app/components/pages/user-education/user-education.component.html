@@ -1,16 +1,27 @@
 <p-tabView [scrollable]="true">
   <p-tabPanel header="Карточка обучаемого" leftIcon="pi pi-graduation-cap">
-    <div>Общий дашбоард какой-то, статистика</div>
+    <ng-template pTemplate="content">
+      <div>Общий дашбоард какой-то, статистика</div>
+    </ng-template>
   </p-tabPanel>
-  <p-tabPanel header="Видеоуроки" leftIcon="pi pi-video">
-    <app-video-lessons></app-video-lessons>
+  <p-tabPanel #videoLessons header="Видеоуроки" leftIcon="pi pi-video">
+    <ng-template pTemplate="content">
+      <app-video-lessons [isActive]="videoLessons.selected"></app-video-lessons>
+    </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Презентации" leftIcon="pi pi-book">
+    <ng-template pTemplate="content">
+      <app-presentation-lessons></app-presentation-lessons>
+    </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Онлайн лекции" leftIcon="pi pi-play-circle">
-    <div>Возможно айфрейм с зумом</div>
+    <ng-template pTemplate="content">
+      <div>Возможно айфрейм с зумом</div>
+    </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Тесты" leftIcon="pi pi-verified">
-    <div>Тесты</div>
+    <ng-template pTemplate="content">
+      <div>Тесты</div>
+    </ng-template>
   </p-tabPanel>
 </p-tabView>
