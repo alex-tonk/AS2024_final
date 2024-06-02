@@ -18,9 +18,7 @@ import {FormsModule} from "@angular/forms";
 import {firstValueFrom, lastValueFrom} from "rxjs";
 import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
 import {MultiSelectModule} from "primeng/multiselect";
-import {
-  UserRegistrationFormComponent
-} from "./user-registration-form/user-registration-form.component";
+import {UserRegistrationFormComponent} from "./user-registration-form/user-registration-form.component";
 import {UserService} from "../../../../services/user.service";
 import {MenuModule} from "primeng/menu";
 import {ExportTable} from "../../../common/table/ExportTable";

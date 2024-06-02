@@ -3,7 +3,7 @@ import {AccordionModule} from "primeng/accordion";
 import {NgForOf, NgIf} from "@angular/common";
 import {VideoPlayerComponent} from "../../../common/video-player/video-player.component";
 import _default from "chart.js/dist/core/core.interaction";
-import index = _default.modes.index;
+
 
 @Component({
   selector: 'app-video-lessons',

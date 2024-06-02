@@ -10,9 +10,7 @@ import {MenuModule} from "primeng/menu";
 import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {
-  UserRegistrationFormComponent
-} from "../user-list/user-registration-form/user-registration-form.component";
+import {UserRegistrationFormComponent} from "../user-list/user-registration-form/user-registration-form.component";
 import {Column} from "../../../common/table/Column";
 import {CourseService} from "../../../../gen/atom2024backend-controllers";
 import {lastValueFrom} from "rxjs";
@@ -20,9 +18,7 @@ import {ExportTable} from "../../../common/table/ExportTable";
 import {CourseDto} from "../../../../gen/atom2024backend-dto";
 import {Object} from "core-js";
 import {FormsModule} from "@angular/forms";
-import {
-  CourseRegistrationFormComponent
-} from "./course-registration-form/course-registration-form.component";
+import {CourseRegistrationFormComponent} from "./course-registration-form/course-registration-form.component";
 
 @Component({
   selector: 'app-course-list',

@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CourseRegistrationFormComponent } from './course-registration-form.component';
+import {CourseRegistrationFormComponent} from './course-registration-form.component';
 
 describe('CourseRegistrationFormComponent', () => {
   let component: CourseRegistrationFormComponent;
@@ -11,7 +11,7 @@ describe('CourseRegistrationFormComponent', () => {
       imports: [CourseRegistrationFormComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(CourseRegistrationFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {TabViewModule} from "primeng/tabview";
 import {UserListComponent} from "../admin-panel/user-list/user-list.component";
 import {VideoPlayerComponent} from "../../common/video-player/video-player.component";
