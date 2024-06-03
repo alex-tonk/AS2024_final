@@ -6,7 +6,5 @@ public enum MetadataNodeType {
     BOOLEAN,
     NUMBER,
     DATE,
-    INSTANT,
-    RESULT_ENUM,
-    SAMPLE_TYPE_ENUM
+    INSTANT
 }
