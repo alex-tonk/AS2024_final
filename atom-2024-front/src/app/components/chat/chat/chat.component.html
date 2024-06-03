@@ -1,28 +1,41 @@
 <div class="main-area" (keydown)="onKeyPress($event)">
   <div class="room-list">
-    <div style="text-align: center"><b>Список чатов</b></div>
+    <div class="room-list-header">
+      <b>Список чатов</b>
+      <p-button icon="pi pi-plus"
+                styleClass="button-clear" pTooltip="Добавить новый чат"
+                (click)="registrationDialogVisible = true">
+      </p-button>
+    </div>
     <hr>
-    <div>
-      <div *ngFor="let chatRoom of chats">
-        <div style="display: inline-flex; flex-direction: row; align-items: center; width: 100%">
-          <div class="chatRoom" [class.active-chat]="chatRoom.id === chat?.id" (click)="selectChat(chatRoom)">
-            <span>{{ chatRoom.name }}</span>
-            <div *ngIf="!!chatRoom.lastMessage" class="last-message">
-              {{ chatRoom.lastMessage.createdDate | date:'HH:mm:ss' }}
-              {{ chatRoom.lastMessage.author?.lastname ?? '' }} {{ chatRoom.lastMessage.author?.firstname ?? '' }}:
-              {{ chatRoom.lastMessage.content }}
-            </div>
+    <div style="overflow: auto">
+      <div *ngFor="let chatRoom of chats" style="padding: 5px">
+        <div class="chat-room"
+             [class.active-chat]="chatRoom.id === chat?.id"
+             (click)="selectChat(chatRoom)">
+          <div style="display: inline-flex; height: 20px;">
+            <div><b>{{ chatRoom.name }}</b></div>
+            <div style="flex: auto"></div>
+            <p-button icon="pi pi-sign-out" styleClass="button-clear" class="chat-room-close-btn"
+                      pTooltip="Покинуть чат"
+                      (onClick)="leaveChat(chatRoom)">
+            </p-button>
           </div>
-          <p-button icon="pi pi-sign-out" [style]="{border: 0}" [rounded]="true" [text]="true"
-                    (onClick)="leaveChat(chatRoom)"></p-button>
+          <div class="last-message">
+            <ng-container *ngIf="!!chatRoom.lastMessage; else empty">
+              <div style="flex: none">
+                {{ chatRoom.lastMessage.author?.lastname ?? '' }} {{ chatRoom.lastMessage.author?.firstname ?? '' }}:
+              </div>
+              <div class="last-message-content">{{ chatRoom.lastMessage.content }}</div>
+            </ng-container>
+            <ng-template #empty>Сообщений нет</ng-template>
+          </div>
+          <div style="width: 100%; text-align: right; font-size: 12px; padding-bottom: 5px;">
+            {{ chatRoom.lastMessage?.createdDate | date:'HH:mm:ss' }}
+          </div>
         </div>
-        <hr>
       </div>
     </div>
-    <div style="flex: 1"></div>
-    <hr>
-    <button pButton label="Новый чат" class="p-button-link" style="width: 100%; text-align: center"
-            (click)="registrationDialogVisible = true"></button>
   </div>
   <div class="chat-box" [class.content-disabled]="chat?.id == null">
     <div class="tabPanel-content">

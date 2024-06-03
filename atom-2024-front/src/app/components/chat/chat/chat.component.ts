@@ -10,6 +10,7 @@ import {ButtonModule} from 'primeng/button';
 import {DialogModule} from 'primeng/dialog';
 import {ChatRegistrationDialogComponent} from '../chat-registration-dialog/chat-registration-dialog.component';
 import {ConfirmationService} from 'primeng/api';
+import {TooltipModule} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-chat',
@@ -22,7 +23,8 @@ import {ConfirmationService} from 'primeng/api';
     ButtonModule,
     DialogModule,
     ChatRegistrationDialogComponent,
-    NgIf
+    NgIf,
+    TooltipModule
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
