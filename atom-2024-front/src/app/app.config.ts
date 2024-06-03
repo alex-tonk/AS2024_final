@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, ApplicationConfig} from '@angular/core';
+import {APP_INITIALIZER, ApplicationConfig, LOCALE_ID} from '@angular/core';
 import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
@@ -11,9 +11,14 @@ import {MessageService} from "primeng/api";
 import {DateInterceptor} from "./services/interceptors/date-interceptor";
 import {ConfigService} from './services/config.service';
 import {NGX_MONACO_EDITOR_CONFIG} from "ngx-monaco-editor-v2";
+import myLocaleRu from '@angular/common/locales/ru';
+import {registerLocaleData} from '@angular/common';
+
+registerLocaleData(myLocaleRu);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    {provide: LOCALE_ID, useValue: 'ru'},
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
