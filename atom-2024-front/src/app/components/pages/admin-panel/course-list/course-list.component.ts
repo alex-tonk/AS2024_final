@@ -1,24 +1,25 @@
 import {Component, OnInit} from '@angular/core';
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {Button} from "primeng/button";
-import {CheckboxModule} from "primeng/checkbox";
+import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {Button} from 'primeng/button';
+import {CheckboxModule} from 'primeng/checkbox';
 import {
   ColumnFilterWrapperComponent
-} from "../../../common/table/column-filter-wrapper/column-filter-wrapper.component";
-import {InputTextModule} from "primeng/inputtext";
-import {MenuModule} from "primeng/menu";
-import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
-import {TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {UserRegistrationFormComponent} from "../user-list/user-registration-form/user-registration-form.component";
-import {Column} from "../../../common/table/Column";
-import {CourseService} from "../../../../gen/atom2024backend-controllers";
-import {lastValueFrom} from "rxjs";
-import {ExportTable} from "../../../common/table/ExportTable";
-import {CourseDto} from "../../../../gen/atom2024backend-dto";
-import {Object} from "core-js";
-import {FormsModule} from "@angular/forms";
-import {CourseRegistrationFormComponent} from "./course-registration-form/course-registration-form.component";
+} from '../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+import {InputTextModule} from 'primeng/inputtext';
+import {MenuModule} from 'primeng/menu';
+import {ConfirmationService, MessageService, PrimeTemplate} from 'primeng/api';
+import {TableModule} from 'primeng/table';
+import {TooltipModule} from 'primeng/tooltip';
+import {UserRegistrationFormComponent} from '../user-list/user-registration-form/user-registration-form.component';
+import {Column} from '../../../common/table/Column';
+import {CourseService} from '../../../../gen/atom2024backend-controllers';
+import {lastValueFrom} from 'rxjs';
+import {ExportTable} from '../../../common/table/ExportTable';
+import {CourseDto} from '../../../../gen/atom2024backend-dto';
+import {Object} from 'core-js';
+import {FormsModule} from '@angular/forms';
+import {CourseRegistrationFormComponent} from './course-registration-form/course-registration-form.component';
+import {getField} from '../../../../services/field-accessor';
 
 @Component({
   selector: 'app-course-list',
@@ -154,4 +155,5 @@ export class CourseListComponent implements OnInit {
   }
 
   protected readonly ExportTable = ExportTable;
+  protected readonly getField = getField;
 }

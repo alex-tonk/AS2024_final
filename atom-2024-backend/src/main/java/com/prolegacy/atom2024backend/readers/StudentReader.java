@@ -1,5 +1,6 @@
 package com.prolegacy.atom2024backend.readers;
 
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.lazy.PageHelper;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
@@ -41,6 +42,10 @@ public class StudentReader {
     private JPAQuery<StudentDto> baseQuery() {
         return queryFactory.from(student)
                 .orderBy(student.id.desc())
-                .selectDto(StudentDto.class);
+                .selectDto(
+                        StudentDto.class,
+                        UserReader.getShortName(student.user).as("user$shortName"),
+                        UserReader.getFullName(student.user).as("user$fullName")
+                );
     }
 }

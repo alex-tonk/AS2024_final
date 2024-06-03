@@ -1,21 +1,22 @@
 import {Component} from '@angular/core';
-import {UserDto} from "../../../../models/UserDto";
-import {Column} from "../../../common/table/Column";
-import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
-import {ConfirmationService, MessageService, SharedModule} from "primeng/api";
-import {firstValueFrom, lastValueFrom} from "rxjs";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {PageResponse} from "../../../../gen/query-lazy";
-import {ButtonModule} from "primeng/button";
-import {CheckboxModule} from "primeng/checkbox";
+import {UserDto} from '../../../../models/UserDto';
+import {Column} from '../../../common/table/Column';
+import {UserAdminService} from '../../../../gen/atom2024backend-controllers';
+import {ConfirmationService, MessageService, SharedModule} from 'primeng/api';
+import {firstValueFrom, lastValueFrom} from 'rxjs';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {PageResponse} from '../../../../gen/query-lazy';
+import {ButtonModule} from 'primeng/button';
+import {CheckboxModule} from 'primeng/checkbox';
 import {
   ColumnFilterWrapperComponent
-} from "../../../common/table/column-filter-wrapper/column-filter-wrapper.component";
-import {InputTextModule} from "primeng/inputtext";
-import {MultiSelectModule} from "primeng/multiselect";
-import {NgForOf, NgIf} from "@angular/common";
-import {TooltipModule} from "primeng/tooltip";
-import {FormsModule} from "@angular/forms";
+} from '../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+import {InputTextModule} from 'primeng/inputtext';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {NgForOf, NgIf} from '@angular/common';
+import {TooltipModule} from 'primeng/tooltip';
+import {FormsModule} from '@angular/forms';
+import {getField} from '../../../../services/field-accessor';
 
 @Component({
   selector: 'app-user-list-lazy',
@@ -167,4 +168,6 @@ export class UserListLazyComponent {
       this.loading = false;
     }
   }
+
+  protected readonly getField = getField;
 }

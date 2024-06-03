@@ -22,14 +22,16 @@ import {ConfirmationService} from 'primeng/api';
     ButtonModule,
     DialogModule,
     ChatRegistrationDialogComponent,
-    NgIf,
+    NgIf
   ],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css',
+  styleUrl: './chat.component.css'
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  @ViewChild('registrationDialogComponent') registrationDialogComponent: ChatRegistrationDialogComponent;
   @ViewChild('bottomAnchor') bottomAnchor: ElementRef;
+
+  registrationDialogVisible = false;
+  registrationDialogLoading = false;
 
   chats: ChatDto[] = [];
   chat?: ChatDto;
@@ -92,16 +94,16 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async createChat(event: ChatDto | null) {
     if (event == null) {
-      this.registrationDialogComponent.visible = false;
+      this.registrationDialogVisible = false;
       return;
     }
     try {
-      this.registrationDialogComponent.loading = true;
+      this.registrationDialogLoading = true;
       await lastValueFrom(this.chatService.createChat(event));
       await this.reloadChat();
-      this.registrationDialogComponent.visible = false;
+      this.registrationDialogVisible = false;
     } finally {
-      this.registrationDialogComponent.loading = false;
+      this.registrationDialogLoading = false;
     }
   }
 
@@ -136,7 +138,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         } finally {
           this.chats = await lastValueFrom(this.chatService.getChats());
         }
-      },
+      }
     });
   }
 }

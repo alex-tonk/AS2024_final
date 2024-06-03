@@ -1,22 +1,22 @@
 import {Component, OnInit} from '@angular/core';
-import {StudentDto} from "../../../../gen/atom2024backend-dto";
-import {Column} from "../../../common/table/Column";
-import {StudentService} from "../../../../gen/atom2024backend-controllers";
-import {lastValueFrom} from "rxjs";
-import {Object} from "core-js";
-import {ExportTable} from "../../../common/table/ExportTable";
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {Button} from "primeng/button";
-import {CheckboxModule} from "primeng/checkbox";
+import {StudentDto} from '../../../../gen/atom2024backend-dto';
+import {Column} from '../../../common/table/Column';
+import {StudentService} from '../../../../gen/atom2024backend-controllers';
+import {lastValueFrom} from 'rxjs';
+import {ExportTable} from '../../../common/table/ExportTable';
+import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {Button} from 'primeng/button';
+import {CheckboxModule} from 'primeng/checkbox';
 import {
   ColumnFilterWrapperComponent
-} from "../../../common/table/column-filter-wrapper/column-filter-wrapper.component";
-import {InputTextModule} from "primeng/inputtext";
-import {MenuModule} from "primeng/menu";
-import {TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {FormsModule} from "@angular/forms";
-import {StudentRegistrationFormComponent} from "./student-registration-form/student-registration-form.component";
+} from '../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+import {InputTextModule} from 'primeng/inputtext';
+import {MenuModule} from 'primeng/menu';
+import {TableModule} from 'primeng/table';
+import {TooltipModule} from 'primeng/tooltip';
+import {FormsModule} from '@angular/forms';
+import {StudentRegistrationFormComponent} from './student-registration-form/student-registration-form.component';
+import {getField} from '../../../../services/field-accessor';
 
 @Component({
   selector: 'app-student-list',
@@ -51,7 +51,7 @@ export class StudentListComponent implements OnInit {
     width: 10
   }, {
     header: 'ФИО',
-    field: 'fullName'
+    field: 'user.fullName'
   }, {
     header: 'Архив',
     field: 'archived',
@@ -86,15 +86,7 @@ export class StudentListComponent implements OnInit {
     this.selected = undefined;
     this.loading = true;
     try {
-      this.students = (await lastValueFrom(this.studentService.getStudents()))
-        .map(s => {
-          const student = Object.assign(new StudentDto(), s);
-          // TODO маппинг ФИО
-          if (student.user) {
-            student.fullName = `${student.user.lastname} ${student.user.firstname} ${student.user.surname}`
-          }
-          return student;
-        });
+      this.students = await lastValueFrom(this.studentService.getStudents());
     } finally {
       this.loading = false;
     }
@@ -116,4 +108,5 @@ export class StudentListComponent implements OnInit {
   }
 
   protected readonly ExportTable = ExportTable;
+  protected readonly getField = getField;
 }

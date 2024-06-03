@@ -1,28 +1,29 @@
 import {Component, OnInit} from '@angular/core';
-import {TableModule} from "primeng/table";
-import {UserDto} from "../../../../models/UserDto";
-import {ToolbarModule} from "primeng/toolbar";
-import {ButtonModule} from "primeng/button";
-import {InputTextModule} from "primeng/inputtext";
-import {Column} from "../../../common/table/Column";
-import {AsyncPipe, DatePipe, NgForOf, NgIf} from "@angular/common";
-import {ConfirmationService, MessageService} from "primeng/api";
-import {TooltipModule} from "primeng/tooltip";
-import {CalendarModule} from "primeng/calendar";
-import {InputNumberModule} from "primeng/inputnumber";
+import {TableModule} from 'primeng/table';
+import {UserDto} from '../../../../models/UserDto';
+import {ToolbarModule} from 'primeng/toolbar';
+import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {Column} from '../../../common/table/Column';
+import {AsyncPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {TooltipModule} from 'primeng/tooltip';
+import {CalendarModule} from 'primeng/calendar';
+import {InputNumberModule} from 'primeng/inputnumber';
 import {
   ColumnFilterWrapperComponent
-} from "../../../common/table/column-filter-wrapper/column-filter-wrapper.component";
-import {CheckboxModule} from "primeng/checkbox";
-import {FormsModule} from "@angular/forms";
-import {firstValueFrom, lastValueFrom} from "rxjs";
-import {UserAdminService} from "../../../../gen/atom2024backend-controllers";
-import {MultiSelectModule} from "primeng/multiselect";
-import {UserRegistrationFormComponent} from "./user-registration-form/user-registration-form.component";
-import {UserService} from "../../../../services/user.service";
-import {MenuModule} from "primeng/menu";
-import {ExportTable} from "../../../common/table/ExportTable";
-import {AutoFocusModule} from "primeng/autofocus";
+} from '../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+import {CheckboxModule} from 'primeng/checkbox';
+import {FormsModule} from '@angular/forms';
+import {firstValueFrom, lastValueFrom} from 'rxjs';
+import {UserAdminService} from '../../../../gen/atom2024backend-controllers';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {UserRegistrationFormComponent} from './user-registration-form/user-registration-form.component';
+import {UserService} from '../../../../services/user.service';
+import {MenuModule} from 'primeng/menu';
+import {ExportTable} from '../../../common/table/ExportTable';
+import {AutoFocusModule} from 'primeng/autofocus';
+import {getField} from '../../../../services/field-accessor';
 
 @Component({
   selector: 'app-user-list',
@@ -197,4 +198,5 @@ export class UserListComponent implements OnInit {
   }
 
   protected readonly ExportTable = ExportTable;
+  protected readonly getField = getField;
 }

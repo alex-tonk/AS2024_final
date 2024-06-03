@@ -111,22 +111,6 @@ public class UserReader {
     }
 
     private JPAQuery<UserDto> baseQuery() {
-        StringExpression shortName = user.firstname.concat(" ")
-                .concat(
-                        Expressions.cases()
-                                .when(user.surname.isNotNull())
-                                .then(user.surname.substring(0, 1).concat(" ").concat(user.lastname.substring(0, 1)))
-                                .otherwise(user.lastname.substring(0, 1))
-                );
-
-        StringExpression fullName = user.firstname.concat(" ")
-                .concat(
-                        Expressions.cases()
-                                .when(user.surname.isNotNull())
-                                .then(user.surname.concat(" ").concat(user.lastname))
-                                .otherwise(user.lastname)
-                );
-
         JPAQuery<String> rolesAsString = queryFactory
                 .from(dummyUser)
                 .innerJoin(dummyUser.roles, userRole)
@@ -140,9 +124,29 @@ public class UserReader {
                 .selectDto(
                         UserDto.class,
                         Expressions.as(Expressions.nullExpression(String.class), "password"),
-                        shortName.as("shortName"),
-                        fullName.as("fullName"),
+                        getShortName(user).as("shortName"),
+                        getFullName(user).as("fullName"),
                         Expressions.as(rolesAsString, "rolesAsString")
+                );
+    }
+
+    public static StringExpression getFullName(QUser qUser) {
+        return qUser.firstname.concat(" ")
+                .concat(
+                        Expressions.cases()
+                                .when(qUser.surname.isNotNull())
+                                .then(qUser.surname.concat(" ").concat(qUser.lastname))
+                                .otherwise(qUser.lastname)
+                );
+    }
+
+    public static StringExpression getShortName(QUser qUser) {
+        return qUser.firstname.concat(" ")
+                .concat(
+                        Expressions.cases()
+                                .when(qUser.surname.isNotNull())
+                                .then(qUser.surname.substring(0, 1).concat(" ").concat(qUser.lastname.substring(0, 1)))
+                                .otherwise(qUser.lastname.substring(0, 1))
                 );
     }
 }

@@ -85,10 +85,10 @@
             </td>
           }
           @case ("date") {
-            <td style="text-align: center">{{ row[col.fieldGetter ?? col.field] }}</td>
+            <td style="text-align: center">{{ getField(row, col) }}</td>
           }
           @default {
-            <td [class.cell-center]="col.field == 'id'">{{ row[col.fieldGetter ?? col.field] }}</td>
+            <td [class.cell-center]="col.field == 'id'">{{ getField(row, col) }}</td>
           }
         }
       </ng-container>

@@ -1,5 +1,6 @@
 package com.prolegacy.atom2024backend.readers;
 
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.lazy.PageHelper;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
@@ -92,7 +93,12 @@ public class StudyGroupReader {
     }
 
     private JPAQuery<StudentInGroupDto> studentQuery() {
-        return queryFactory.from(studentInGroup).selectDto(StudentInGroupDto.class);
+        return queryFactory.from(studentInGroup)
+                .selectDto(
+                        StudentInGroupDto.class,
+                        UserReader.getFullName(studentInGroup.student.user).as("student$user$fullName"),
+                        UserReader.getShortName(studentInGroup.student.user).as("student$user$shortName")
+                );
     }
 
     private JPAQuery<CourseWithTutorsDto> courseQuery() {
@@ -100,6 +106,11 @@ public class StudyGroupReader {
     }
 
     private JPAQuery<TutorInCourseDto> tutorQuery() {
-        return queryFactory.from(tutorInCourse).selectDto(TutorInCourseDto.class);
+        return queryFactory.from(tutorInCourse)
+                .selectDto(
+                        TutorInCourseDto.class,
+                        UserReader.getFullName(tutorInCourse.tutor.user).as("tutor$user$fullName"),
+                        UserReader.getShortName(tutorInCourse.tutor.user).as("tutor$user$shortName")
+                );
     }
 }

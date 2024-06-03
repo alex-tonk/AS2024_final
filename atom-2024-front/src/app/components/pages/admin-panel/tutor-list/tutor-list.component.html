@@ -75,10 +75,10 @@
             </td>
           }
           @case ("date") {
-            <td style="text-align: center">{{ row[col.fieldGetter ?? col.field] }}</td>
+            <td style="text-align: center">{{ getField(row, col) }}</td>
           }
           @default {
-            <td [class.cell-center]="col.field == 'id'">{{ row[col.fieldGetter ?? col.field] }}</td>
+            <td [class.cell-center]="col.field == 'id'">{{ getField(row, col) }}</td>
           }
         }
       </ng-container>
@@ -102,8 +102,8 @@
 </p-table>
 
 <app-tutor-registration-form *ngIf="!!tutorFormData"
-                               [tutorId]="tutorFormData.tutorId"
-                               (result)="onTutorFormResult($event)">
+                             [tutorId]="tutorFormData.tutorId"
+                             (result)="onTutorFormResult($event)">
 </app-tutor-registration-form>
 
 <p-menu #menu [model]="(ExportTable.exportMenu | async)!" [popup]="true"

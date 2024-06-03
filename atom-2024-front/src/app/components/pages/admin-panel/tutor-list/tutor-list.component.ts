@@ -1,22 +1,23 @@
 import {Component, OnInit} from '@angular/core';
-import {TutorDto} from "../../../../gen/atom2024backend-dto";
-import {Column} from "../../../common/table/Column";
-import {TutorService} from "../../../../gen/atom2024backend-controllers";
-import {lastValueFrom} from "rxjs";
-import {Object} from "core-js";
-import {ExportTable} from "../../../common/table/ExportTable";
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {Button} from "primeng/button";
-import {CheckboxModule} from "primeng/checkbox";
+import {TutorDto} from '../../../../gen/atom2024backend-dto';
+import {Column} from '../../../common/table/Column';
+import {TutorService} from '../../../../gen/atom2024backend-controllers';
+import {lastValueFrom} from 'rxjs';
+import {Object} from 'core-js';
+import {ExportTable} from '../../../common/table/ExportTable';
+import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {Button} from 'primeng/button';
+import {CheckboxModule} from 'primeng/checkbox';
 import {
   ColumnFilterWrapperComponent
-} from "../../../common/table/column-filter-wrapper/column-filter-wrapper.component";
-import {InputTextModule} from "primeng/inputtext";
-import {MenuModule} from "primeng/menu";
-import {TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {FormsModule} from "@angular/forms";
-import {TutorRegistrationFormComponent} from "./tutor-registration-form/tutor-registration-form.component";
+} from '../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+import {InputTextModule} from 'primeng/inputtext';
+import {MenuModule} from 'primeng/menu';
+import {TableModule} from 'primeng/table';
+import {TooltipModule} from 'primeng/tooltip';
+import {FormsModule} from '@angular/forms';
+import {TutorRegistrationFormComponent} from './tutor-registration-form/tutor-registration-form.component';
+import {getField} from '../../../../services/field-accessor';
 
 @Component({
   selector: 'app-tutor-list',
@@ -116,4 +117,5 @@ export class TutorListComponent implements OnInit {
   }
 
   protected readonly ExportTable = ExportTable;
+  protected readonly getField = getField;
 }

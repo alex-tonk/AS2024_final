@@ -3,6 +3,7 @@ package com.prolegacy.atom2024backend.readers;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.QUser;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
@@ -86,11 +87,20 @@ public class ChatReader {
                         ))
                 )
                 .leftJoin(lastMessage$author).on(lastMessage$author.id.eq(lastMessage.author.id))
-                .selectDto(ChatDto.class);
+                .selectDto(
+                        ChatDto.class,
+                        UserReader.getShortName(lastMessage$author).as("lastMessage$author$shortName"),
+                        UserReader.getFullName(lastMessage$author).as("lastMessage$author$fullName")
+                );
     }
 
     private JPAQuery<MessageDto> messageQuery() {
-        return queryFactory.from(message).selectDto(MessageDto.class);
+        return queryFactory.from(message)
+                .selectDto(
+                        MessageDto.class,
+                        UserReader.getFullName(message.author).as("author$fullName"),
+                        UserReader.getShortName(message.author).as("author$shortName")
+                );
     }
 
     private JPAQuery<AttachmentDto> attachmentQuery() {
@@ -98,6 +108,12 @@ public class ChatReader {
     }
 
     private JPAQuery<UserDto> memberQuery() {
-        return queryFactory.from(user).innerJoin(chat).on(chat.members.contains(user)).selectDto(UserDto.class);
+        return queryFactory.from(user)
+                .innerJoin(chat).on(chat.members.contains(user))
+                .selectDto(
+                        UserDto.class,
+                        UserReader.getShortName(user).as("shortName"),
+                        UserReader.getFullName(user).as("fullName")
+                );
     }
 }

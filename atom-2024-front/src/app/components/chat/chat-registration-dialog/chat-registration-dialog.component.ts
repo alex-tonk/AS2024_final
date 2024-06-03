@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogModule} from 'primeng/dialog';
 import {PaginatorModule} from 'primeng/paginator';
 import {ChipsModule} from 'primeng/chips';
@@ -17,16 +17,15 @@ import {ChatDto} from '../../../gen/dto-chat';
     PaginatorModule,
     ChipsModule,
     ButtonModule,
-    MultiSelectModule,
+    MultiSelectModule
   ],
   templateUrl: './chat-registration-dialog.component.html',
-  styleUrl: './chat-registration-dialog.component.css',
+  styleUrl: './chat-registration-dialog.component.css'
 })
 export class ChatRegistrationDialogComponent implements OnInit {
+  @Input() loading = false;
   @Output() result: EventEmitter<ChatDto | null> = new EventEmitter<ChatDto | null>();
 
-  visible: boolean = false;
-  loading = false;
 
   options: UserDto[] = [];
 

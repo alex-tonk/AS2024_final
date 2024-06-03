@@ -22,7 +22,7 @@
     <div style="flex: 1"></div>
     <hr>
     <button pButton label="Новый чат" class="p-button-link" style="width: 100%; text-align: center"
-            (click)="registrationDialogComponent.visible = true"></button>
+            (click)="registrationDialogVisible = true"></button>
   </div>
   <div class="chat-box" [class.content-disabled]="chat?.id == null">
     <div class="tabPanel-content">
@@ -51,5 +51,7 @@
   </div>
 </div>
 
-<app-chat-registration-dialog #registrationDialogComponent (result)="createChat($event)">
+<app-chat-registration-dialog *ngIf="registrationDialogVisible"
+                              [loading]="registrationDialogLoading"
+                              (result)="createChat($event)">
 </app-chat-registration-dialog>
