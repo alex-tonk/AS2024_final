@@ -40,6 +40,11 @@
   <div class="chat-box" [class.content-disabled]="chat?.id == null">
     <div class="tabPanel-content">
       <div class="message-feed-wrapper">
+        <div class="chat-header">
+          <p-button icon="pi pi-users" rounded styleClass="button-clear"
+                    [label]="chat != undefined ? '(' + chat.members?.length + ')' : ''"
+                    (onClick)="showMembers()"></p-button>
+        </div>
         <div *ngFor="let message of chat?.messages ?? []" style="display: grid; width: 100%;">
           <div class="message-wrapper" [class.not-my-message]="isNotMyMessage(message)">
             <span style="flex: auto;">{{ message.content }}</span>

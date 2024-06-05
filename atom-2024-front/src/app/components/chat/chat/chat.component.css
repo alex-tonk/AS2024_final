@@ -82,7 +82,7 @@
 }
 
 .message-wrapper {
-  justify-self: left;
+  justify-self: right;
   background: rgba(163, 245, 152, 0.4);
   border-radius: 10px;
   padding: 10px;
@@ -93,7 +93,7 @@
 }
 
 .not-my-message {
-  justify-self: right;
+  justify-self: left;
   background: rgba(131, 185, 248, 0.4);
 }
 
@@ -137,4 +137,20 @@ input {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.chat-header {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: var(--primary-alfa-color);
+  padding: 10px;
+  border: 1px;
+  border-radius: 10px 10px 25px 25px;
+}
+
+div.chat-box > div > div > div.chat-header > p-button > button {
+  border: 0 !important;
 }

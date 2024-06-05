@@ -11,6 +11,8 @@ import {DialogModule} from 'primeng/dialog';
 import {ChatRegistrationDialogComponent} from '../chat-registration-dialog/chat-registration-dialog.component';
 import {ConfirmationService} from 'primeng/api';
 import {TooltipModule} from 'primeng/tooltip';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Listbox} from 'primeng/listbox';
 
 @Component({
   selector: 'app-chat',
@@ -26,6 +28,7 @@ import {TooltipModule} from 'primeng/tooltip';
     NgIf,
     TooltipModule
   ],
+  providers: [DialogService],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
@@ -47,7 +50,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   constructor(private chatService: ChatService,
               private userService: UserService,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService,
+              private dialogService: DialogService) {
   }
 
   async onKeyPress(event: KeyboardEvent) {
@@ -142,5 +146,18 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  showMembers() {
+    let dynamicDialogRef = this.dialogService.open(Listbox, {
+      modal: true,
+      header: 'Участники чата'
+    });
+    dynamicDialogRef.onChildComponentLoaded.subscribe(value => {
+      value.readonly = true;
+      value.autoOptionFocus = false;
+      value.optionLabel = 'fullName';
+      value.options = this.chat?.members!;
+    })
   }
 }
