@@ -86,6 +86,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.chatsLoading = true;
+    let response = await lastValueFrom(this.chatService.searchChats({first: 0, rows: 100}));
+    this.chats = Array.from({length: response.total!});
 
     this.reloadInterval = setInterval(this.reloadChat.bind(this), 1000);
   }
@@ -95,20 +97,17 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async onLoad(lazyLoadEvent: ScrollerLazyLoadEvent) {
-    // lazyLoadEvent.last = 100;
     const pageQuery = {...lazyLoadEvent, rows: lazyLoadEvent.last - lazyLoadEvent.first};
     this.lastPageQuery = pageQuery;
     this.chatsLoading = true;
     try {
       let response = await lastValueFrom(this.chatService.searchChats(pageQuery));
       const {first, last} = lazyLoadEvent;
-      const lazyItems = [...this.chats];
+      this.chats = Array.from({length: response.total!});
 
       for (let i = first; i < last; i++) {
-        lazyItems[i] = response.items![i - first];
+        this.chats[i] = response.items![i - first];
       }
-
-      this.chats = lazyItems;
     } finally {
       this.chatsLoading = false;
     }
