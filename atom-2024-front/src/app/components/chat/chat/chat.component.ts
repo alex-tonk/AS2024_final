@@ -13,6 +13,8 @@ import {ConfirmationService} from 'primeng/api';
 import {TooltipModule} from 'primeng/tooltip';
 import {DialogService} from 'primeng/dynamicdialog';
 import {Listbox} from 'primeng/listbox';
+import {ScrollerLazyLoadEvent, ScrollerModule} from 'primeng/scroller';
+import {TableLazyLoadEvent} from 'primeng/table';
 
 @Component({
   selector: 'app-chat',
@@ -26,7 +28,8 @@ import {Listbox} from 'primeng/listbox';
     DialogModule,
     ChatRegistrationDialogComponent,
     NgIf,
-    TooltipModule
+    TooltipModule,
+    ScrollerModule
   ],
   providers: [DialogService],
   templateUrl: './chat.component.html',
@@ -43,6 +46,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   newMessage: MessageDto = new MessageDto();
 
   loading = false;
+  chatsLoading = false;
+
+  lastPageQuery?: TableLazyLoadEvent;
 
   private reloadInterval: number;
 
@@ -62,29 +68,50 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async reloadChat() {
-    const newChats = await lastValueFrom(this.chatService.getChats());
-    if (newChats.length !== this.chats.length || !newChats.reduce((p, c, i) => p && c.id === this.chats[i].id && c.lastMessage?.id === this.chats[i]?.lastMessage?.id, true)) {
-      this.chats = newChats;
-    }
-    if (this.chat?.id == null) {
-      return;
-    }
-    try {
-      this.chat = await lastValueFrom(this.chatService.getChat(this.chat.id));
-    } catch (e) {
-      this.chat = undefined;
-      throw e;
-    }
+    // let response = await lastValueFrom(this.chatService.searchChats(this.lastPageQuery!));
+    // const newChats = response.items;
+    // if (newChats.length !== this.chats.length || !newChats.reduce((p, c, i) => p && c.id === this.chats[i].id && c.lastMessage?.id === this.chats[i]?.lastMessage?.id, true)) {
+    //   this.chats = newChats;
+    // }
+    // if (this.chat?.id == null) {
+    //   return;
+    // }
+    // try {
+    //   this.chat = await lastValueFrom(this.chatService.getChat(this.chat.id));
+    // } catch (e) {
+    //   this.chat = undefined;
+    //   throw e;
+    // }
   }
 
   async ngOnInit(): Promise<void> {
-    this.chats = await lastValueFrom(this.chatService.getChats());
+    this.chatsLoading = true;
 
     this.reloadInterval = setInterval(this.reloadChat.bind(this), 1000);
   }
 
   ngOnDestroy() {
     clearInterval(this.reloadInterval);
+  }
+
+  async onLoad(lazyLoadEvent: ScrollerLazyLoadEvent) {
+    // lazyLoadEvent.last = 100;
+    const pageQuery = {...lazyLoadEvent, rows: lazyLoadEvent.last - lazyLoadEvent.first};
+    this.lastPageQuery = pageQuery;
+    this.chatsLoading = true;
+    try {
+      let response = await lastValueFrom(this.chatService.searchChats(pageQuery));
+      const {first, last} = lazyLoadEvent;
+      const lazyItems = [...this.chats];
+
+      for (let i = first; i < last; i++) {
+        lazyItems[i] = response.items![i - first];
+      }
+
+      this.chats = lazyItems;
+    } finally {
+      this.chatsLoading = false;
+    }
   }
 
   async sendMessage() {

@@ -8,9 +8,16 @@
       </p-button>
     </div>
     <hr>
-    <div style="overflow: auto">
-      <div *ngFor="let chatRoom of chats" style="padding: 5px">
+    <p-scroller
+      [delay]="250"
+      [items]="chats"
+      [itemSize]="50"
+      [loading]="chatsLoading"
+      [lazy]="true"
+      (onLazyLoad)="onLoad($event)">
+      <ng-template let-chatRoom pTemplate="item">
         <div class="chat-room"
+             [style]="{height: '50px'}"
              [class.active-chat]="chatRoom.id === chat?.id"
              (click)="selectChat(chatRoom)">
           <div style="display: inline-flex; height: 20px;">
@@ -34,8 +41,36 @@
             {{ chatRoom.lastMessage?.createdDate | date:'dd MMM HH:mm' }}
           </div>
         </div>
-      </div>
-    </div>
+      </ng-template>
+    </p-scroller>
+    <!--    <div style="overflow: auto">-->
+    <!--      <div *ngFor="let chatRoom of chats" style="padding: 5px">-->
+    <!--        <div class="chat-room"-->
+    <!--             [class.active-chat]="chatRoom.id === chat?.id"-->
+    <!--             (click)="selectChat(chatRoom)">-->
+    <!--          <div style="display: inline-flex; height: 20px;">-->
+    <!--            <div><b>{{ chatRoom.name }}</b></div>-->
+    <!--            <div style="flex: auto"></div>-->
+    <!--            <p-button icon="pi pi-sign-out" styleClass="button-clear" class="chat-room-close-btn"-->
+    <!--                      pTooltip="Покинуть чат"-->
+    <!--                      (onClick)="leaveChat(chatRoom)">-->
+    <!--            </p-button>-->
+    <!--          </div>-->
+    <!--          <div class="last-message">-->
+    <!--            <ng-container *ngIf="!!chatRoom.lastMessage; else empty">-->
+    <!--              <div style="flex: none">-->
+    <!--                {{ chatRoom.lastMessage.author?.lastname ?? '' }} {{ chatRoom.lastMessage.author?.firstname ?? '' }}:-->
+    <!--              </div>-->
+    <!--              <div class="last-message-content">{{ chatRoom.lastMessage.content }}</div>-->
+    <!--            </ng-container>-->
+    <!--            <ng-template #empty>Сообщений нет</ng-template>-->
+    <!--          </div>-->
+    <!--          <div style="width: 100%; text-align: right; font-size: 12px; padding-bottom: 5px;">-->
+    <!--            {{ chatRoom.lastMessage?.createdDate | date:'dd MMM HH:mm' }}-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
   <div class="chat-box" [class.content-disabled]="chat?.id == null">
     <div class="tabPanel-content">

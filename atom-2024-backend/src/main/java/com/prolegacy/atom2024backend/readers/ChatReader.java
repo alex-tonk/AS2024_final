@@ -4,11 +4,15 @@ import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.QUser;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
+import com.prolegacy.atom2024backend.common.query.lazy.PageHelper;
+import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
+import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
+import com.prolegacy.atom2024backend.entities.chat.QAllChats;
 import com.prolegacy.atom2024backend.entities.chat.QAttachment;
 import com.prolegacy.atom2024backend.entities.chat.QChat;
 import com.prolegacy.atom2024backend.entities.chat.QMessage;
@@ -31,9 +35,12 @@ public class ChatReader {
     private static final QMessage lastMessage = new QMessage("lastMessage");
     private static final QAttachment attachment = QAttachment.attachment;
     private static final QUser user = QUser.user;
+    private static final QAllChats allChats = QAllChats.allChats;
 
     @Autowired
     private JPAQueryFactory queryFactory;
+    @Autowired
+    private PageHelper pageHelper;
 
     public ChatDto getChat(ChatId chatId) {
         ChatDto chat = baseQuery().where(ChatReader.chat.id.eq(chatId)).fetchFirst();
@@ -49,6 +56,20 @@ public class ChatReader {
                 .orderBy(lastMessage.createdDate.desc().nullsLast())
                 .orderBy(chat.id.desc())
                 .fetch();
+    }
+
+    public PageResponse<ChatDto> searchChats(PageQuery pageQuery) {
+        return pageHelper.paginate(
+                queryFactory.from(allChats)
+                        .leftJoin(chat).on(chat.id.eq(allChats.chatId))
+                        .leftJoin(user).on(user.id.eq(allChats.userId))
+                        .selectDto(
+                                ChatDto.class,
+                                chat.id.as("id"),
+                                chat.name.coalesce(UserReader.getFullName(user)).as("name")
+                        ),
+                pageQuery
+        );
     }
 
     public MessageDto getMessage(ChatId chatId, MessageId messageId) {

@@ -42,6 +42,11 @@ export class ChatService {
     return this.httpService.delete<void>('chats/' + chatId + '/leave');
   }
 
+ public searchChats(pageQuery: TableLazyLoadEvent): Observable<PageResponse<ChatDto> >  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.post<PageResponse<ChatDto> >('chats/search', JSON.stringify(pageQuery) , {headers, responseType: 'json'});
+  }
+
 }
 
 @Injectable({

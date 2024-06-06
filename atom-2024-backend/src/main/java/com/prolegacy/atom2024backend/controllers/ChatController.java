@@ -2,6 +2,8 @@ package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
+import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
+import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
@@ -28,6 +30,11 @@ public class ChatController {
     @GetMapping
     public List<ChatDto> getChats() {
         return chatReader.getChats(userProvider.get().getId());
+    }
+
+    @PostMapping("search")
+    public PageResponse<ChatDto> searchChats(@RequestBody PageQuery pageQuery) {
+        return chatReader.searchChats(pageQuery);
     }
 
     @GetMapping("{chatId}")
