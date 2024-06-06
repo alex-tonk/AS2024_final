@@ -30,6 +30,7 @@ public class DtoProjections {
             }
         }
         Arrays.stream(overrides)
+                .filter(Objects::nonNull)
                 .forEach(override -> {
                     if (override instanceof Operation<?> overrideOperation && overrideOperation.getOperator() == Ops.ALIAS) {
                         mainGroup.addOverride(overrideOperation.getArg(0), ((Path<?>) overrideOperation.getArg(1)).getMetadata().getName());

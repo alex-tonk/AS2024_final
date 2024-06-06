@@ -255,6 +255,9 @@ public class Rest2tsGenerator {
     private void searchClasses(List<Class<?>> loadedClasses, Set<Class<?>> restClassSet, Set<Class<?>> modelClassSet, Set<Class<?>> enumClassSet) {
         for (Class<?> loadedClass : loadedClasses) {
             if (!restClassesCondition.accept(loadedClass)) {
+                if (modelClassesCondition.accept(loadedClass)) {
+                    modelClassSet.add(loadedClass);
+                }
                 continue;
             }
             restClassSet.add(loadedClass);

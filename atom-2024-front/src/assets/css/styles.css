@@ -320,3 +320,33 @@ label.required:after {
 .p-dataview-content {
   overflow: auto;
 }
+
+/* SurveyJS */
+
+.sd-progress-buttons__list li:hover .sd-progress-buttons__button {
+  background-color: var(--sjs-primary-backcolor, var(--primary)) !important;
+}
+
+/*.sd-progress-buttons__list > li:hover > :nth-child(2) {*/
+/*  background-color: var(--sjs-primary-backcolor, var(--primary)) !important;*/
+/*}*/
+
+.sd-progress-buttons__list > li:hover > .sd-progress-buttons__button > div {
+  display: none !important;
+}
+
+.sd-progress-buttons__list-element--current > .sd-progress-buttons__button > div {
+  display: none !important;
+}
+
+li.sd-progress-buttons__list-element--current:hover  .sd-progress-buttons__button {
+  background-color: white !important;
+}
+
+.sd-progress-buttons__button:hover {
+  background-color: var(--sjs-primary-backcolor, var(--primary)) !important;
+}
+
+.sd-progress-buttons__button:hover > div {
+  display: none !important;
+}

@@ -1,0 +1,34 @@
+<p-dialog #dialog
+          [style]="{width: '95%', height: '95%'}"
+          [baseZIndex]="99"
+          [autoZIndex]="false"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          [closable]="true"
+          header="Тестирование"
+          [(visible)]="visible"
+          (onHide)="surveyAttemptEnd.emit()">
+  <div class="full-size" [class.content-disabled]="loading">
+    <div *ngIf="(survey.questions ?? []).length === 0"
+         class="full-size begin-attempt-container">
+      <div class="begin-attempt-label-container-wrapper">
+        <div class="begin-attempt-label-container">
+          <div class="begin-attempt-label">{{survey.name}}</div>
+          <div *ngIf="survey.timeLimitMinutes != null"> Ограничение по времени: {{getTimeLimitString()}}</div>
+          <div *ngIf="survey.timeLimitMinutes == null"> Ограничение по времени отсутствует</div>
+        </div>
+      </div>
+      <div class="begin-attempt-button-wrapper">
+        <p-button styleClass="button-primary"
+                  [label]="survey.lastSurveyAttempt?.id == null || survey.lastSurveyAttempt?.finishDate != null ? 'Начать тестирование' : 'Продолжить тестирование'"
+                  (click)="survey.lastSurveyAttempt?.id == null || survey.lastSurveyAttempt?.finishDate != null ? beginSurveyAttempt() : continueAttempt()">
+        </p-button>
+      </div>
+    </div>
+    <div *ngIf="(survey.questions ?? []).length > 0"
+         id="surveyJsQuestionAttempt"
+         class="full-size">
+    </div>
+  </div>
+</p-dialog>

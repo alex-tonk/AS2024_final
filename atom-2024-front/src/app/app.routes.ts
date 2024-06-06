@@ -7,6 +7,8 @@ import {RestorePasswordComponent} from "./components/pages/login/restore-passwor
 import {UserPanelComponent} from "./components/pages/user-panel/user-panel.component";
 import {adminGuard} from "./services/guards/admin.guard";
 import {unauthorizedGuard} from "./services/guards/unauthorized.guard";
+import { SurveyComponent } from './components/pages/survey/survey.component';
+import {SurveyRegistrationComponent} from "./components/pages/survey/survey-registration/survey-registration.component";
 import {ChatComponent} from "./components/chat/chat/chat.component";
 import {UserEducationComponent} from "./components/pages/user-education/user-education.component";
 
@@ -23,5 +25,6 @@ export const routes: Routes = [
   {path: 'user-panel', component: UserPanelComponent},
   {path: 'user-education', component: UserEducationComponent},
   {path: 'chat', component: ChatComponent},
+  {path: 'survey', component: SurveyComponent},
   {path: '**', redirectTo: ''}
 ];

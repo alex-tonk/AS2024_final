@@ -10,6 +10,7 @@ import com.blueveery.springrest2ts.tsmodel.TSType;
 import com.blueveery.springrest2ts.tsmodel.generics.TSFormalTypeParameter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
+import com.prolegacy.atom2024backend.common.annotation.TypescriptModel;
 import com.prolegacy.atom2024backend.common.auth.dto.RoleDto;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.hibernate.LongId;
@@ -44,7 +45,7 @@ public class TypescriptEndpointGeneratorPlugin {
         reflections.getSubTypesOf(LongId.class).forEach(idClass ->
                 customTypeMapping.put(idClass, TypeMapper.tsNumber)
         );
-        customTypeMapping.put(JsonNode.class, TypeMapper.tsObject);
+        customTypeMapping.put(JsonNode.class, new TSSimpleType("any"));
         customTypeMapping.put(MultipartFile.class, new TSSimpleType("FormData"));
 
         tsGenerator.registerExternalClassMapping(PageQuery.class, "primeng/table", "TableLazyLoadEvent", new TSFormalTypeParameter("T"));
@@ -63,6 +64,7 @@ public class TypescriptEndpointGeneratorPlugin {
         tsGenerator.setRestClassesCondition(new HasAnnotationJavaTypeFilter(TypescriptEndpoint.class));
 
         // Java model classes converter setup
+        tsGenerator.setModelClassesCondition(new HasAnnotationJavaTypeFilter(TypescriptModel.class));
         tsGenerator.setModelClassesConverter(new ModelClassesToTsClassesConverter(new EmptyImplementationGenerator(), new NullableFieldsMapper()));
         tsGenerator.setEnumConverter(new StringBasedEnumConverter());
 

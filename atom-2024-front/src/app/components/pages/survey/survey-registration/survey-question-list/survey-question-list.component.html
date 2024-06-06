@@ -1,0 +1,39 @@
+<div class="question-list-wrapper">
+  <p-orderList
+    [listStyle]="{ 'max-height': '100%' }"
+    [value]="questions"
+    [selection]="selectedQuestions"
+    [dragdrop]="true"
+    (selectionChange)="onQuestionSelectionChange($event)"
+    (onReorder)="onQuestionReorder()">
+    <ng-template let-question pTemplate="item">
+      <div class="question-item-wrapper">
+        <i [class]="getQuestionIcon(question)"></i>
+
+        <div style="flex: 1; min-width: 0;">
+          <div class="question-item-title-wrapper">
+            <div class="question-item-title">Вопрос {{question.orderNumber}}.</div>
+            <i *ngIf="questionInvalidReason(question) != null"
+               [pTooltip]="questionInvalidReason(question)!"
+               class="pi pi-exclamation-triangle question-item-error">
+            </i>
+            <div style="flex: 1"></div>
+          </div>
+          <div class="question-item-wording">{{question.wording}}</div>
+        </div>
+
+        <i class="pi pi-trash clickable-icon" style="color: var(--red-color)" (click)="deleteQuestion(question)"></i>
+      </div>
+    </ng-template>
+  </p-orderList>
+</div>
+
+<div class="question-list-toolbar">
+  <p-button icon="pi pi-plus"
+            label="Добавить вопрос"
+            severity="success"
+            [style]="{height: '3rem'}"
+            (click)="addQuestion()">
+  </p-button>
+</div>
+

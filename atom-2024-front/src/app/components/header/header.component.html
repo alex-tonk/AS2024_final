@@ -7,6 +7,7 @@
     <div class="group" style="width: 100%">
       <ng-container *ngIf="!isMobileMode">
         <p-button label="Мое обучение" styleClass="button-clear" routerLink="user-education"></p-button>
+        <p-button label="Тестирование" styleClass="button-clear" routerLink="survey"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
                   styleClass="button-clear" routerLink="admin-panel"></p-button>
         <p-button label="Чаты" styleClass="button-clear" routerLink="chat"></p-button>
@@ -39,6 +40,7 @@
 <p-overlayPanel #op>
   <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
     <p-button label="Мое обучение" styleClass="button-clear" routerLink="user-education" (click)="op.hide()"></p-button>
+    <p-button label="Тестирование" styleClass="button-clear" routerLink="survey" (click)="op.hide()"></p-button>
     <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
               styleClass="button-clear" routerLink="admin-panel" (click)="op.hide()">
     </p-button>
