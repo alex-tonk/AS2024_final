@@ -21,7 +21,7 @@ public class Course {
     private CourseId id;
 
     String name;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests = new ArrayList<>();
 
     public Course(CourseDto dto) {

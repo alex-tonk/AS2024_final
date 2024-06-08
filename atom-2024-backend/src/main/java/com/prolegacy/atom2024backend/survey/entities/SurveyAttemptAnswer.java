@@ -35,6 +35,8 @@ public abstract class SurveyAttemptAnswer<T> {
     }
 
     public abstract SurveyQuestion getQuestion();
+
     public abstract void updateAnswer(T answer);
+
     abstract void checkCorrectness();
 }

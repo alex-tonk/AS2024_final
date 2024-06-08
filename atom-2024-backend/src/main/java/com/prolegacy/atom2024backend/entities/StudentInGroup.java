@@ -2,10 +2,7 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.entities.ids.StudentInGroupId;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,9 +18,11 @@ public class StudentInGroup {
 
     @ManyToOne
     @MapsId("studyGroupId")
+    @JoinColumn(name = "study_group_id", nullable = false)
     private StudyGroup studyGroup;
     @ManyToOne
     @MapsId("studentId")
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     public StudentInGroup(StudyGroup studyGroup, StudentInGroupDto studentInGroupDto) {

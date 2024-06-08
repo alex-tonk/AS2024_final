@@ -29,9 +29,9 @@ public class StudyGroup {
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseWithTutors> courses = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentInGroup> students = new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
