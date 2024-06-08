@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
-import {ChatDto, MessageDto} from '../../../gen/dto-chat';
+import {AttachmentDto, ChatDto, MessageDto} from '../../../gen/dto-chat';
 import {ChatService} from '../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {UserService} from '../../../services/user.service';
@@ -13,6 +13,9 @@ import {ConfirmationService} from 'primeng/api';
 import {TooltipModule} from 'primeng/tooltip';
 import {DialogService} from 'primeng/dynamicdialog';
 import {Listbox} from 'primeng/listbox';
+import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
+import {FileService} from '../../../services/file.service';
+import FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-chat',
@@ -26,7 +29,8 @@ import {Listbox} from 'primeng/listbox';
     DialogModule,
     ChatRegistrationDialogComponent,
     NgIf,
-    TooltipModule
+    TooltipModule,
+    FileUploadModule
   ],
   providers: [DialogService],
   templateUrl: './chat.component.html',
@@ -51,7 +55,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(private chatService: ChatService,
               private userService: UserService,
               private confirmationService: ConfirmationService,
-              private dialogService: DialogService) {
+              private dialogService: DialogService,
+              private fileService: FileService) {
   }
 
   async onKeyPress(event: KeyboardEvent) {
@@ -159,5 +164,16 @@ export class ChatComponent implements OnInit, OnDestroy {
       value.optionLabel = 'fullName';
       value.options = this.chat?.members!;
     })
+  }
+
+  async addAttachment(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
+    let attachmentDto = await lastValueFrom(this.fileService.uploadFile(event.files[0]));
+    this.newMessage.attachments = [...(this.newMessage.attachments ?? []), attachmentDto];
+    fileUpload.clear();
+  }
+
+  async downloadAttachment(attachment: AttachmentDto) {
+    let blob = await lastValueFrom(this.fileService.getAttachment(attachment.id!));
+    FileSaver.saveAs(blob, attachment.fileName);
   }
 }

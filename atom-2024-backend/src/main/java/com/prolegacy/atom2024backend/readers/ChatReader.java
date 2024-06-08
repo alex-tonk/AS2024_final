@@ -9,6 +9,7 @@ import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
+import com.prolegacy.atom2024backend.entities.QFile;
 import com.prolegacy.atom2024backend.entities.chat.QAttachment;
 import com.prolegacy.atom2024backend.entities.chat.QChat;
 import com.prolegacy.atom2024backend.entities.chat.QMessage;
@@ -30,6 +31,7 @@ public class ChatReader {
     private static final QMessage message = QMessage.message;
     private static final QMessage lastMessage = new QMessage("lastMessage");
     private static final QAttachment attachment = QAttachment.attachment;
+    private static final QFile file = QFile.file;
     private static final QUser user = QUser.user;
 
     @Autowired
@@ -104,7 +106,9 @@ public class ChatReader {
     }
 
     private JPAQuery<AttachmentDto> attachmentQuery() {
-        return queryFactory.from(attachment).selectDto(AttachmentDto.class);
+        return queryFactory.from(attachment)
+                .leftJoin(file).on(file.id.eq(attachment.fileId))
+                .selectDto(AttachmentDto.class, file.fileName.as("fileName"));
     }
 
     private JPAQuery<UserDto> memberQuery() {

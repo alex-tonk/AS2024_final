@@ -1,9 +1,9 @@
 import {UserDto} from '../models/UserDto';
 
 export class AttachmentDto {
+  fileId?: number;
+  fileName?: string;
   id?: number;
-  message?: MessageDto;
-  uri?: any;
 }
 
 export class ChatDto {

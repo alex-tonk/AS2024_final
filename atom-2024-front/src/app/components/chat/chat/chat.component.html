@@ -48,6 +48,10 @@
         <div *ngFor="let message of chat?.messages ?? []" style="display: grid; width: 100%;">
           <div class="message-wrapper" [class.not-my-message]="isNotMyMessage(message)">
             <span style="flex: auto;">{{ message.content }}</span>
+            <ng-container *ngIf="!!message.attachments && message.attachments.length > 0">
+              <span *ngFor="let attachment of message.attachments"
+                    (click)="downloadAttachment(attachment)">{{ attachment.fileName }}</span>
+            </ng-container>
             <div style="display: inline-flex; margin-top: 5px; font-size: x-small">
               <b style="flex: none">{{ message.author?.lastname ?? '' }} {{ message.author?.firstname ?? '' }}:</b>
               <span style="flex: none; margin-left: 5px"><u>{{ message.createdDate | date:'HH:mm:ss' }}</u></span>
@@ -58,11 +62,13 @@
       </div>
 
       <form #form="ngForm" [class.content-disabled]="loading">
-        <div style="padding: 10px; display: inline-flex">
+        <div style="padding: 10px; display: inline-flex; gap: 15px">
+          <p-fileUpload #fileUpload mode="basic" [auto]="true" [customUpload]="true"
+                        (uploadHandler)="addAttachment($event, fileUpload)"/>
           <input pInputText name="message" placeholder="Введите Ваше сообщение"
                  [(ngModel)]="newMessage.content" size="255"
                  style="width: 100%" required>
-          <button id="sent-button" pButton (click)="sendMessage()" icon="pi pi-play" [disabled]="form.invalid"></button>
+          <button id="send-button" pButton (click)="sendMessage()" icon="pi pi-play" [disabled]="form.invalid"></button>
         </div>
       </form>
     </div>
