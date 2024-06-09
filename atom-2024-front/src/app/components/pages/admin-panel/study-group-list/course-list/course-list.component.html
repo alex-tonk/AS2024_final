@@ -6,6 +6,7 @@
          (onFilter)="selected=undefined"
          [columns]="columns"
          [virtualScroll]="true"
+         [virtualScrollItemSize]="55"
          class="mini-table"
          styleClass="p-datatable-gridlines"
          dataKey="course.id">
@@ -78,7 +79,7 @@
 <p-overlayPanel #addCoursePanel>
   <form #form="ngForm" [class.content-disabled]="loading">
     <div class="detail-form-wrapper">
-      <p-dropdown name="course" [options]="allCourses" [(ngModel)]="addingCourse"
+      <p-dropdown name="course" [options]="filteredCourses" [(ngModel)]="addingCourse"
                   optionLabel="name" [filter]="true"
                   [style]="{width: '100%', display: 'inline-flex'}"
                   placeholder="Выберите курс" [required]="true">

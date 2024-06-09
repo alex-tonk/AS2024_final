@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {CourseDto, CourseWithTutorsDto, StudyGroupDto} from '../../../../../gen/atom2024backend-dto';
 import {ScrollerModule} from 'primeng/scroller';
-import {setTimeout} from 'core-js';
 import {TableModule} from 'primeng/table';
 import {Column} from '../../../../common/table/Column';
 import {
@@ -42,8 +41,16 @@ import {MessageService} from 'primeng/api';
 })
 export class CourseListComponent implements OnInit {
   @Input() studyGroup: StudyGroupDto;
-  @Input() coursesInGroup: CourseWithTutorsDto[] = [];
-  @Input() allCourses: CourseDto[];
+  @Input() allCourses: CourseDto[] = [];
+
+  coursesInGroup: CourseWithTutorsDto[] = [];
+
+  get filteredCourses() {
+    if (!this.coursesInGroup) {
+      return this.allCourses;
+    }
+    return this.allCourses.filter(c => !this.coursesInGroup.map(cg => cg.course?.id).includes(c.id))
+  }
 
   constructor(
     private studyGroupService: StudyGroupService,
@@ -71,6 +78,16 @@ export class CourseListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.init();
+  }
+
+  async init() {
+    this.loading = true;
+    try {
+      this.coursesInGroup = await lastValueFrom(this.studyGroupService.getCourses(this.studyGroup.id!));
+    } finally {
+      this.loading = false;
+    }
   }
 
   async addCourseToGroup() {
@@ -84,7 +101,7 @@ export class CourseListComponent implements OnInit {
           detail: `Курс ${this.addingCourse.name} добавлен для группы ${this.studyGroup.name} `
         });
         this.addingCourse = null;
-        this.coursesInGroup = [result].concat(this.coursesInGroup);
+        await this.init();
       }
     } finally {
       this.loading = false;
@@ -101,9 +118,8 @@ export class CourseListComponent implements OnInit {
           summary: 'Выполнено',
           detail: `Курс ${this.selected.course.name} удален для группы ${this.studyGroup.name} `
         });
-        this.coursesInGroup = this.coursesInGroup
-          .filter(c => c.course?.id != this.selected?.course?.id);
         this.selected = undefined;
+        await this.init();
       }
     } finally {
       this.loading = false;

@@ -5,6 +5,17 @@
   height: 260px;
 }
 
+.detail-content > :nth-child(1) {
+  flex: 1;
+}
+
 .detail-wrapper {
-  width: 50%;
+  width: 100%;
+  overflow: auto;
+}
+
+.detail-wrapper > :nth-child(1) {
+  width: 100%;
+  display: inline-flex;
+  height: 100%;
 }

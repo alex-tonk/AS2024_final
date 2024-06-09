@@ -72,7 +72,7 @@ public class UserReader {
     }
 
     public List<UserDto> getUsers(boolean joinRoles) {
-        List<UserDto> userDtoList = baseQuery().orderBy(user.id.asc()).fetch();
+        List<UserDto> userDtoList = baseQuery().orderBy(user.id.desc()).fetch();
         if (joinRoles) {
             setRoles(userDtoList);
         }

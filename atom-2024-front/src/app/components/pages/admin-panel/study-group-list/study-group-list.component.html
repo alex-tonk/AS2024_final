@@ -8,6 +8,7 @@
          [columns]="columns"
          [reorderableColumns]="true"
          [virtualScroll]="true"
+         [virtualScrollItemSize]="55"
          [expandedRowKeys]="expandedRows"
          (onRowExpand)="onRowExpand($event)"
          (onRowCollapse)="onRowCollapse($event)"
@@ -79,9 +80,9 @@
   <!--TABLE DATA-->
   <ng-template pTemplate="body" let-row let-expanded="expanded">
     <tr [pSelectableRow]="row">
-      <td>
+      <td style="position: relative">
         <p-button type="button" [pRowToggler]="row" [text]="true"
-                  [rounded]="true" [plain]="true" styleClass="no-bordered button-mini"
+                  [rounded]="true" [plain]="true" styleClass="no-bordered table-expand-button"
                   [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"/>
       </td>
       <ng-container *ngFor="let col of columns">
@@ -109,14 +110,18 @@
     <tr>
       <td colspan="99" style="padding: 0">
         <div class="detail-content">
-          <div class="detail-wrapper">
-            <app-course-list [studyGroup]="row" [allCourses]="allCourses"
-                             [coursesInGroup]="row.courses"></app-course-list>
-          </div>
-          <div class="detail-wrapper">
-            <app-student-list [studyGroup]="row" [allStudents]="allStudents"
-                              [studentsInGroup]="row.students"></app-student-list>
-          </div>
+          <p-splitter [style]="{ height: '100%'}" [panelSizes]="[50, 50]" [minSizes]="[30, 30]">
+            <ng-template pTemplate>
+              <div class="detail-wrapper">
+                <app-course-list [studyGroup]="row" [allCourses]="allCourses"></app-course-list>
+              </div>
+            </ng-template>
+            <ng-template pTemplate>
+              <div class="detail-wrapper">
+                <app-student-list [studyGroup]="row" [allStudents]="allStudents"></app-student-list>
+              </div>
+            </ng-template>
+          </p-splitter>
         </div>
       </td>
     </tr>

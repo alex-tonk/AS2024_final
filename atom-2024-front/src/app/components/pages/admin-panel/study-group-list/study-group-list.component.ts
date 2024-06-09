@@ -29,6 +29,7 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {DropdownModule} from 'primeng/dropdown';
 import {CourseListComponent} from './course-list/course-list.component';
 import {StudentListComponent} from './student-list/student-list.component';
+import {SplitterModule} from 'primeng/splitter';
 
 @Component({
   selector: 'app-study-group-list',
@@ -52,7 +53,8 @@ import {StudentListComponent} from './student-list/student-list.component';
     OverlayPanelModule,
     DropdownModule,
     CourseListComponent,
-    StudentListComponent
+    StudentListComponent,
+    SplitterModule
   ],
   templateUrl: './study-group-list.component.html',
   styleUrl: './study-group-list.component.css'
@@ -206,16 +208,6 @@ export class StudyGroupListComponent implements OnInit {
   }
 
   async onRowExpand(event: TableRowExpandEvent) {
-    const studyGroup: StudyGroupDto = event.data;
-    this.loading = true;
-    try {
-      if (studyGroup?.id) {
-        studyGroup.courses = await lastValueFrom(this.studyGroupService.getCourses(studyGroup.id));
-        studyGroup.students = await lastValueFrom(this.studyGroupService.getStudents(studyGroup.id));
-      }
-    } finally {
-      this.loading = false;
-    }
   }
 
   onRowCollapse(event: TableRowCollapseEvent) {
