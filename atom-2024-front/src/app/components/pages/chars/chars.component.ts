@@ -78,9 +78,10 @@ export class CharsComponent implements OnInit {
         html2canvas(printContent).then(canvas => {
           const doc = new jsPDF.default('portrait', 'px', 'a4');
           const imgData = canvas.toDataURL();
-          const imgProps= doc.getImageProperties(imgData);
 
           /*
+          const imgProps= doc.getImageProperties(imgData);
+
           FOR landscape
           onst pdfWidth = doc.internal.pageSize.getWidth();
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
@@ -90,8 +91,19 @@ export class CharsComponent implements OnInit {
           const pdfWidth = (imgProps.width * pdfHeight) / imgProps.height;
           */
 
-          doc.addImage(imgData, 0, 0, printContent.clientWidth, printContent.clientHeight);
-          doc.save('export.pdf');
+          /*doc.addImage(imgData, 0, 0, printContent.clientWidth, printContent.clientHeight);
+          doc.save('export.pdf');*/
+
+          const printWindow: Window = window.open()!;
+          printWindow.document.write('<html><head><title>На печать</title>');
+          printWindow.document.write('</head><body >');
+          printWindow.document.write(`<img src="${imgData}">`);
+          printWindow.document.write('</body></html>');
+          printWindow.document.close();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 1000)
         })
       }
     });
