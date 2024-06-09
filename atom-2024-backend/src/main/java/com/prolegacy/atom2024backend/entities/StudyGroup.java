@@ -2,7 +2,6 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
-import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.entities.chat.Chat;
 import com.prolegacy.atom2024backend.entities.ids.*;
 import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
@@ -43,12 +42,7 @@ public class StudyGroup {
 
     public StudyGroup(StudyGroupDto studyGroupDto) {
         update(studyGroupDto);
-        this.chat = new Chat(
-                ChatDto.builder()
-                        .name("Чат группы %s".formatted(this.name))
-                        .build(),
-                this
-        );
+        this.chat = new Chat(this);
     }
 
     public void update(StudyGroupDto studyGroupDto) {

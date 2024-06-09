@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.dto.chat;
 
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
+import com.prolegacy.atom2024backend.entities.enums.ChatType;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +20,5 @@ public class ChatDto {
     List<MessageDto> messages;
     List<UserDto> members;
     MessageDto lastMessage;
+    ChatType type;
 }

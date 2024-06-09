@@ -19,6 +19,10 @@ export class FileService {
     return this.httpService.post<AttachmentDto>('chats/attachment', formData, {responseType: 'json'});
   }
 
+  public deleteFile(fileId: number): Observable<void> {
+    return this.httpService.delete<void>('chats/attachment/' + fileId);
+  }
+
   public getAttachment(attachment_id: number): Observable<Blob> {
     return this.httpService.get('chats/attachment/' + attachment_id + '', {responseType: 'blob'});
   }

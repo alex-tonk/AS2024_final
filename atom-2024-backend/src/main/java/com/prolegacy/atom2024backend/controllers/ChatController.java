@@ -60,8 +60,14 @@ public class ChatController {
 
     @PostMapping("attachment")
     @TypescriptIgnore
-    public AttachmentDto addAttachment(@RequestParam MultipartFile file) {
+    public AttachmentDto uploadFile(@RequestParam MultipartFile file) {
         return new AttachmentDto(null, null, fileUploadService.uploadFile(file).getId(), file.getOriginalFilename());
+    }
+
+    @DeleteMapping("attachment/{fileId}")
+    @TypescriptIgnore
+    public void deleteFile(@PathVariable FileId fileId) {
+        fileUploadService.deleteFile(fileId);
     }
 
     @GetMapping("attachment/{attachment_id}")

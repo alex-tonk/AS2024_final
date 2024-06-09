@@ -75,7 +75,7 @@ public class TestDataGenerationService implements ApplicationRunner {
                 .create()
                 .stream()
                 .peek(userDto -> userDto.setPassword(Base64.getEncoder().encodeToString(DigestUtils.sha256(userDto.getEmail()))))
-                .forEach(userService::createUser);
+                .forEach(userService::registerUser);
 
         List<UserDto> users = userReader.getUsers();
 
