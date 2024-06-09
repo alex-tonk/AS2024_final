@@ -10,7 +10,6 @@ import com.prolegacy.atom2024backend.survey.entities.QSurveyQuestion;
 import com.prolegacy.atom2024backend.survey.entities.id.SurveyId;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +45,8 @@ public class SurveyReader {
 
     private JPAQuery<SurveyDto> baseQuery() {
         Expression<Long> questionCount = queryFactory.from(questionsForCounting)
-                        .where(questionsForCounting.survey.id.eq(survey.id))
-                        .select(questionsForCounting.id.count());
+                .where(questionsForCounting.survey.id.eq(survey.id))
+                .select(questionsForCounting.id.count());
 
         return queryFactory.from(survey)
                 .leftJoin(lastSurveyAttempt).on(
@@ -58,7 +57,7 @@ public class SurveyReader {
                 .selectDto(
                         SurveyDto.class,
                         Expressions.as(questionCount, ("questionCount")),
-                        Expressions.as(surveyAttemptReader.surveyAttemptCorrectAnswerCount(lastSurveyAttempt.id),"lastSurveyAttempt.correctAnswerCount")
+                        Expressions.as(surveyAttemptReader.surveyAttemptCorrectAnswerCount(lastSurveyAttempt.id), "lastSurveyAttempt.correctAnswerCount")
                 );
     }
 }

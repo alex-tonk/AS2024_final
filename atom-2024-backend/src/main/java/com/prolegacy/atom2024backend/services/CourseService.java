@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.dto.CourseDto;
+import com.prolegacy.atom2024backend.dto.ModuleDto;
 import com.prolegacy.atom2024backend.entities.Course;
 import com.prolegacy.atom2024backend.entities.ids.CourseId;
 import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
@@ -28,6 +29,13 @@ public class CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException(courseId));
         course.update(courseDto);
+        return courseReader.getCourse(course.getId());
+    }
+
+    public CourseDto addModule(CourseId courseId, ModuleDto moduleDto) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        course.addModule(moduleDto);
         return courseReader.getCourse(course.getId());
     }
 }

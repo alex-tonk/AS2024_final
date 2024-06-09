@@ -1,11 +1,7 @@
 package com.prolegacy.atom2024backend.survey.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
-import com.prolegacy.atom2024backend.survey.dto.SurveyAttemptAnswerDto;
-import com.prolegacy.atom2024backend.survey.dto.SurveyAttemptDto;
 import com.prolegacy.atom2024backend.survey.dto.SurveyDto;
-import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
-import com.prolegacy.atom2024backend.survey.entities.id.SurveyAttemptId;
 import com.prolegacy.atom2024backend.survey.entities.id.SurveyId;
 import com.prolegacy.atom2024backend.survey.readers.SurveyReader;
 import com.prolegacy.atom2024backend.survey.services.SurveyService;

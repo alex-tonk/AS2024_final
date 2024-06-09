@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.dto.CourseDto;
+import com.prolegacy.atom2024backend.dto.ModuleDto;
 import com.prolegacy.atom2024backend.entities.ids.CourseId;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,8 +22,8 @@ public class Course {
     private CourseId id;
 
     String name;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Test> tests = new ArrayList<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Module> modules = new ArrayList<>();
 
     public Course(CourseDto dto) {
         update(dto);
@@ -30,5 +31,9 @@ public class Course {
 
     public void update(CourseDto dto) {
         name = dto.getName();
+    }
+
+    public void addModule(ModuleDto moduleDto) {
+        modules.add(new Module(moduleDto));
     }
 }

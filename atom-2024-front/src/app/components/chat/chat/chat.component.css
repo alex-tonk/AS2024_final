@@ -101,9 +101,8 @@ input {
   height: 50px;
 }
 
-#sent-button {
+#send-button {
   width: 50px;
-  margin-left: 10px;
 }
 
 /* tabview flexbox layout */

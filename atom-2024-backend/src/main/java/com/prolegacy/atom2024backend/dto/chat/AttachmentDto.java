@@ -1,12 +1,11 @@
 package com.prolegacy.atom2024backend.dto.chat;
 
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.chat.AttachmentId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.net.URI;
 
 @Data
 @AllArgsConstructor
@@ -15,5 +14,6 @@ import java.net.URI;
 public class AttachmentDto {
     AttachmentId id;
     MessageDto message;
-    URI uri;
+    FileId fileId;
+    String fileName;
 }

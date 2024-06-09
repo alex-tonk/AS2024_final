@@ -1,14 +1,20 @@
 package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
+import com.prolegacy.atom2024backend.common.annotation.TypescriptIgnore;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
+import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import com.prolegacy.atom2024backend.readers.ChatReader;
 import com.prolegacy.atom2024backend.services.ChatService;
+import com.prolegacy.atom2024backend.services.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,6 +30,8 @@ public class ChatController {
     private ChatReader chatReader;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private FileUploadService fileUploadService;
 
     @GetMapping
     public List<ChatDto> getChats() {
@@ -48,5 +56,17 @@ public class ChatController {
     @DeleteMapping("{chatId}/leave")
     public void leaveChat(@PathVariable ChatId chatId) {
         chatService.leaveChat(chatId);
+    }
+
+    @PostMapping("attachment")
+    @TypescriptIgnore
+    public AttachmentDto addAttachment(@RequestParam MultipartFile file) {
+        return new AttachmentDto(null, null, fileUploadService.uploadFile(file).getId(), file.getOriginalFilename());
+    }
+
+    @GetMapping("attachment/{attachment_id}")
+    @TypescriptIgnore
+    public Resource getAttachment(@PathVariable FileId attachment_id) {
+        return fileUploadService.serveFile(attachment_id);
     }
 }

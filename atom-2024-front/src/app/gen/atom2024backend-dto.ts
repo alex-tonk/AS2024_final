@@ -2,6 +2,7 @@ import {UserDto} from '../models/UserDto';
 
 export class CourseDto {
   id?: number;
+  modules?: ModuleDto[];
   name?: string;
 }
 
@@ -9,6 +10,12 @@ export class CourseWithTutorsDto {
   course?: CourseDto;
   studyGroup?: StudyGroupDto;
   tutors?: TutorDto[];
+}
+
+export class ModuleDto {
+  id?: number;
+  module?: ModuleDto;
+  name?: string;
 }
 
 export class StudentDto {

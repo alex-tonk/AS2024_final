@@ -23,12 +23,14 @@ public class CourseWithTutors {
 
     @ManyToOne
     @MapsId("studyGroupId")
+    @JoinColumn(name = "study_group_id", nullable = false)
     private StudyGroup studyGroup;
     @ManyToOne
     @MapsId("courseId")
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "courseWithTutors", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TutorInCourse> tutors = new ArrayList<>();
 
     public CourseWithTutors(StudyGroup studyGroup, Course course) {

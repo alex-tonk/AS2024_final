@@ -19,6 +19,8 @@ public interface SurveyAttemptRepository extends JpaRepository<SurveyAttempt, Su
     }
 
     Optional<SurveyAttempt> findByUserIdAndSurveyIdAndLastAttemptIsTrueAndFinishDateIsNull(UserId userId, SurveyId surveyId);
+
     Optional<SurveyAttempt> findByUserIdAndSurveyIdAndLastAttemptIsTrue(UserId userId, SurveyId surveyId);
+
     List<SurveyAttempt> findBySurveyId(SurveyId surveyId);
 }

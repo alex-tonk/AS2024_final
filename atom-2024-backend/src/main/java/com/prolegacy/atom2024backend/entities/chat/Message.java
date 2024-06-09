@@ -21,6 +21,7 @@ public class Message {
     private MessageId id;
 
     @ManyToOne
+    @JoinColumn(name = "chat_id")
     private Chat chat;
 
     @Column(length = 4000)
@@ -32,7 +33,7 @@ public class Message {
     private User author;
     @ManyToMany
     private List<User> readBy = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>();
 
     public Message(Chat chat, User author, MessageDto messageDto) {

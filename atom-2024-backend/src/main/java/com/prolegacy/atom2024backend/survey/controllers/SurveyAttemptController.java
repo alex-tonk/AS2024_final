@@ -48,8 +48,8 @@ public class SurveyAttemptController {
 
     @PostMapping("{surveyAttemptId}")
     public SurveyAttemptDto finishAttempt(@PathVariable SurveyId surveyId,
-                              @PathVariable SurveyAttemptId surveyAttemptId,
-                              @RequestBody SurveyAttemptDto attemptDto) {
+                                          @PathVariable SurveyAttemptId surveyAttemptId,
+                                          @RequestBody SurveyAttemptDto attemptDto) {
         return surveyAttemptService.finishAttempt(surveyId, surveyAttemptId, attemptDto);
     }
 
