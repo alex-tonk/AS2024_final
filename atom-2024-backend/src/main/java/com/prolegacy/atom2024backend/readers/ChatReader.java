@@ -10,11 +10,15 @@ import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
 import com.prolegacy.atom2024backend.entities.QFile;
+import com.prolegacy.atom2024backend.entities.chat.Chat;
 import com.prolegacy.atom2024backend.entities.chat.QAttachment;
 import com.prolegacy.atom2024backend.entities.chat.QChat;
 import com.prolegacy.atom2024backend.entities.chat.QMessage;
+import com.prolegacy.atom2024backend.entities.enums.ChatType;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import com.prolegacy.atom2024backend.entities.ids.chat.MessageId;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -53,10 +57,6 @@ public class ChatReader {
                 .fetch();
     }
 
-    public MessageDto getMessage(ChatId chatId, MessageId messageId) {
-        return messageQuery().where(message.chat.id.eq(chatId).and(message.id.eq(messageId))).fetchFirst();
-    }
-
     public List<MessageDto> getMessages(ChatId chatId) {
         List<MessageDto> messages = messageQuery()
                 .innerJoin(chat).on(chat.id.eq(message.chat.id))
@@ -92,7 +92,8 @@ public class ChatReader {
                 .selectDto(
                         ChatDto.class,
                         UserReader.getShortName(lastMessage$author).as("lastMessage$author$shortName"),
-                        UserReader.getFullName(lastMessage$author).as("lastMessage$author$fullName")
+                        UserReader.getFullName(lastMessage$author).as("lastMessage$author$fullName"),
+                        getChatNameExpression().as("name")
                 );
     }
 
@@ -119,5 +120,13 @@ public class ChatReader {
                         UserReader.getShortName(user).as("shortName"),
                         UserReader.getFullName(user).as("fullName")
                 );
+    }
+
+    private static StringExpression getChatNameExpression() {
+        return Expressions.cases()
+                .when(chat.type.eq(ChatType.FAVORITE)).then(Chat.FAVORITE)
+                // TODO: get other person's name
+                // .when(chat.type.eq(ChatType.DIALOGUE)).then()
+                .otherwise(chat.name);
     }
 }

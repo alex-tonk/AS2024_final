@@ -1,9 +1,11 @@
 package com.prolegacy.atom2024backend.init;
 
+import com.prolegacy.atom2024backend.common.auth.dto.RoleDto;
+import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.Role;
-import com.prolegacy.atom2024backend.common.auth.entities.User;
 import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
+import com.prolegacy.atom2024backend.common.auth.services.UserService;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -13,7 +15,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
@@ -22,7 +23,6 @@ import java.util.Collections;
 @Configuration
 @Order(InitializationOrder.ROLE_GENERATOR + 100)
 public class InitialUserGenerator implements ApplicationRunner {
-
     @Value("${auth.admin-role:#{null}}")
     private String adminRoleName;
     @Value("${default-user.email}")
@@ -40,10 +40,10 @@ public class InitialUserGenerator implements ApplicationRunner {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private UserService userService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
 
 
     @Override
@@ -57,16 +57,14 @@ public class InitialUserGenerator implements ApplicationRunner {
         Role role = roleRepository.findByName("ROLE_" + adminRoleName)
                 .orElseThrow(() -> new BusinessLogicException("Отсутствует роль администратора"));
 
-        userRepository.save(
-                new User(
-                        this.email,
-                        passwordEncoder.encode(Base64.getEncoder().encodeToString(DigestUtils.sha256(this.password))),
-                        this.firstname,
-                        this.lastname,
-                        this.surname,
-                        null,
-                        Collections.singletonList(role)
-                )
+        userService.createUser(UserDto.builder()
+                .email(this.email)
+                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256(this.password)))
+                .firstname(this.firstname)
+                .lastname(this.lastname)
+                .surname(this.surname)
+                .roles(Collections.singletonList(new RoleDto(role.getId(), null, null)))
+                .build()
         );
     }
 }

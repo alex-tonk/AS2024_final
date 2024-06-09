@@ -1,4 +1,5 @@
 import {UserDto} from '../models/UserDto';
+import {ChatType} from './entities-enums';
 
 export class AttachmentDto {
   fileId?: number;
@@ -13,6 +14,7 @@ export class ChatDto {
   members?: UserDto[];
   messages?: MessageDto[];
   name?: string;
+  type?: ChatType;
 }
 
 export class MessageDto {

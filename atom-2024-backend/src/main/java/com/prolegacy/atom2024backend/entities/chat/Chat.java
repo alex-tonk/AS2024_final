@@ -5,6 +5,7 @@ import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
 import com.prolegacy.atom2024backend.entities.*;
+import com.prolegacy.atom2024backend.entities.enums.ChatType;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,6 +18,9 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Chat {
+    public static final String FAVORITE = "Избранное";
+    public static final String GROUP_CHAT = "Чат группы";
+
     @Id
     @GeneratedValue(generator = "typed-sequence")
     private ChatId id;
@@ -31,15 +35,28 @@ public class Chat {
     @OneToOne
     private StudyGroup studyGroup;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ChatType type = ChatType.PUBLIC;
+
     public Chat(ChatDto chatDto, List<User> members) {
         this.name = chatDto.getName();
+        this.type = chatDto.getType();
         this.members.addAll(members);
     }
 
-    public Chat(ChatDto chatDto, StudyGroup studyGroup) {
-        this.name = chatDto.getName();
+    public Chat(User user) {
+        this.name = "[%s] %s".formatted(FAVORITE, user.getShortName());
+        this.members.add(user);
+        this.type = ChatType.FAVORITE;
+    }
+
+    public Chat(StudyGroup studyGroup) {
+        this.name = ("%s %s").formatted(GROUP_CHAT, studyGroup.getName());
+        this.studyGroup = studyGroup;
         this.members.addAll(studyGroup.getStudents().stream().map(StudentInGroup::getStudent).map(Student::getUser).toList());
         this.members.addAll(studyGroup.getCourses().stream().flatMap(c -> c.getTutors().stream()).map(TutorInCourse::getTutor).map(Tutor::getUser).toList());
+        this.type = ChatType.GROUP;
     }
 
     public void addMember(User user) {

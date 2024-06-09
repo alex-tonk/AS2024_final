@@ -12,6 +12,8 @@ import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.chat.Chat;
+import com.prolegacy.atom2024backend.repositories.ChatRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ChatRepository chatRepository;
+
     /**
      * Регистрация юзера (для бичей)
      */
@@ -59,6 +64,7 @@ public class UserService {
 
         User user = new User(userDto, encodeAndValidatePassword(userDto.getPassword()), List.of(defaultRole));
         userRepository.save(user);
+        chatRepository.save(new Chat(user));
 
         return userReader.getUser(user.getId());
     }
@@ -75,6 +81,7 @@ public class UserService {
                 getAndValidateRoles(userDto)
         );
         userRepository.save(user);
+        chatRepository.save(new Chat(user));
 
         return userReader.getUser(user.getId());
     }
