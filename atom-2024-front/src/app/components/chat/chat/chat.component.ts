@@ -16,6 +16,8 @@ import {Listbox} from 'primeng/listbox';
 import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
 import {FileService} from '../../../services/file.service';
 import FileSaver from 'file-saver';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {BadgeModule} from 'primeng/badge';
 
 @Component({
   selector: 'app-chat',
@@ -30,7 +32,9 @@ import FileSaver from 'file-saver';
     ChatRegistrationDialogComponent,
     NgIf,
     TooltipModule,
-    FileUploadModule
+    FileUploadModule,
+    OverlayPanelModule,
+    BadgeModule
   ],
   providers: [DialogService],
   templateUrl: './chat.component.html',
@@ -68,14 +72,17 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async reloadChat() {
     const newChats = await lastValueFrom(this.chatService.getChats());
-    if (newChats.length !== this.chats.length || !newChats.reduce((p, c, i) => p && c.id === this.chats[i].id && c.lastMessage?.id === this.chats[i]?.lastMessage?.id, true)) {
+    if (!this.chatListsEquals(this.chats, newChats)) {
       this.chats = newChats;
     }
     if (this.chat?.id == null) {
       return;
     }
     try {
-      this.chat = await lastValueFrom(this.chatService.getChat(this.chat.id));
+      let newChat = await lastValueFrom(this.chatService.getChat(this.chat.id));
+      if (!this.chatsEquals(this.chat, newChat)) {
+        this.chat = newChat;
+      }
     } catch (e) {
       this.chat = undefined;
       throw e;
@@ -175,5 +182,30 @@ export class ChatComponent implements OnInit, OnDestroy {
   async downloadAttachment(attachment: AttachmentDto) {
     let blob = await lastValueFrom(this.fileService.getAttachment(attachment.id!));
     FileSaver.saveAs(blob, attachment.fileName);
+  }
+
+  private chatListsEquals(chatsA: ChatDto[], chatsB: ChatDto[]): boolean {
+    if (chatsA === chatsB) return true;
+    if (chatsA.length !== chatsB.length) return false;
+
+    return chatsA.every((c, i) => c.id === chatsB[i].id && c.lastMessage?.id === chatsB[i]?.lastMessage?.id);
+  }
+
+  private chatsEquals(chatA: ChatDto, chatB: ChatDto): boolean {
+    if (chatA === chatB) return true;
+    if (chatA.messages?.length !== chatB.messages?.length) return false;
+    if (chatA.members?.length !== chatB.members?.length) return false;
+
+    let messagesEquals = !!chatA.messages && !!chatB.messages || !chatA.messages || !chatB.messages
+      || chatA.messages!.every((m, i) => m.id === chatB.messages![i].id);
+    let membersEquals = !!chatA.members && !!chatB.members || !chatA.members || !chatB.members
+      || chatB.members!.every((m, i) => m.id === chatB.members![i].id);
+
+    return messagesEquals && membersEquals;
+  }
+
+  async removeAttachment(attachment: AttachmentDto) {
+    this.newMessage.attachments = this.newMessage.attachments?.filter(v => v !== attachment);
+    await lastValueFrom(this.fileService.deleteFile(attachment.fileId!));
   }
 }
