@@ -4,6 +4,7 @@ export class AttachmentDto {
   fileId?: number;
   fileName?: string;
   id?: number;
+  message?: MessageDto;
 }
 
 export class ChatDto {

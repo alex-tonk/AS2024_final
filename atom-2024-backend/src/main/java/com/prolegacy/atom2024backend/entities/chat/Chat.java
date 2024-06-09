@@ -23,7 +23,7 @@ public class Chat {
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
     @ManyToMany
     private Set<User> members = new HashSet<>();
@@ -54,11 +54,10 @@ public class Chat {
         members.removeIf(u -> Objects.equals(user.getId(), u.getId()));
     }
 
-    public Message addMessage(User author, MessageDto messageDto) {
+    public void addMessage(User author, MessageDto messageDto) {
         User user = members.stream().filter(u -> Objects.equals(u.getId(), author.getId())).findFirst()
                 .orElseThrow(() -> new BusinessLogicException("Автор сообщения не состоит в чате"));
         Message message = new Message(this, user, messageDto);
         messages.add(message);
-        return message;
     }
 }

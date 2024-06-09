@@ -4,6 +4,7 @@ import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.dto.CourseDto;
+import com.prolegacy.atom2024backend.dto.ModuleDto;
 import com.prolegacy.atom2024backend.entities.ids.CourseId;
 import com.prolegacy.atom2024backend.exceptions.CourseNotFoundException;
 import com.prolegacy.atom2024backend.readers.CourseReader;
@@ -48,5 +49,10 @@ public class CourseController {
     @PutMapping("{courseId}")
     public CourseDto updateCourse(@PathVariable CourseId courseId, @RequestBody CourseDto courseDto) {
         return courseService.updateCourse(courseId, courseDto);
+    }
+
+    @PostMapping("{courseId}/module")
+    public CourseDto addModule(@PathVariable CourseId courseId, @RequestBody ModuleDto moduleDto) {
+        return courseService.addModule(courseId, moduleDto);
     }
 }

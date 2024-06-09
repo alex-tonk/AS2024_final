@@ -3,10 +3,7 @@ package com.prolegacy.atom2024backend.entities.chat;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.chat.AttachmentId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -20,6 +17,7 @@ public class Attachment {
     private AttachmentId id;
     private FileId fileId;
     @ManyToOne
+    @JoinColumn(name = "message_id")
     private Message message;
 
     public Attachment(Message message, AttachmentDto attachmentDto) {

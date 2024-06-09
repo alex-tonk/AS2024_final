@@ -2,7 +2,7 @@ import {RoleDto} from '../models/RoleDto';
 import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {CourseDto, CourseWithTutorsDto, StudentDto, StudentInGroupDto, StudyGroupDto, TutorDto, TutorInCourseDto} from './atom2024backend-dto';
+import {CourseDto, CourseWithTutorsDto, ModuleDto, StudentDto, StudentInGroupDto, StudyGroupDto, TutorDto, TutorInCourseDto} from './atom2024backend-dto';
 import {ChatDto, MessageDto} from './dto-chat';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
@@ -50,6 +50,11 @@ providedIn:'root'
 export class CourseService {
   httpService: HttpClient;
 
+
+ public addModule(courseId: number, moduleDto: ModuleDto): Observable<CourseDto>  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.post<CourseDto>('courses/' + courseId + '/module', JSON.stringify(moduleDto) , {headers, responseType: 'json'});
+  }
 
  public constructor(httpService: HttpClient) {
     this.httpService = httpService;
