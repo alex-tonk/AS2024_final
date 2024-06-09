@@ -173,7 +173,7 @@ hr {
 }
 
 .form-row label {
-  width: 120px;
+  width: 140px;
   flex: none;
 }
 
@@ -263,6 +263,19 @@ label.required:after {
   height: 100% !important;
 }
 
+.mini-table .p-datatable-header, .mini-table .p-datatable-tbody > tr > td {
+  padding: 5px !important;
+}
+
+.mini-table .p-datatable-wrapper {
+  border: 1px solid var(--border-color);
+  background: white;
+}
+
+.mini-table .p-datatable-tbody > tr > td {
+  border-width: 0 0 1px 1px;
+}
+
 /* CONFIRM */
 
 .p-confirm-popup-footer {
@@ -339,7 +352,7 @@ label.required:after {
   display: none !important;
 }
 
-li.sd-progress-buttons__list-element--current:hover  .sd-progress-buttons__button {
+li.sd-progress-buttons__list-element--current:hover .sd-progress-buttons__button {
   background-color: white !important;
 }
 

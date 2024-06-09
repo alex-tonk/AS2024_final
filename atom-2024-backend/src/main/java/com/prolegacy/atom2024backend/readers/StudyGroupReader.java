@@ -89,7 +89,7 @@ public class StudyGroupReader {
     }
 
     private JPAQuery<StudyGroupDto> baseQuery() {
-        return queryFactory.from(studyGroup).selectDto(StudyGroupDto.class);
+        return queryFactory.from(studyGroup).orderBy(studyGroup.id.desc()).selectDto(StudyGroupDto.class);
     }
 
     private JPAQuery<StudentInGroupDto> studentQuery() {

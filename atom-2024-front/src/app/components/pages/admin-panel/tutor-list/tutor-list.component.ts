@@ -52,7 +52,7 @@ export class TutorListComponent implements OnInit {
     width: 10
   }, {
     header: 'ФИО',
-    field: 'fullName'
+    field: 'user.fullName'
   }, {
     header: 'Архив',
     field: 'archived',
@@ -87,15 +87,7 @@ export class TutorListComponent implements OnInit {
     this.selected = undefined;
     this.loading = true;
     try {
-      this.tutors = (await lastValueFrom(this.tutorService.getTutors()))
-        .map(s => {
-          const tutor = Object.assign(new TutorDto(), s);
-          // TODO маппинг ФИО
-          if (tutor.user) {
-            tutor.fullName = `${tutor.user.lastname} ${tutor.user.firstname} ${tutor.user.surname}`
-          }
-          return tutor;
-        });
+      this.tutors = await lastValueFrom(this.tutorService.getTutors());
     } finally {
       this.loading = false;
     }

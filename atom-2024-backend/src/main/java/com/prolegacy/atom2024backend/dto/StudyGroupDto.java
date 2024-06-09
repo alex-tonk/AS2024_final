@@ -17,4 +17,6 @@ public class StudyGroupDto {
     String name;
     List<CourseWithTutorsDto> courses;
     List<StudentInGroupDto> students;
+    int studentsCount;
+    int coursesCount;
 }

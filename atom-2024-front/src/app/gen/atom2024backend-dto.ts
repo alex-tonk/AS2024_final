@@ -30,9 +30,11 @@ export class StudentInGroupDto {
 
 export class StudyGroupDto {
   courses?: CourseWithTutorsDto[];
+  coursesCount?: number;
   id?: number;
   name?: string;
   students?: StudentInGroupDto[];
+  studentsCount?: number;
 }
 
 export class TutorDto {

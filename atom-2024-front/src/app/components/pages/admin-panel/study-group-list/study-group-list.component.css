@@ -1,0 +1,10 @@
+.detail-content {
+  display: inline-flex;
+  width: 100%;
+  gap: 10px;
+  height: 260px;
+}
+
+.detail-wrapper {
+  width: 50%;
+}
