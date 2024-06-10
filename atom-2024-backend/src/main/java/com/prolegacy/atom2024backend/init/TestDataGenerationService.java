@@ -1,8 +1,6 @@
 package com.prolegacy.atom2024backend.init;
 
-import com.prolegacy.atom2024backend.common.auth.dto.RoleDto;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
-import com.prolegacy.atom2024backend.common.auth.readers.RoleReader;
 import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.services.UserService;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
@@ -36,9 +34,6 @@ import java.util.List;
 @Order(InitializationOrder.ROLE_GENERATOR + 101)
 public class TestDataGenerationService implements ApplicationRunner {
     @Autowired
-    private RoleReader roleReader;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -63,15 +58,12 @@ public class TestDataGenerationService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        List<RoleDto> roles = roleReader.getRoles();
-
         Instancio.ofList(UserDto.class)
                 .size(20)
                 .generate(Select.allStrings(), gen -> gen.text().loremIpsum().words(1))
                 .generate(Select.field(UserDto::getPhoneNumber), gen -> gen.text().pattern("+7-9#d#d-#d#d#d-#d#d-#d#d"))
                 .generate(Select.field(UserDto::getEmail), gen -> gen.net().email())
                 .ignore(Select.field(UserDto::getPassword))
-                .set(Select.field(UserDto::getRoles), roles)
                 .create()
                 .stream()
                 .peek(userDto -> userDto.setPassword(Base64.getEncoder().encodeToString(DigestUtils.sha256(userDto.getEmail()))))

@@ -45,7 +45,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     // Для дебага
     @Deprecated(forRemoval = true)
@@ -57,7 +57,7 @@ public class User {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.registrationDate = Instant.now();
-        this.roles = new ArrayList<>(roles);
+        this.roles.addAll(roles);
     }
 
     public User(@NonNull UserDto userDto,
@@ -65,13 +65,13 @@ public class User {
                 @NonNull List<Role> roles) {
         this.registrationDate = Instant.now();
         this.email = formatAndValidateEmail(userDto.getEmail());
-        this.roles = roles;
+        this.roles.addAll(roles);
         this.update(userDto, encodedPassword);
     }
 
     public void adminUpdate(@NonNull UserDto userDto,
                             @NonNull List<Role> roles) {
-        this.roles = roles;
+        this.roles = new HashSet<>(roles);
         this.update(userDto, null);
     }
 
@@ -88,7 +88,7 @@ public class User {
     private String formatAndValidateEmail(String email) {
         return Optional.ofNullable(email)
                 .map(e -> {
-                            boolean matches = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
+                            boolean matches = Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
                                     .matcher(e)
                                     .matches();
                             if (!matches) {

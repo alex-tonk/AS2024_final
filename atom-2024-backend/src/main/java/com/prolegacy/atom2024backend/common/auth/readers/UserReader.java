@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -86,13 +87,15 @@ public class UserReader {
     private void setRoles(UserDto userDto) {
         if (userDto == null) return;
         userDto.setRoles(
-                queryFactory
-                        .from(user)
-                        .innerJoin(user.roles, userRole)
-                        .innerJoin(role).on(userRole.id.eq(role.id))
-                        .where(user.id.eq(userDto.getId()))
-                        .selectDto(RoleDto.class, role)
-                        .fetch()
+                new HashSet<>(
+                        queryFactory
+                                .from(user)
+                                .innerJoin(user.roles, userRole)
+                                .innerJoin(role).on(userRole.id.eq(role.id))
+                                .where(user.id.eq(userDto.getId()))
+                                .selectDto(RoleDto.class, role)
+                                .fetch()
+                )
         );
     }
 
@@ -106,7 +109,7 @@ public class UserReader {
                         .as(GroupBy.list(DtoProjections.constructDto(rolesQuery, RoleDto.class, role)))
         );
         userDtoList.forEach(
-                user -> user.setRoles(rolesByUser.getOrDefault(user.getId(), new ArrayList<>()))
+                user -> user.setRoles(new HashSet<>(rolesByUser.getOrDefault(user.getId(), new ArrayList<>())))
         );
     }
 

@@ -2,6 +2,7 @@ package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.common.auth.entities.User;
 import com.prolegacy.atom2024backend.common.auth.exceptions.UserNotFoundException;
+import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.StudentDto;
@@ -19,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(isolation = Isolation.SERIALIZABLE)
 public class StudentService {
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private StudentRepository studentRepository;
     @Autowired
     private UserRepository userRepository;
@@ -33,6 +37,9 @@ public class StudentService {
 
         User user = userRepository.findByEmail(studentDto.getUser().getEmail())
                 .orElseThrow(() -> new UserNotFoundException(studentDto.getUser().getEmail()));
+        user.getRoles().add(roleRepository.findByName("ROLE_student")
+                .orElseThrow(() -> new BusinessLogicException("Роль \"струдент\""))
+        );
 
         Student student = studentRepository.save(new Student(user, studentDto));
         return studentReader.getStudent(student.getId());

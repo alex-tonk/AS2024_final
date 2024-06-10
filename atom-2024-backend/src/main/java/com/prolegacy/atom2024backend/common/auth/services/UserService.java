@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.common.auth.services;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.prolegacy.atom2024backend.common.auth.dto.RoleDto;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.Role;
@@ -12,8 +13,14 @@ import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.dto.StudentDto;
+import com.prolegacy.atom2024backend.dto.TutorDto;
+import com.prolegacy.atom2024backend.entities.Student;
+import com.prolegacy.atom2024backend.entities.Tutor;
 import com.prolegacy.atom2024backend.entities.chat.Chat;
 import com.prolegacy.atom2024backend.repositories.ChatRepository;
+import com.prolegacy.atom2024backend.repositories.StudentRepository;
+import com.prolegacy.atom2024backend.repositories.TutorRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +34,8 @@ import java.util.*;
 
 @Service
 public class UserService {
-
-    @Value("${auth.default-role:#{null}}")
-    private String defaultRoleName;
+//    @Value("${auth.default-role:#{null}}")
+//    private String defaultRoleName;
 
     @Value("${auth.admin-role:#{null}}")
     private String adminRoleName;
@@ -52,17 +58,20 @@ public class UserService {
     @Autowired
     private ChatRepository chatRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private TutorRepository tutorRepository;
+
     /**
      * Регистрация юзера (для бичей)
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserDto registerUser(UserDto userDto) {
         this.validateUserDoesntExist(userDto);
-        Role defaultRole = Optional.ofNullable(defaultRoleName)
-                .flatMap(roleWithoutPrefix -> roleRepository.findByName("ROLE_" + roleWithoutPrefix))
-                .orElseThrow(() -> new BusinessLogicException("Не найдена дефолтная роль"));
 
-        User user = new User(userDto, encodeAndValidatePassword(userDto.getPassword()), List.of(defaultRole));
+        User user = new User(userDto, encodeAndValidatePassword(userDto.getPassword()), Lists.newArrayList());
         userRepository.save(user);
         chatRepository.save(new Chat(user));
 
@@ -82,6 +91,23 @@ public class UserService {
         );
         userRepository.save(user);
         chatRepository.save(new Chat(user));
+
+        for (Role role : user.getRoles()) {
+            var r = com.prolegacy.atom2024backend.enums.Role.getRoleByName(role.getName());
+            if (r == null) {
+                continue;
+            }
+            switch (r) {
+                case ADMIN, METHODIST -> {
+                }
+                case STUDENT -> {
+                    studentRepository.save(new Student(user, new StudentDto()));
+                }
+                case TUTOR -> {
+                    tutorRepository.save(new Tutor(user, new TutorDto()));
+                }
+            }
+        }
 
         return userReader.getUser(user.getId());
     }

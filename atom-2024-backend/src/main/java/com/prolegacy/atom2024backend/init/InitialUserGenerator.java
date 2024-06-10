@@ -18,7 +18,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 @Configuration
 @Order(InitializationOrder.ROLE_GENERATOR + 100)
@@ -63,7 +64,7 @@ public class InitialUserGenerator implements ApplicationRunner {
                 .firstname(this.firstname)
                 .lastname(this.lastname)
                 .surname(this.surname)
-                .roles(Collections.singletonList(new RoleDto(role.getId(), null, null)))
+                .roles(new HashSet<>(List.of(new RoleDto(role.getId(), null, null))))
                 .build()
         );
     }
