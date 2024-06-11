@@ -15,4 +15,7 @@ public class CourseWithTutorsDto {
     StudyGroupDto studyGroup;
     CourseDto course;
     List<TutorDto> tutors;
+
+    String tutorNames;
+    long tutorsCount;
 }

@@ -15,7 +15,6 @@ import {CourseDto, StudentDto, StudyGroupDto} from '../../../../gen/atom2024back
 import {Column} from '../../../common/table/Column';
 import {CourseService, StudentService, StudyGroupService} from '../../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
-import {Object} from 'core-js';
 import {ExportTable} from '../../../common/table/ExportTable';
 import {getField} from '../../../../services/field-accessor';
 import {FormsModule} from '@angular/forms';
@@ -137,13 +136,7 @@ export class StudyGroupListComponent implements OnInit {
     this.selected = undefined;
     this.loading = true;
     try {
-      this.studyGroups = (await lastValueFrom(this.studyGroupService.getStudyGroups()))
-        .map(c => {
-          const group: StudyGroupDto = Object.assign(new StudyGroupDto(), c);
-          group.studentsCount = group.students?.length ?? 0;
-          group.coursesCount = group.courses?.length ?? 0;
-          return group;
-        });
+      this.studyGroups = await lastValueFrom(this.studyGroupService.getStudyGroups());
     } finally {
       this.loading = false;
     }

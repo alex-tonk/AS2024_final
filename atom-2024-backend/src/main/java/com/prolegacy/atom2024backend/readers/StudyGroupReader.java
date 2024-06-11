@@ -1,5 +1,6 @@
 package com.prolegacy.atom2024backend.readers;
 
+import com.prolegacy.atom2024backend.common.auth.entities.QUser;
 import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.lazy.PageHelper;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
@@ -10,14 +11,13 @@ import com.prolegacy.atom2024backend.dto.CourseWithTutorsDto;
 import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
 import com.prolegacy.atom2024backend.dto.TutorInCourseDto;
-import com.prolegacy.atom2024backend.entities.QCourseWithTutors;
-import com.prolegacy.atom2024backend.entities.QStudentInGroup;
-import com.prolegacy.atom2024backend.entities.QStudyGroup;
-import com.prolegacy.atom2024backend.entities.QTutorInCourse;
+import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.CourseWithTutorsId;
 import com.prolegacy.atom2024backend.entities.ids.StudentInGroupId;
 import com.prolegacy.atom2024backend.entities.ids.StudyGroupId;
 import com.prolegacy.atom2024backend.entities.ids.TutorInCourseId;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +29,13 @@ import java.util.List;
 public class StudyGroupReader {
     private static final QStudyGroup studyGroup = QStudyGroup.studyGroup;
     private static final QStudentInGroup studentInGroup = QStudentInGroup.studentInGroup;
+    private static final QStudent student = QStudent.student;
+    private static final QUser student$user = new QUser("student$user");
     private static final QCourseWithTutors courseWithTutors = QCourseWithTutors.courseWithTutors;
+    private static final QCourse course = QCourse.course;
     private static final QTutorInCourse tutorInCourse = QTutorInCourse.tutorInCourse;
+    private static final QTutor tutor = QTutor.tutor;
+    private static final QUser tutor$user = new QUser("tutor$user");
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -89,7 +94,23 @@ public class StudyGroupReader {
     }
 
     private JPAQuery<StudyGroupDto> baseQuery() {
-        return queryFactory.from(studyGroup).orderBy(studyGroup.id.desc()).selectDto(StudyGroupDto.class);
+        StringTemplate studentNames = Expressions.stringTemplate("function('stringAggDistinct', {0}, ', ')", UserReader.getFullName(student$user));
+        StringTemplate courseNames = Expressions.stringTemplate("function('stringAggDistinct', {0}, ', ')", courseWithTutors.course.name);
+        return queryFactory.from(studyGroup)
+                .leftJoin(studentInGroup).on(studentInGroup.studyGroup.id.eq(studyGroup.id))
+                .leftJoin(student).on(student.id.eq(studentInGroup.student.id))
+                .leftJoin(student$user).on(student$user.id.eq(student.user.id))
+                .leftJoin(courseWithTutors).on(courseWithTutors.studyGroup.id.eq(studyGroup.id))
+                .leftJoin(course).on(course.id.eq(courseWithTutors.course.id))
+                .orderBy(studyGroup.id.desc())
+                .groupBy(studyGroup)
+                .selectDto(
+                        StudyGroupDto.class,
+                        studentNames.as("studentNames"),
+                        student.countDistinct().as("studentsCount"),
+                        courseNames.as("courseNames"),
+                        course.countDistinct().as("coursesCount")
+                );
     }
 
     private JPAQuery<StudentInGroupDto> studentQuery() {
@@ -102,7 +123,19 @@ public class StudyGroupReader {
     }
 
     private JPAQuery<CourseWithTutorsDto> courseQuery() {
-        return queryFactory.from(courseWithTutors).selectDto(CourseWithTutorsDto.class);
+        StringTemplate tutorsNames = Expressions.stringTemplate("function('stringAgg', {0}, ', ')", UserReader.getFullName(tutor$user));
+        return queryFactory.from(courseWithTutors)
+                .leftJoin(studyGroup).on(studyGroup.id.eq(courseWithTutors.studyGroup.id))
+                .leftJoin(course).on(course.id.eq(courseWithTutors.course.id))
+                .leftJoin(tutorInCourse).on(tutorInCourse.courseWithTutors.id.eq(courseWithTutors.id))
+                .leftJoin(tutor).on(tutor.id.eq(tutorInCourse.tutor.id))
+                .leftJoin(tutor$user).on(tutor$user.id.eq(tutor.user.id))
+                .groupBy(studyGroup, course)
+                .selectDto(
+                        CourseWithTutorsDto.class,
+                        tutorsNames.as("tutorNames"),
+                        tutor.count().as("tutorsCount")
+                );
     }
 
     private JPAQuery<TutorInCourseDto> tutorQuery() {

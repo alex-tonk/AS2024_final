@@ -12,6 +12,8 @@ public class HibernateFunctionContributor implements FunctionContributor {
     public void contributeFunctions(FunctionContributions functionContributions) {
         functionContributions.getFunctionRegistry()
                 .register("stringAgg", new StandardSQLFunction("string_agg", StandardBasicTypes.STRING));
+        functionContributions.getFunctionRegistry()
+                .registerPattern("stringAggDistinct", "string_agg(distinct ?1, ?2)");
         functionContributions.getFunctionRegistry().registerPattern(
                 "jsonExtract",
                 "?1 -> ?2",

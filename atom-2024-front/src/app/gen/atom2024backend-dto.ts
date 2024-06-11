@@ -9,7 +9,9 @@ export class CourseDto {
 export class CourseWithTutorsDto {
   course?: CourseDto;
   studyGroup?: StudyGroupDto;
+  tutorNames?: string;
   tutors?: TutorDto[];
+  tutorsCount?: number;
 }
 
 export class ModuleDto {
@@ -29,10 +31,12 @@ export class StudentInGroupDto {
 }
 
 export class StudyGroupDto {
+  courseNames?: string;
   courses?: CourseWithTutorsDto[];
   coursesCount?: number;
   id?: number;
   name?: string;
+  studentNames?: string;
   students?: StudentInGroupDto[];
   studentsCount?: number;
 }
