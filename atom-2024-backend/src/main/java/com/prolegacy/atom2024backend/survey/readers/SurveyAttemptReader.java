@@ -49,7 +49,8 @@ public class SurveyAttemptReader {
                 .leftJoin(user).on(user.id.eq(surveyAttempt.user.id))
                 .selectDto(
                         SurveyAttemptDto.class,
-                        Expressions.as(surveyAttemptCorrectAnswerCount(surveyAttempt.id), "correctAnswerCount")
+                        Expressions.as(surveyAttemptCorrectAnswerCount(surveyAttempt.id), "correctAnswerCount"),
+                        surveyAttempt.survey.id.as("surveyId")
                 );
     }
 }

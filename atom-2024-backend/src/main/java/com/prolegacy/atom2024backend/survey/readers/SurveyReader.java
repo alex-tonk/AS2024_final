@@ -56,6 +56,7 @@ public class SurveyReader {
                 )
                 .selectDto(
                         SurveyDto.class,
+                        survey.id.as("lastSurveyAttempt.surveyId"),
                         Expressions.as(questionCount, ("questionCount")),
                         Expressions.as(surveyAttemptReader.surveyAttemptCorrectAnswerCount(lastSurveyAttempt.id), "lastSurveyAttempt.correctAnswerCount")
                 );

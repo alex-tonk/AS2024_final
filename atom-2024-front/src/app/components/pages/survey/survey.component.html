@@ -21,13 +21,23 @@
 
               <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
 
-                <p-button pTooltip="Редактировать" icon="pi pi-pencil"
+                <p-button *ngIf="userService.hasRole('ROLE_admin')"
+                          pTooltip="Просмотр результата" icon="pi pi-search"
+                          styleClass="button-primary"
+                          [style]="{'width': '3rem'}"
+                          [disabled]="survey.lastSurveyAttempt?.finishDate == null"
+                          (click)="reviewSurveyAttempt(survey)">
+                </p-button>
+
+                <p-button *ngIf="userService.hasRole('ROLE_admin')"
+                          pTooltip="Редактировать" icon="pi pi-pencil"
                           styleClass="button-primary"
                           [style]="{'width': '3rem'}"
                           (click)="editSurvey(survey)">
                 </p-button>
 
-                <p-button pTooltip="Удалить" icon="pi pi-trash"
+                <p-button *ngIf="userService.hasRole('ROLE_admin')"
+                          pTooltip="Удалить" icon="pi pi-trash"
                           severity="warning"
                           [style]="{'width': '3rem'}"
                           (click)="confirmDeleteSurvey($event, survey)">
@@ -37,12 +47,15 @@
                 <div *ngIf="survey.lastSurveyAttempt == null" class="survey-status">
                   Не пройдено
                 </div>
-                <div *ngIf="survey.lastSurveyAttempt != null && survey.lastSurveyAttempt?.finishDate == null" class="survey-status">
+                <div *ngIf="survey.lastSurveyAttempt != null && survey.lastSurveyAttempt?.finishDate == null"
+                     class="survey-status">
                   В процессе
                 </div>
-                <div class="v-flex" *ngIf="survey.lastSurveyAttempt != null && survey.lastSurveyAttempt?.finishDate != null">
+                <div class="v-flex"
+                     *ngIf="survey.lastSurveyAttempt != null && survey.lastSurveyAttempt?.finishDate != null">
                   <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>
-                  <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false" [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>
+                  <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"
+                                 [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>
                 </div>
               </div>
             </div>
@@ -59,6 +72,11 @@
 </app-survey-registration>
 
 <app-survey-attempt *ngIf="surveyAttemptVisible"
-                    [survey]="surveyForAttempt!"
+                    [surveyForAttempt]="surveyForAttempt!"
                     (surveyAttemptEnd)="onSurveyAttemptEnd()">
 </app-survey-attempt>
+
+<app-survey-review *ngIf="surveyReviewVisible"
+                   [surveyAttempt]="surveyAttemptForReview!"
+                   (surveyReviewEnd)="onSurveyReviewEnd()">
+</app-survey-review>

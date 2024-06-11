@@ -21,8 +21,8 @@
       </div>
       <div class="begin-attempt-button-wrapper">
         <p-button styleClass="button-primary"
-                  [label]="survey.lastSurveyAttempt?.id == null || survey.lastSurveyAttempt?.finishDate != null ? 'Начать тестирование' : 'Продолжить тестирование'"
-                  (click)="survey.lastSurveyAttempt?.id == null || survey.lastSurveyAttempt?.finishDate != null ? beginSurveyAttempt() : continueAttempt()">
+                  [label]="surveyAttempt?.id == null || surveyAttempt?.finishDate != null ? 'Начать тестирование' : 'Продолжить тестирование'"
+                  (click)="surveyAttempt?.id == null || surveyAttempt?.finishDate != null ? beginSurveyAttempt() : continueAttempt()">
         </p-button>
       </div>
     </div>

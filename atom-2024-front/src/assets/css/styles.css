@@ -374,3 +374,12 @@ li.sd-progress-buttons__list-element--current:hover .sd-progress-buttons__button
 .sd-progress-buttons__button:hover > div {
   display: none !important;
 }
+
+.surveyjs-correct-answer {
+  color: var(--green-color);
+  text-transform: uppercase;
+}
+.surveyjs-incorrect-answer {
+  color: var(--red-color);
+  text-transform: uppercase;
+}

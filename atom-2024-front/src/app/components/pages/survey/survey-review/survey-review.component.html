@@ -1,0 +1,17 @@
+<p-dialog #dialog
+          [style]="{width: '95%', height: '95%'}"
+          [baseZIndex]="99"
+          [autoZIndex]="false"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          [closable]="true"
+          header="Просмотр тестирования"
+          [(visible)]="visible"
+          (onHide)="surveyReviewEnd.emit()">
+  <div class="full-size" [class.content-disabled]="loading">
+    <div id="surveyJsQuestionReview"
+         class="full-size">
+    </div>
+  </div>
+</p-dialog>

@@ -16,6 +16,7 @@ export class SurveyAttemptDto {
   finishDate?: Date;
   id?: number;
   lastAttempt?: boolean;
+  surveyId?: number;
   user?: UserDto;
 }
 
