@@ -2,7 +2,7 @@
   display: inline-flex;
   width: 100%;
   gap: 10px;
-  height: 260px;
+  max-height: 460px;
 }
 
 .detail-content > :nth-child(1) {
