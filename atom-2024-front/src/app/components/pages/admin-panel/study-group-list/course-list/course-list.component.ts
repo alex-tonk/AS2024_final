@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CourseDto, CourseWithTutorsDto, StudyGroupDto} from '../../../../../gen/atom2024backend-dto';
 import {ScrollerModule} from 'primeng/scroller';
 import {TableModule} from 'primeng/table';
 import {Column} from '../../../../common/table/Column';
@@ -16,8 +15,10 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DropdownModule} from 'primeng/dropdown';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {lastValueFrom} from 'rxjs';
-import {StudyGroupService} from '../../../../../gen/atom2024backend-controllers';
 import {MessageService} from 'primeng/api';
+import {CourseDto, CourseWithTutorsDto, StudyGroupDto, TutorDto} from '../../../../../gen/atom2024backend-dto';
+import {StudyGroupService} from '../../../../../gen/atom2024backend-controllers';
+import {TutorsForCourseListComponent} from './tutors-for-course-list/tutors-for-course-list.component';
 
 @Component({
   selector: 'app-course-list',
@@ -34,7 +35,8 @@ import {MessageService} from 'primeng/api';
     InputTextModule,
     TooltipModule,
     DropdownModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    TutorsForCourseListComponent
   ],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css'
@@ -42,24 +44,11 @@ import {MessageService} from 'primeng/api';
 export class CourseListComponent implements OnInit {
   @Input() studyGroup: StudyGroupDto;
   @Input() allCourses: CourseDto[] = [];
-
-  coursesInGroup: CourseWithTutorsDto[] = [];
-
+  @Input() allTutors: TutorDto[] = [];
   @Output() result = new EventEmitter<number>();
 
-  get filteredCourses() {
-    if (!this.coursesInGroup) {
-      return this.allCourses;
-    }
-    return this.allCourses.filter(c => !this.coursesInGroup.map(cg => cg.course?.id).includes(c.id))
-  }
-
-  constructor(
-    private studyGroupService: StudyGroupService,
-    private messageService: MessageService
-  ) {
-  }
-
+  coursesInGroup: CourseWithTutorsDto[] = [];
+  expandedRows = {};
   addingCourse: CourseDto | null;
 
   selected?: CourseWithTutorsDto;
@@ -79,6 +68,19 @@ export class CourseListComponent implements OnInit {
     return arr.concat(arr2);
   }
 
+  get filteredCourses() {
+    if (!this.coursesInGroup) {
+      return this.allCourses;
+    }
+    return this.allCourses.filter(c => !this.coursesInGroup.map(cg => cg.course?.id).includes(c.id))
+  }
+
+  constructor(
+    private studyGroupService: StudyGroupService,
+    private messageService: MessageService
+  ) {
+  }
+
   ngOnInit() {
     this.init();
   }
@@ -96,7 +98,7 @@ export class CourseListComponent implements OnInit {
     this.loading = true;
     try {
       if (this.studyGroup?.id && this.addingCourse?.id) {
-        const result = await lastValueFrom(this.studyGroupService.addCourse(this.studyGroup.id, this.addingCourse.id));
+        await lastValueFrom(this.studyGroupService.addCourse(this.studyGroup.id, this.addingCourse.id));
         this.messageService.add({
           severity: 'success',
           summary: 'Выполнено',

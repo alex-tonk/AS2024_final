@@ -126,6 +126,13 @@ public class StudyGroupController {
         return studyGroupReader.searchTutors(new CourseWithTutorsId(studyGroupId, courseId), pageQuery);
     }
 
+    @PostMapping("{studyGroupId}/courses/{courseId}/tutors/{tutorId}")
+    public TutorInCourseDto addTutor(@PathVariable StudyGroupId studyGroupId,
+                                      @PathVariable CourseId courseId,
+                                      @PathVariable TutorId tutorId) {
+        return studyGroupService.addTutor(studyGroupId, courseId, tutorId);
+    }
+
     @DeleteMapping("{studyGroupId}/courses/{courseId}/tutors/{tutorId}")
     public void removeTutor(@PathVariable StudyGroupId studyGroupId,
                             @PathVariable CourseId courseId,

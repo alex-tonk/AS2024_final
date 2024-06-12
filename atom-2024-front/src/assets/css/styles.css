@@ -287,6 +287,26 @@ label.required:after {
   top: 14px;
 }
 
+.mini-table-expand-button {
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.mini-table-expand-button > .pi.p-button-icon {
+  font-size: smaller;
+}
+
+.mini-table-expand-button, .table-expand-button {
+  box-shadow: none;
+}
+
+.mini-table-header {
+  font-size: 14px;
+}
+
 /* CONFIRM */
 
 .p-confirm-popup-footer {

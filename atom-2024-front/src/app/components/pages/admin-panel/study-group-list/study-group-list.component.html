@@ -61,7 +61,7 @@
   <!--TABLE COLUMNS-->
   <ng-template pTemplate="header">
     <tr>
-      <th style="width: 5rem"></th>
+      <th style="width: 4rem"></th>
       <ng-container *ngFor="let col of columns">
         <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" pResizableColumn pReorderableColumn>
           {{ col.header }}
@@ -113,7 +113,7 @@
           <p-splitter [style]="{ height: '100%'}" [panelSizes]="[50, 50]" [minSizes]="[30, 30]">
             <ng-template pTemplate>
               <div class="detail-wrapper">
-                <app-course-list [studyGroup]="row" [allCourses]="allCourses" (result)="onRowChanged($event)"></app-course-list>
+                <app-course-list [studyGroup]="row" [allCourses]="allCourses" [allTutors]="allTutors" (result)="onRowChanged($event)"></app-course-list>
               </div>
             </ng-template>
             <ng-template pTemplate>

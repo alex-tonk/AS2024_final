@@ -3,23 +3,22 @@ import {Button} from 'primeng/button';
 import {CheckboxModule} from 'primeng/checkbox';
 import {
   ColumnFilterWrapperComponent
-} from '../../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
+} from '../../../../../common/table/column-filter-wrapper/column-filter-wrapper.component';
 import {DropdownModule} from 'primeng/dropdown';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
-import {PaginatorModule} from 'primeng/paginator';
 import {MessageService, PrimeTemplate} from 'primeng/api';
 import {TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
-import {StudentDto, StudentInGroupDto, StudyGroupDto} from '../../../../../gen/atom2024backend-dto';
-import {StudyGroupService} from '../../../../../gen/atom2024backend-controllers';
-import {Column} from '../../../../common/table/Column';
+import {CourseWithTutorsDto, TutorDto, TutorInCourseDto} from '../../../../../../gen/atom2024backend-dto';
+import {StudyGroupService} from '../../../../../../gen/atom2024backend-controllers';
+import {Column} from '../../../../../common/table/Column';
 import {lastValueFrom} from 'rxjs';
-import {getField} from '../../../../../services/field-accessor';
+import {getField} from '../../../../../../services/field-accessor';
 
 @Component({
-  selector: 'app-student-list',
+  selector: 'app-tutors-for-course-list',
   standalone: true,
   imports: [
     Button,
@@ -30,29 +29,29 @@ import {getField} from '../../../../../services/field-accessor';
     NgForOf,
     NgIf,
     OverlayPanelModule,
-    PaginatorModule,
     PrimeTemplate,
     TableModule,
     TooltipModule
   ],
-  templateUrl: './student-list.component.html',
-  styleUrl: './student-list.component.css'
+  templateUrl: './tutors-for-course-list.component.html',
+  styleUrl: './tutors-for-course-list.component.css'
 })
-export class StudentListComponent implements OnInit {
-  @Input() studyGroup: StudyGroupDto;
-  @Input() allStudents: StudentDto[] = [];
+export class TutorsForCourseListComponent implements OnInit {
+  @Input() course: CourseWithTutorsDto;
+  @Input() allTutors: TutorDto[] = [];
   @Output() result = new EventEmitter<number>();
 
-  studentsInGroup: StudentInGroupDto[] = [];
-  addingStudent: StudentDto | null;
+  tutorsInCourse: TutorInCourseDto[] = [];
 
-  selected?: StudentInGroupDto;
+  addingTutor: TutorDto | null;
+
+  selected?: TutorInCourseDto;
   loading = false;
   filter = false;
 
   columns: Column[] = [{
     header: 'ФИО',
-    field: 'student.user.fullName'
+    field: 'tutor.user.fullName'
   }];
 
   get columnFields(): string[] {
@@ -63,11 +62,11 @@ export class StudentListComponent implements OnInit {
     return arr.concat(arr2);
   }
 
-  get filteredStudents() {
-    if (!this.studentsInGroup) {
-      return this.allStudents;
+  get filteredTutors() {
+    if (!this.tutorsInCourse) {
+      return this.allTutors;
     }
-    return this.allStudents.filter(s => !this.studentsInGroup.map(sg => sg.student?.id).includes(s.id))
+    return this.allTutors.filter(t => !this.tutorsInCourse.map(tc => tc.tutor?.id).includes(t.id))
   }
 
   constructor(
@@ -83,44 +82,43 @@ export class StudentListComponent implements OnInit {
   async init() {
     this.loading = true;
     try {
-      this.studentsInGroup = await lastValueFrom(this.studyGroupService.getStudents(this.studyGroup.id!));
+      this.tutorsInCourse = await lastValueFrom(this.studyGroupService.getTutorsGET(this.course.studyGroup?.id!, this.course.course?.id!));
     } finally {
       this.loading = false;
     }
   }
 
-  async addStudentToGroup() {
+  async addTutorToCourse() {
     this.loading = true;
     try {
-      if (this.studyGroup?.id && this.addingStudent?.id) {
-        await lastValueFrom(this.studyGroupService.addStudent(this.studyGroup.id, this.addingStudent.id));
+      if (this.course) {
+        await lastValueFrom(this.studyGroupService
+          .addTutor(this.course.studyGroup?.id!, this.course.course?.id!, this.addingTutor?.id!));
         this.messageService.add({
           severity: 'success',
           summary: 'Выполнено',
-          detail: `${this.addingStudent.user?.fullName} добавлен в группу ${this.studyGroup.name} `
+          detail: `${this.addingTutor?.user?.fullName} добавлен для курса ${this.course.course?.name} `
         });
-        this.addingStudent = null;
+        this.addingTutor = null;
         await this.init();
-        this.result.emit(this.studyGroup.id);
       }
     } finally {
       this.loading = false;
     }
   }
 
-  async removeStudentFromGroup() {
+  async removeTutorFromCourse() {
     this.loading = true;
     try {
-      if (this.studyGroup?.id && this.selected?.student?.id) {
-        await lastValueFrom(this.studyGroupService.removeStudent(this.studyGroup.id, this.selected.student.id));
+      if (this.course && this.selected) {
+        await lastValueFrom(this.studyGroupService.removeTutor(this.course.studyGroup?.id!, this.course.course?.id!, this.selected.tutor?.id!));
         this.messageService.add({
           severity: 'success',
           summary: 'Выполнено',
-          detail: `${this.selected.student.user?.fullName} удален из группы ${this.studyGroup.name} `
+          detail: `${this.selected.tutor?.user?.fullName} удален для курса ${this.course.course?.name} `
         });
         this.selected = undefined;
         await this.init();
-        this.result.emit(this.studyGroup.id);
       }
     } finally {
       this.loading = false;

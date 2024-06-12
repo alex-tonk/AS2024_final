@@ -5,8 +5,7 @@
          [globalFilterFields]="columnFields"
          (onFilter)="selected=undefined"
          [columns]="columns"
-         [virtualScroll]="true"
-         [virtualScrollItemSize]="33"
+         [expandedRowKeys]="expandedRows"
          class="mini-table"
          styleClass="p-datatable-gridlines"
          dataKey="course.id">
@@ -14,7 +13,7 @@
   <ng-template pTemplate="caption">
     <div class="table-toolbar">
       <div class="table-toolbar-left">
-        <div>Список курсов ({{coursesInGroup.length}})</div>
+        <div class="mini-table-header">Список курсов ({{coursesInGroup.length}})</div>
 
         <div class="splitter"></div>
 
@@ -23,11 +22,11 @@
 
         <div class="splitter"></div>
 
-        <p-button pTooltip="Добавить курс" icon="pi pi-plus"
+        <p-button pTooltip="Добавить курс для группы" icon="pi pi-plus"
                   (click)="addCoursePanel.toggle($event)"
                   styleClass="button-mini button-clear">
         </p-button>
-        <p-button pTooltip="Удалить выбранный курс" icon="pi pi-minus"
+        <p-button pTooltip="Удалить выбранный курс для группы" icon="pi pi-minus"
                   [disabled]="!selected"
                   (click)="removeCourseFromGroup()"
                   styleClass="button-mini button-clear">
@@ -40,6 +39,7 @@
   <ng-template pTemplate="header">
     <!--TABLE FILTER-->
     <tr *ngIf="filter">
+      <th style="width: 2rem"></th>
       <th *ngFor="let col of columns">
         <app-column-filter-wrapper [column]="col"></app-column-filter-wrapper>
       </th>
@@ -47,8 +47,13 @@
   </ng-template>
 
   <!--TABLE DATA-->
-  <ng-template pTemplate="body" let-row>
+  <ng-template pTemplate="body" let-row let-expanded="expanded">
     <tr [pSelectableRow]="row">
+      <td style="position: relative; width: 2rem">
+        <p-button type="button" [pRowToggler]="row" [text]="true"
+                  [rounded]="true" [plain]="true" styleClass="no-bordered mini-table-expand-button"
+                  [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"/>
+      </td>
       <ng-container *ngFor="let col of columns">
         @switch (col.type) {
           @case ("boolean") {
@@ -66,6 +71,16 @@
           }
         }
       </ng-container>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="rowexpansion" let-row>
+    <tr>
+      <td colspan="99" style="background: var(--primary-deep-alfa-color)">
+        <div class="detail-content">
+          <app-tutors-for-course-list [course]="row" [allTutors]="allTutors"></app-tutors-for-course-list>
+        </div>
+      </td>
     </tr>
   </ng-template>
 

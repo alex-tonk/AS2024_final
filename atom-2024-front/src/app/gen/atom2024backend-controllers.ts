@@ -136,6 +136,10 @@ export class StudyGroupService {
     return this.httpService.post<StudentInGroupDto>('study-groups/' + studyGroupId + '/students/' + studentId + '', null , {responseType: 'json'});
   }
 
+ public addTutor(studyGroupId: number, courseId: number, tutorId: number): Observable<TutorInCourseDto>  {
+    return this.httpService.post<TutorInCourseDto>('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors/' + tutorId + '', null , {responseType: 'json'});
+  }
+
  public constructor(httpService: HttpClient) {
     this.httpService = httpService;
   }

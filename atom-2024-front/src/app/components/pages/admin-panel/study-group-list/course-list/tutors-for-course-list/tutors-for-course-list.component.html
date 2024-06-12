@@ -1,20 +1,18 @@
-<p-table #table [value]="studentsInGroup" [scrollable]="true" scrollHeight="flex" sortMode="multiple"
+<p-table #table [value]="tutorsInCourse" [scrollable]="true" sortMode="multiple"
          [loading]="loading"
          [selectionMode]="'single'"
          [(selection)]="selected"
          [globalFilterFields]="columnFields"
          (onFilter)="selected=undefined"
          [columns]="columns"
-         [virtualScroll]="true"
-         [virtualScrollItemSize]="33"
          styleClass="p-datatable-gridlines"
          class="mini-table"
-         dataKey="student.id">
+         dataKey="tutor.id">
   <!--TABLE TOOLBAR-->
   <ng-template pTemplate="caption">
     <div class="table-toolbar">
       <div class="table-toolbar-left">
-        <div class="mini-table-header">Список учеников ({{studentsInGroup.length}})</div>
+        <div class="mini-table-header">Преподаватели ({{tutorsInCourse.length}})</div>
 
         <div class="splitter"></div>
 
@@ -23,13 +21,13 @@
 
         <div class="splitter"></div>
 
-        <p-button pTooltip="Добавить ученика в группу" icon="pi pi-plus"
-                  (click)="addStudentPanel.toggle($event)"
+        <p-button pTooltip="Добавить преподавателя для курса" icon="pi pi-plus"
+                  (click)="addTutorPanel.toggle($event)"
                   styleClass="button-mini button-clear">
         </p-button>
-        <p-button pTooltip="Удалить выбранного ученика из группы" icon="pi pi-minus"
+        <p-button pTooltip="Удалить выбранного преподавателя" icon="pi pi-minus"
                   [disabled]="!selected"
-                  (click)="removeStudentFromGroup()"
+                  (click)="removeTutorFromCourse()"
                   styleClass="button-mini button-clear">
         </p-button>
       </div>
@@ -76,21 +74,21 @@
   </ng-template>
 </p-table>
 
-<p-overlayPanel #addStudentPanel>
+<p-overlayPanel #addTutorPanel>
   <form #form="ngForm" [class.content-disabled]="loading">
     <div class="detail-form-wrapper">
-      <p-dropdown name="student" [options]="filteredStudents" [(ngModel)]="addingStudent"
+      <p-dropdown name="tutor" [options]="filteredTutors" [(ngModel)]="addingTutor"
                   optionLabel="user.fullName" [filter]="true"
                   [style]="{width: '100%', display: 'inline-flex'}"
-                  placeholder="Выберите ученика" [required]="true">
+                  placeholder="Выберите преподавателя" [required]="true">
       </p-dropdown>
     </div>
   </form>
 
   <div class="detail-form-footer" [class.content-disabled]="loading">
-    <p-button [label]="loading ? 'Подождите...' : 'Добавить ученика'"
+    <p-button [label]="loading ? 'Подождите...' : 'Добавить преподавателя'"
               styleClass="button-mini-with-label" [disabled]="!!form.invalid"
-              (click)="addStudentToGroup()">
+              (click)="addTutorToCourse()">
     </p-button>
   </div>
 </p-overlayPanel>

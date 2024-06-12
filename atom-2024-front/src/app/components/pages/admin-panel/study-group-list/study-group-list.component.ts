@@ -11,9 +11,14 @@ import {ConfirmationService, MessageService, PrimeTemplate} from 'primeng/api';
 import {TableModule, TableRowCollapseEvent, TableRowExpandEvent} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {TutorRegistrationFormComponent} from '../tutor-list/tutor-registration-form/tutor-registration-form.component';
-import {CourseDto, StudentDto, StudyGroupDto} from '../../../../gen/atom2024backend-dto';
+import {CourseDto, StudentDto, StudyGroupDto, TutorDto} from '../../../../gen/atom2024backend-dto';
 import {Column} from '../../../common/table/Column';
-import {CourseService, StudentService, StudyGroupService} from '../../../../gen/atom2024backend-controllers';
+import {
+  CourseService,
+  StudentService,
+  StudyGroupService,
+  TutorService
+} from '../../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {ExportTable} from '../../../common/table/ExportTable';
 import {getField} from '../../../../services/field-accessor';
@@ -66,6 +71,7 @@ export class StudyGroupListComponent implements OnInit {
 
   allCourses: CourseDto[] = [];
   allStudents: StudentDto[] = [];
+  allTutors: TutorDto[] = [];
 
   columns: Column[] = [{
     header: 'ID',
@@ -108,6 +114,7 @@ export class StudyGroupListComponent implements OnInit {
     private studyGroupService: StudyGroupService,
     private courseService: CourseService,
     private studentService: StudentService,
+    private tutorService: TutorService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService) {
   }
@@ -126,6 +133,7 @@ export class StudyGroupListComponent implements OnInit {
     try {
       this.allCourses = await lastValueFrom(this.courseService.getCourses());
       this.allStudents = await lastValueFrom(this.studentService.getStudents());
+      this.allTutors = await lastValueFrom(this.tutorService.getTutors());
     } finally {
       this.loading = false;
     }
@@ -203,10 +211,10 @@ export class StudyGroupListComponent implements OnInit {
   async onRowChanged(id: number) {
     this.loading = true;
     try {
-     const updatedRow = await lastValueFrom(this.studyGroupService.getStudyGroup(id));
-     this.studyGroups
-       .filter(s => s.id === updatedRow.id)
-       .map(s => Object.assign(s, updatedRow))
+      const updatedRow = await lastValueFrom(this.studyGroupService.getStudyGroup(id));
+      this.studyGroups
+        .filter(s => s.id === updatedRow.id)
+        .map(s => Object.assign(s, updatedRow))
     } finally {
       this.loading = false;
     }
