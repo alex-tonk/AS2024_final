@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Button} from 'primeng/button';
 import {CheckboxModule} from 'primeng/checkbox';
 import {
@@ -43,6 +43,8 @@ export class StudentListComponent implements OnInit {
     @Input() allStudents: StudentDto[] = [];
 
     studentsInGroup: StudentInGroupDto[] = [];
+
+    @Output() result = new EventEmitter<number>();
 
     get filteredStudents() {
         if (!this.studentsInGroup) {
@@ -101,6 +103,7 @@ export class StudentListComponent implements OnInit {
                 });
                 this.addingStudent = null;
                 await this.init();
+                this.result.emit(this.studyGroup.id);
             }
         } finally {
             this.loading = false;
@@ -119,6 +122,7 @@ export class StudentListComponent implements OnInit {
                 });
                 this.selected = undefined;
                 await this.init();
+                this.result.emit(this.studyGroup.id);
             }
         } finally {
             this.loading = false;

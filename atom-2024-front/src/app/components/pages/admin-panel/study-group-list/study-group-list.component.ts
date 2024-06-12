@@ -200,7 +200,19 @@ export class StudyGroupListComponent implements OnInit {
     }
   }
 
-  async onRowExpand(event: TableRowExpandEvent) {
+  async onRowChanged(id: number) {
+    this.loading = true;
+    try {
+     const updatedRow = await lastValueFrom(this.studyGroupService.getStudyGroup(id));
+     this.studyGroups
+       .filter(s => s.id === updatedRow.id)
+       .map(s => Object.assign(s, updatedRow))
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  onRowExpand(event: TableRowExpandEvent) {
   }
 
   onRowCollapse(event: TableRowCollapseEvent) {

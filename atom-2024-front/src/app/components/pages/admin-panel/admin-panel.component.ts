@@ -8,6 +8,7 @@ import {CourseListComponent} from "./course-list/course-list.component";
 import {StudentListComponent} from "./student-list/student-list.component";
 import {TutorListComponent} from "./tutor-list/tutor-list.component";
 import {StudyGroupListComponent} from './study-group-list/study-group-list.component';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-admin-panel',
@@ -21,7 +22,8 @@ import {StudyGroupListComponent} from './study-group-list/study-group-list.compo
     CourseListComponent,
     StudentListComponent,
     TutorListComponent,
-    StudyGroupListComponent
+    StudyGroupListComponent,
+    NgIf
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css'

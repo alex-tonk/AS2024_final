@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CourseDto, CourseWithTutorsDto, StudyGroupDto} from '../../../../../gen/atom2024backend-dto';
 import {ScrollerModule} from 'primeng/scroller';
 import {TableModule} from 'primeng/table';
@@ -44,6 +44,8 @@ export class CourseListComponent implements OnInit {
   @Input() allCourses: CourseDto[] = [];
 
   coursesInGroup: CourseWithTutorsDto[] = [];
+
+  @Output() result = new EventEmitter<number>();
 
   get filteredCourses() {
     if (!this.coursesInGroup) {
@@ -102,6 +104,7 @@ export class CourseListComponent implements OnInit {
         });
         this.addingCourse = null;
         await this.init();
+        this.result.emit(this.studyGroup.id);
       }
     } finally {
       this.loading = false;
@@ -120,6 +123,7 @@ export class CourseListComponent implements OnInit {
         });
         this.selected = undefined;
         await this.init();
+        this.result.emit(this.studyGroup.id);
       }
     } finally {
       this.loading = false;

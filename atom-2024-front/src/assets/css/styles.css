@@ -273,7 +273,7 @@ label.required:after {
 
 .mini-table .p-datatable-wrapper {
   border: 1px solid var(--border-color);
-  background: white;
+  /*background: white;*/
 }
 
 .mini-table .p-datatable-tbody > tr > td {
