@@ -110,7 +110,7 @@
     <tr>
       <td colspan="99" style="background: var(--primary-deep-alfa-color)">
         <div class="detail-content">
-          <p-splitter [style]="{ height: '100%'}" [panelSizes]="[50, 50]" [minSizes]="[30, 30]">
+          <p-splitter [style]="{ height: '100%'}" [panelSizes]="[50, 50]" [minSizes]="[30, 30]" [gutterSize]="8">
             <ng-template pTemplate>
               <div class="detail-wrapper">
                 <app-course-list [studyGroup]="row" [allCourses]="allCourses" [allTutors]="allTutors" (result)="onRowChanged($event)"></app-course-list>
