@@ -1,0 +1,50 @@
+<p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeGroup($event.index)">
+  <p-tabPanel header="Учебные группы" leftIcon="pi pi-graduation-cap">
+    <ng-template pTemplate="content">
+      <p-dataView [value]="filteredGroups" layout="grid">
+        <ng-template pTemplate="grid" let-groups>
+          <div class="full-width-center" style="padding: 20px">
+            <div class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
+            </div>
+          </div>
+          <div class="grid" style="justify-content: center; overflow: auto">
+            <div *ngFor="let group of groups" class="col-12 md:col-6 lg:col-3">
+              <p-card (click)="openGroup(group)">
+                <h3 class="no-margin study-group-header">{{ group.name }}</h3>
+                <hr>
+                <div style="text-align: left">
+                  <div style="padding-bottom: 10px">Проходимые курсы:</div>
+                  <div style="padding-left: 20px">
+                    <div *ngFor="let course of splitCourses(group.courseNames)">{{ course }}</div>
+                  </div>
+                </div>
+                <p-footer>
+                  <hr>
+                  Кол-во учеников: {{ group.studentsCount }}
+                </p-footer>
+              </p-card>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+          <div>Всего ваших групп: {{studyGroups ? studyGroups.length : 0}}</div>
+        </ng-template>
+      </p-dataView>
+    </ng-template>
+  </p-tabPanel>
+
+  <p-tabPanel header="Все ДЗ на проверку" leftIcon="pi pi-list-check">
+    <ng-template pTemplate="content">
+      <div>Таблица домашних заданий по всем студентам доступных групп и курсов</div>
+    </ng-template>
+  </p-tabPanel>
+
+  <p-tabPanel *ngFor="let group of openedGroups" [header]="group.title" closable="true">
+    <ng-template pTemplate="content">
+      <app-study-group-card [studyGroup]="group.value"></app-study-group-card>
+    </ng-template>
+  </p-tabPanel>
+</p-tabView>

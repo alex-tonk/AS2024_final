@@ -399,7 +399,41 @@ li.sd-progress-buttons__list-element--current:hover .sd-progress-buttons__button
   color: var(--green-color);
   text-transform: uppercase;
 }
+
 .surveyjs-incorrect-answer {
   color: var(--red-color);
   text-transform: uppercase;
+}
+
+/* LIST BOX */
+p-listbox {
+  height: 100%;
+}
+
+p-listbox > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-box-wrapper {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.list-box-header {
+  text-align: center;
+  padding: 5px
+}
+
+.list-box-body {
+  overflow: auto;
+  height: 100%
+}
+
+/* PRIME FLEX */
+.grid {
+  margin: 0 !important;
 }

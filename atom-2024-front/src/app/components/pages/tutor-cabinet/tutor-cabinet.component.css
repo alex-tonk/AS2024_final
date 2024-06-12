@@ -1,0 +1,38 @@
+>>> .p-card {
+  cursor: pointer;
+  height: 100%;
+  max-width: 100%;
+}
+
+>>> .p-card:hover {
+  background: var(--primary-deep-alfa-color)
+}
+
+>>> .p-card .p-card-content {
+  padding: 5px;
+  height: 100%;
+}
+
+>>> .p-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.study-group-header {
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+}
+
+>>> .p-dataview-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+>>> .p-dataview-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

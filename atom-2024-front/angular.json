@@ -29,7 +29,8 @@
               "src/assets/css/styles.css",
               "src/assets/css/theme.css",
               "node_modules/survey-angular/defaultV2.min.css",
-              "node_modules/@videogular/ngx-videogular/fonts/videogular.css"
+              "node_modules/@videogular/ngx-videogular/fonts/videogular.css",
+              "node_modules/primeflex/primeflex.css"
             ],
             "scripts": []
           },

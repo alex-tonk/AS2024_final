@@ -13,7 +13,7 @@
         <div class="chat-room"
              [class.active-chat]="chatRoom.id === chat?.id"
              (click)="selectChat(chatRoom)">
-          <div style="display: inline-flex; height: 20px;">
+          <div style="display: inline-flex">
             <div><b>{{ chatRoom.name }}</b></div>
             <div style="flex: auto"></div>
             <p-button icon="pi pi-sign-out" styleClass="button-clear" class="chat-room-close-btn"

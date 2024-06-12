@@ -10,7 +10,9 @@ import {unauthorizedGuard} from "./services/guards/unauthorized.guard";
 import { SurveyComponent } from './components/pages/survey/survey.component';
 import {SurveyRegistrationComponent} from "./components/pages/survey/survey-registration/survey-registration.component";
 import {ChatComponent} from "./components/chat/chat/chat.component";
-import {UserEducationComponent} from "./components/pages/user-education/user-education.component";
+import {StudentCabinetComponent} from "./components/pages/student-cabinet/student-cabinet.component";
+import {TutorCabinetComponent} from './components/pages/tutor-cabinet/tutor-cabinet.component';
+import {StudyGroupCardComponent} from './components/pages/tutor-cabinet/study-group-card/study-group-card.component';
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -23,7 +25,8 @@ export const routes: Routes = [
   },
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [adminGuard]},
   {path: 'user-panel', component: UserPanelComponent},
-  {path: 'user-education', component: UserEducationComponent},
+  {path: 'stuent-cabinet', component: StudentCabinetComponent},
+  {path: 'tutor-cabinet', component: TutorCabinetComponent},
   {path: 'chat', component: ChatComponent},
   {path: 'survey', component: SurveyComponent},
   {path: '**', redirectTo: ''}

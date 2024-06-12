@@ -1,0 +1,43 @@
+<div class="full-width-height">
+  <p-splitter [style]="{ height: '100%'}" [panelSizes]="[20, 80]">
+    <ng-template pTemplate>
+      <div class="list-box-wrapper">
+        <div class="list-box-header"><b>Курсы группы</b></div>
+        <div class="list-box-body">
+          <p-listbox
+            [options]="courses"
+            [(ngModel)]="selectedCourse"
+            [listStyle]="{'max-height': 'unset', 'height': '100%'}"
+            optionLabel="name"
+            [filter]="true"/>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate>
+      <p-splitter [style]="{ height: '100%'}" [panelSizes]="[25, 75]">
+        <ng-template pTemplate>
+          <div class="list-box-wrapper">
+            <div class="list-box-header"><b>Ученики группы</b></div>
+            <div class="list-box-body">
+              <p-listbox
+                [options]="students"
+                [(ngModel)]="selectedStudent"
+                [listStyle]="{'max-height': 'unset', 'height': '100%'}"
+                optionLabel="user.fullName"
+                [filter]="true"/>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate>
+          <div class="course-card">
+            <app-course-card *ngIf="selectedCourse && selectedStudent && studyGroup"
+                             [course]="selectedCourse" [student]="selectedStudent" [studyGroup]="studyGroup">
+            </app-course-card>
+          </div>
+        </ng-template>
+      </p-splitter>
+    </ng-template>
+  </p-splitter>
+</div>
