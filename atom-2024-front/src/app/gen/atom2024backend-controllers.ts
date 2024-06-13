@@ -173,6 +173,14 @@ export class StudyGroupService {
     return this.httpService.get<StudyGroupDto[]>('study-groups', {responseType: 'json'});
   }
 
+ public getStudyGroupsForStudent(): Observable<StudyGroupDto[]>  {
+    return this.httpService.get<StudyGroupDto[]>('study-groups/student-study-groups', {responseType: 'json'});
+  }
+
+ public getStudyGroupsForTutor(): Observable<StudyGroupDto[]>  {
+    return this.httpService.get<StudyGroupDto[]>('study-groups/tutor-study-groups', {responseType: 'json'});
+  }
+
  public getTutor(studyGroupId: number, courseId: number, tutorId: number): Observable<TutorInCourseDto>  {
     return this.httpService.get<TutorInCourseDto>('study-groups/' + studyGroupId + '/courses/' + courseId + '/tutors/' + tutorId + '', {responseType: 'json'});
   }

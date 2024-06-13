@@ -1,5 +1,5 @@
-import {RoleDto} from "./RoleDto";
-import {DateFormatter} from "../components/common/DateFormatter";
+import {RoleDto} from './RoleDto';
+import {DateFormatter} from '../components/common/DateFormatter';
 
 export class UserDto {
   id: UserId;
@@ -14,6 +14,8 @@ export class UserDto {
   archived: boolean;
   fullName: string;
   rolesAsString: string;
+  tutorId?: number;
+  studentId?: number;
 
   get formattedRegistrationDate() {
     return DateFormatter.format(this.registrationDate);

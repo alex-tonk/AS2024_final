@@ -1,6 +1,10 @@
 package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
+import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
+import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
+import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.query.lazy.PageQuery;
 import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.dto.CourseWithTutorsDto;
@@ -29,6 +33,10 @@ public class StudyGroupController {
     private StudyGroupReader studyGroupReader;
     @Autowired
     private StudyGroupService studyGroupService;
+    @Autowired
+    private UserReader userReader;
+    @Autowired
+    private UserProvider userProvider;
 
     @GetMapping("{studyGroupId}")
     public StudyGroupDto getStudyGroup(@PathVariable StudyGroupId studyGroupId) {
@@ -39,6 +47,20 @@ public class StudyGroupController {
     @GetMapping
     public List<StudyGroupDto> getStudyGroups() {
         return studyGroupReader.getStudyGroups();
+    }
+
+    @GetMapping("tutor-study-groups")
+    public List<StudyGroupDto> getStudyGroupsForTutor() {
+        UserDto user = userReader.getUser(userProvider.get().getId());
+        if (user.getTutorId() == null) throw new BusinessLogicException("Вы не являетесь преподавателем");
+        return studyGroupReader.getStudyGroupsForTutor(user.getTutorId());
+    }
+
+    @GetMapping("student-study-groups")
+    public List<StudyGroupDto> getStudyGroupsForStudent() {
+        UserDto user = userReader.getUser(userProvider.get().getId());
+        if (user.getStudentId() == null) throw new BusinessLogicException("Вы не являетесь студентом");
+        return studyGroupReader.getStudyGroupsForStudent(user.getStudentId());
     }
 
     @PostMapping("search")
@@ -128,8 +150,8 @@ public class StudyGroupController {
 
     @PostMapping("{studyGroupId}/courses/{courseId}/tutors/{tutorId}")
     public TutorInCourseDto addTutor(@PathVariable StudyGroupId studyGroupId,
-                                      @PathVariable CourseId courseId,
-                                      @PathVariable TutorId tutorId) {
+                                     @PathVariable CourseId courseId,
+                                     @PathVariable TutorId tutorId) {
         return studyGroupService.addTutor(studyGroupId, courseId, tutorId);
     }
 

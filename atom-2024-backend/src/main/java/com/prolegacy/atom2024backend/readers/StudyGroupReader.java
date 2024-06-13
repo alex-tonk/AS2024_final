@@ -12,10 +12,7 @@ import com.prolegacy.atom2024backend.dto.StudentInGroupDto;
 import com.prolegacy.atom2024backend.dto.StudyGroupDto;
 import com.prolegacy.atom2024backend.dto.TutorInCourseDto;
 import com.prolegacy.atom2024backend.entities.*;
-import com.prolegacy.atom2024backend.entities.ids.CourseWithTutorsId;
-import com.prolegacy.atom2024backend.entities.ids.StudentInGroupId;
-import com.prolegacy.atom2024backend.entities.ids.StudyGroupId;
-import com.prolegacy.atom2024backend.entities.ids.TutorInCourseId;
+import com.prolegacy.atom2024backend.entities.ids.*;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +60,25 @@ public class StudyGroupReader {
 
     public List<StudyGroupDto> getStudyGroups() {
         return baseQuery().fetch();
+    }
+
+    public List<StudyGroupDto> getStudyGroupsForTutor(TutorId tutorId) {
+        QCourseWithTutors cwt = new QCourseWithTutors("cwt");
+        QTutorInCourse tic = new QTutorInCourse("tic");
+        return baseQuery()
+                .innerJoin(studyGroup.courses, cwt)
+                .innerJoin(cwt.tutors, tic)
+                .where(tic.tutor.id.eq(tutorId))
+                .distinct()
+                .fetch();
+    }
+
+    public List<StudyGroupDto> getStudyGroupsForStudent(StudentId studentId) {
+        QStudentInGroup siq = new QStudentInGroup("siq");
+        return baseQuery()
+                .innerJoin(studyGroup.students, siq)
+                .where(siq.student.id.eq(studentId))
+                .fetch();
     }
 
     public PageResponse<StudyGroupDto> searchStudyGroups(PageQuery pageQuery) {

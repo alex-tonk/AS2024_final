@@ -58,14 +58,14 @@ export class TutorCabinetComponent implements OnInit {
   constructor(private studyGroupService: StudyGroupService) {
   }
 
-  ngOnInit() {
-    this.init();
+  async ngOnInit() {
+    await this.init();
   }
 
   async init() {
     this.loading = true;
     try {
-      this.availableStudyGroups = await lastValueFrom(this.studyGroupService.getStudyGroups());
+      this.availableStudyGroups = await lastValueFrom(this.studyGroupService.getStudyGroupsForTutor());
     } finally {
       this.loading = false;
     }

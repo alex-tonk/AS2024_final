@@ -1,6 +1,8 @@
 package com.prolegacy.atom2024backend.common.auth.dto;
 
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.entities.ids.StudentId;
+import com.prolegacy.atom2024backend.entities.ids.TutorId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,9 @@ public class UserDto {
     private String phoneNumber;
     private Instant registrationDate;
     private Boolean archived;
+
+    private TutorId tutorId;
+    private StudentId studentId;
 
     private String fullName;
     private String shortName;
