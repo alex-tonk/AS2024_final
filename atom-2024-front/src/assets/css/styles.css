@@ -369,6 +369,10 @@ label.required:after {
   overflow: auto;
 }
 
+.p-dataview-emptymessage {
+  text-align: center;
+}
+
 /* SurveyJS */
 
 .sd-progress-buttons__list li:hover .sd-progress-buttons__button {
@@ -441,3 +445,69 @@ p-listbox > div {
 .grid {
   margin: 0 !important;
 }
+
+/* CLICKABLE CARD */
+.clickable-card .p-card {
+  cursor: pointer;
+  height: 100%;
+  max-width: 260px;
+}
+
+.clickable-card.full-width .p-card {
+  max-width: 100% !important;
+}
+
+.clickable-card .header {
+  display: inline-flex;
+  align-items: center;
+}
+
+.clickable-card .p-card:hover {
+  background: var(--primary-deep-alfa-color);
+}
+
+.clickable-card .p-card .p-card-content {
+  padding: 5px;
+  height: 100%;
+}
+
+.clickable-card .p-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.clickable-card-grid .p-dataview-grid, .clickable-card-grid .p-dataview-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CALENDAR */
+.inline-calendar .p-datepicker table td {
+  padding: 0;
+}
+
+.inline-calendar .p-datepicker table td > span {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* SPLITTER */
+.min400-min340 .p-splitter-horizontal > :nth-child(1) {
+  min-width: 400px;
+}
+
+.min400-min340 .p-splitter-horizontal > :nth-child(3) {
+  min-width: 340px;
+}
+
+.min340-min340 .p-splitter-horizontal > :nth-child(1),
+.min340-min340 .p-splitter-horizontal > :nth-child(3) {
+  min-width: 340px;
+}
+
+.min200 .p-splitter-horizontal > :nth-child(1) {
+  min-width: 200px;
+}
+

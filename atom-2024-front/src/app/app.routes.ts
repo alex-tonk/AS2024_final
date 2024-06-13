@@ -25,7 +25,7 @@ export const routes: Routes = [
   },
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [adminGuard]},
   {path: 'user-panel', component: UserPanelComponent},
-  {path: 'stuent-cabinet', component: StudentCabinetComponent},
+  {path: 'student-cabinet', component: StudentCabinetComponent},
   {path: 'tutor-cabinet', component: TutorCabinetComponent},
   {path: 'chat', component: ChatComponent},
   {path: 'survey', component: SurveyComponent},

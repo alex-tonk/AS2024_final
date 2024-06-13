@@ -7,7 +7,7 @@
     <div class="group" style="width: 100%">
       <ng-container *ngIf="!isMobileMode">
         <p-button *ngIf="userService.user.studentId != null" label="Кабинет ученика" styleClass="button-clear"
-                  routerLink="stuent-cabinet"></p-button>
+                  routerLink="student-cabinet"></p-button>
         <p-button *ngIf="userService.user.tutorId != null" label="Кабинет преподавателя" styleClass="button-clear"
                   routerLink="tutor-cabinet"></p-button>
         <p-button label="Тестирование" styleClass="button-clear" routerLink="survey"></p-button>
@@ -42,7 +42,7 @@
 
 <p-overlayPanel #op>
   <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
-    <p-button label="Кабинет ученика" styleClass="button-clear" routerLink="stuent-cabinet"
+    <p-button label="Кабинет ученика" styleClass="button-clear" routerLink="student-cabinet"
               (click)="op.hide()"></p-button>
     <p-button label="Кабинет преподавателя" styleClass="button-clear" routerLink="tutor-cabinet"
               (click)="op.hide()"></p-button>

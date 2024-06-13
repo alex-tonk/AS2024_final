@@ -48,6 +48,7 @@ export class StudyGroupCardComponent implements OnInit {
   async init() {
     this.loading = true;
     try {
+      // TODO Курсы группы для препода, студенты группы
       this.courses = await lastValueFrom(this.courseService.getCourses());
       this.students = await lastValueFrom(this.studentService.getStudents());
     } finally {

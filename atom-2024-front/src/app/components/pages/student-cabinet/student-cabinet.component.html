@@ -1,9 +1,9 @@
 <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeCourse($event.index)">
   <p-tabPanel header="Ваши курсы" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
-      <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]">
+      <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]" class="min400-min340">
         <ng-template pTemplate>
-          <p-dataView [value]="filteredCourses" layout="grid">
+          <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid" emptyMessage="Не найдено ни одного курса">
             <ng-template pTemplate="grid" let-courses>
               <div class="quick-search-wrapper">
                 <div class="p-input-icon-left">
@@ -13,8 +13,8 @@
               </div>
               <div class="grid" style="justify-content: center; overflow: auto">
                 <div *ngFor="let course of courses" style="padding: 0.5rem">
-                  <p-card (click)="openCourse(course)">
-                    <h3 class="no-margin course-header">{{ course.name }}</h3>
+                  <p-card (click)="openCourse(course)" class="clickable-card">
+                    <h3 class="no-margin header">{{ course.name }}</h3>
                     <hr>
                     <div>Какое-то описание курса, даты, разная инфа</div>
                     <p-footer>
@@ -38,6 +38,7 @@
 
             <p-calendar
               [(ngModel)]="selectedDate"
+              class="inline-calendar"
               [inline]="true"
               [showWeek]="true">
               <ng-template pTemplate="date" let-date>

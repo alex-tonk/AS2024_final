@@ -41,7 +41,7 @@ export class TutorCabinetComponent implements OnInit {
   activeIndex = 0;
 
   systemTabsCount = 3;
-  // TODO группы для препода!
+
   availableStudyGroups: StudyGroupDto[] = [];
   openedGroups: { value: StudyGroupDto, title: string }[] = [];
 
