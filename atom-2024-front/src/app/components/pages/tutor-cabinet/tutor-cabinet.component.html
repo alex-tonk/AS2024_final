@@ -3,7 +3,7 @@
     <ng-template pTemplate="content">
       <p-dataView [value]="filteredGroups" layout="grid">
         <ng-template pTemplate="grid" let-groups>
-          <div class="full-width-center" style="padding: 20px">
+          <div class="quick-search-wrapper">
             <div class="p-input-icon-left">
               <i class="pi pi-search"></i>
               <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
@@ -30,7 +30,7 @@
         </ng-template>
 
         <ng-template pTemplate="footer">
-          <div>Всего ваших групп: {{studyGroups ? studyGroups.length : 0}}</div>
+          <div>Всего ваших групп: {{availableStudyGroups ? availableStudyGroups.length : 0}}</div>
         </ng-template>
       </p-dataView>
     </ng-template>
@@ -39,6 +39,12 @@
   <p-tabPanel header="Все ДЗ на проверку" leftIcon="pi pi-list-check">
     <ng-template pTemplate="content">
       <div>Таблица домашних заданий по всем студентам доступных групп и курсов</div>
+    </ng-template>
+  </p-tabPanel>
+
+  <p-tabPanel header="Расписание" leftIcon="pi pi-calendar-clock">
+    <ng-template pTemplate="content">
+      какое-то расписание воршопов
     </ng-template>
   </p-tabPanel>
 

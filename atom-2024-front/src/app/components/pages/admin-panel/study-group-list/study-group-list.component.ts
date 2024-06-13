@@ -107,7 +107,8 @@ export class StudyGroupListComponent implements OnInit {
       .filter(c => !!c.fieldGetter)
       .map(c => <string>c.fieldGetter);
     const arr2 = this.columns.map(c => c.field);
-    return arr.concat(arr2);
+    const arr3 = ['courseNames','studentNames'];
+    return arr.concat(arr2).concat(arr3);
   }
 
   constructor(

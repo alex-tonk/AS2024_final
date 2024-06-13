@@ -1,27 +1,96 @@
-<p-tabView [scrollable]="true">
-  <p-tabPanel header="Ваша карточка" leftIcon="pi pi-graduation-cap">
+<p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeCourse($event.index)">
+  <p-tabPanel header="Ваши курсы" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
-      <div>Общий дашбоард какой-то, статистика</div>
+      <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]">
+        <ng-template pTemplate>
+          <p-dataView [value]="filteredCourses" layout="grid">
+            <ng-template pTemplate="grid" let-courses>
+              <div class="quick-search-wrapper">
+                <div class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
+                </div>
+              </div>
+              <div class="grid" style="justify-content: center; overflow: auto">
+                <div *ngFor="let course of courses" style="padding: 0.5rem">
+                  <p-card (click)="openCourse(course)">
+                    <h3 class="no-margin course-header">{{ course.name }}</h3>
+                    <hr>
+                    <div>Какое-то описание курса, даты, разная инфа</div>
+                    <p-footer>
+                      <hr>
+                      Кол-во модулей: 5
+                    </p-footer>
+                  </p-card>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <div>Всего ваших курсов: {{ availableCourses ? availableCourses.length : 0 }}</div>
+            </ng-template>
+          </p-dataView>
+        </ng-template>
+
+        <ng-template pTemplate>
+          <div class="full-width-center" style="padding: 20px">
+            <h4 class="no-margin" style="padding-bottom: 20px">Ваше расписание</h4>
+
+            <p-calendar
+              [(ngModel)]="selectedDate"
+              [inline]="true"
+              [showWeek]="true">
+              <ng-template pTemplate="date" let-date>
+                <span class="calendar-cell" [class.busy]="date.day > 10 && date.day < 18">
+                    {{ date.day }}
+                </span>
+              </ng-template>
+            </p-calendar>
+
+            <div *ngIf="selectedDate" class="selected-date-wrapper">
+              {{selectedDate | date}}
+              <p-button pTooltip="Очистить фильтр по дате" icon="pi pi-times"
+                        (click)="selectedDate = undefined"
+                        styleClass="button-mini button-clear">
+            </p-button>
+            </div>
+
+            <div class="schedule-wrapper">
+              <div>✔ Сдать тест</div>
+              <div>✔ Воркшоп по Java</div>
+            </div>
+          </div>
+        </ng-template>
+      </p-splitter>
     </ng-template>
   </p-tabPanel>
-  <p-tabPanel #videoLessons header="Видеоуроки" leftIcon="pi pi-video">
+
+  <p-tabPanel *ngFor="let course of openedCourses" [header]="course.title" closable="true">
     <ng-template pTemplate="content">
-      <app-video-lessons [isActive]="videoLessons.selected"></app-video-lessons>
-    </ng-template>
-  </p-tabPanel>
-  <p-tabPanel header="Презентации" leftIcon="pi pi-book">
-    <ng-template pTemplate="content">
-      <app-presentation-lessons></app-presentation-lessons>
-    </ng-template>
-  </p-tabPanel>
-  <p-tabPanel #onlineLessons header="Онлайн лекции" leftIcon="pi pi-play-circle">
-    <ng-template pTemplate="content">
-      <app-online-lessons [isActive]="onlineLessons.selected"></app-online-lessons>
-    </ng-template>
-  </p-tabPanel>
-  <p-tabPanel header="Тесты" leftIcon="pi pi-verified">
-    <ng-template pTemplate="content">
-      <div>Тесты</div>
+      <app-course-panel [course]="course.value" [mode]="CoursePanelMode.STUDENT"></app-course-panel>
     </ng-template>
   </p-tabPanel>
 </p-tabView>
+
+
+<!--
+<p-tabPanel #videoLessons header="Видеоуроки" leftIcon="pi pi-video">
+  <ng-template pTemplate="content">
+    <app-video-lessons [isActive]="videoLessons.selected"></app-video-lessons>
+  </ng-template>
+</p-tabPanel>
+<p-tabPanel header="Презентации" leftIcon="pi pi-book">
+  <ng-template pTemplate="content">
+    <app-presentation-lessons></app-presentation-lessons>
+  </ng-template>
+</p-tabPanel>
+<p-tabPanel #onlineLessons header="Онлайн лекции" leftIcon="pi pi-play-circle">
+  <ng-template pTemplate="content">
+    <app-online-lessons [isActive]="onlineLessons.selected"></app-online-lessons>
+  </ng-template>
+</p-tabPanel>
+<p-tabPanel header="Тесты" leftIcon="pi pi-verified">
+  <ng-template pTemplate="content">
+    <div>Тесты</div>
+  </ng-template>
+</p-tabPanel>-->

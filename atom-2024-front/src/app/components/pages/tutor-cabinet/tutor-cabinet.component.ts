@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PrimeTemplate} from 'primeng/api';
 import {TabViewModule} from 'primeng/tabview';
-import {VideoLessonsComponent} from '../student-cabinet/video-lessons/video-lessons.component';
+import {VideoLessonsComponent} from '../student-cabinet/samples/video-lessons/video-lessons.component';
 import {CardModule} from 'primeng/card';
 import {RouterLink} from '@angular/router';
 import {StudyGroupCardComponent} from './study-group-card/study-group-card.component';
@@ -13,8 +13,8 @@ import {StudyGroupDto} from '../../../gen/atom2024backend-dto';
 import {lastValueFrom} from 'rxjs';
 import {InputTextModule} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
-import {OnlineLessonsComponent} from '../student-cabinet/online-lessons/online-lessons.component';
-import {PresentationLessonsComponent} from '../student-cabinet/presentation-lessons/presentation-lessons.component';
+import {OnlineLessonsComponent} from '../student-cabinet/samples/online-lessons/online-lessons.component';
+import {PresentationLessonsComponent} from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
 
 @Component({
   selector: 'app-tutor-cabinet',
@@ -40,17 +40,18 @@ export class TutorCabinetComponent implements OnInit {
   loading = false;
   activeIndex = 0;
 
-  systemTabsCount = 2;
-  studyGroups: StudyGroupDto[] = [];
+  systemTabsCount = 3;
+  // TODO группы для препода!
+  availableStudyGroups: StudyGroupDto[] = [];
   openedGroups: { value: StudyGroupDto, title: string }[] = [];
 
   filterValue: string;
 
   get filteredGroups() {
     if (this.filterValue) {
-      return this.studyGroups.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      return this.availableStudyGroups.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
     } else {
-      return this.studyGroups;
+      return this.availableStudyGroups;
     }
   }
 
@@ -64,7 +65,7 @@ export class TutorCabinetComponent implements OnInit {
   async init() {
     this.loading = true;
     try {
-      this.studyGroups = await lastValueFrom(this.studyGroupService.getStudyGroups());
+      this.availableStudyGroups = await lastValueFrom(this.studyGroupService.getStudyGroups());
     } finally {
       this.loading = false;
     }

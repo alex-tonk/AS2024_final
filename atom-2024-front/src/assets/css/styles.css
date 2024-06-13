@@ -29,6 +29,10 @@ div, span, input {
   text-overflow: ellipsis;
 }
 
+div.p-tabview-nav-content {
+  text-overflow: unset !important;
+}
+
 .p-overflow-hidden {
   padding-right: 0;
 }

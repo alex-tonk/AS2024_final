@@ -48,3 +48,7 @@
 :host ::ng-deep .p-card-content {
   padding: 0.5rem;
 }
+
+>>> .p-dialog-mask {
+  z-index: 1;
+}

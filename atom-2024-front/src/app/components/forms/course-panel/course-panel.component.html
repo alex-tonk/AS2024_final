@@ -1,0 +1,60 @@
+<div class="content" [class.content-disabled]="loading">
+  <div class="table-toolbar header">
+    <div class="table-toolbar-left">
+      <b>{{ header }}</b>
+    </div>
+
+    <div class="table-toolbar-right">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
+        </span>
+    </div>
+  </div>
+
+  <div class="module-list-wrapper">
+    <p-accordion [multiple]="true">
+      <p-accordionTab *ngFor="let module of filteredModules"
+                      [selected]="mode != CoursePanelMode.ADMIN">
+        <ng-template pTemplate="header">
+          <div style="flex: none">
+            {{ module.name }}
+          </div>
+
+          <div *ngIf="mode == CoursePanelMode.ADMIN" class="admin-module-controls">
+            <p-button pTooltip="Редактировать название текущего модуля" icon="pi pi-pencil"
+                      styleClass="button-clear" tooltipPosition="left"
+                      (click)="editModule(module, $event)">
+            </p-button>
+
+            <p-button pTooltip="Удалить текущий модуль" icon="pi pi-trash" severity="danger"
+                      styleClass="button-clear" tooltipPosition="left"
+                      (click)="deleteModule(module, $event)">
+            </p-button>
+          </div>
+        </ng-template>
+
+        <div class="module-wrapper">
+          <div *ngFor="let lesson of module.lessons">
+            {{ lesson }}
+          </div>
+
+          <app-survey *ngIf="mode == CoursePanelMode.ADMIN"></app-survey>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+
+  <p-footer *ngIf="mode == CoursePanelMode.ADMIN" class="admin-footer">
+    <p-button label="Добавить модуль"
+              icon="pi pi-plus" severity="success"
+              (click)="createModule()">
+    </p-button>
+
+    <p-button styleClass="button-clear"
+              label="Назад" icon="pi pi-chevron-left"
+              pTooltip="Вернуться к списку курсов"
+              (click)="backToCourseList.emit()">
+    </p-button>
+  </p-footer>
+</div>

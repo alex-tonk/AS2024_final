@@ -20,6 +20,8 @@ import {Object} from 'core-js';
 import {FormsModule} from '@angular/forms';
 import {CourseRegistrationFormComponent} from './course-registration-form/course-registration-form.component';
 import {getField} from '../../../../services/field-accessor';
+import {SplitterModule} from 'primeng/splitter';
+import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel/course-panel.component';
 
 @Component({
   selector: 'app-course-list',
@@ -38,7 +40,9 @@ import {getField} from '../../../../services/field-accessor';
     TooltipModule,
     UserRegistrationFormComponent,
     FormsModule,
-    CourseRegistrationFormComponent
+    CourseRegistrationFormComponent,
+    SplitterModule,
+    CoursePanelComponent
   ],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css'
@@ -65,6 +69,7 @@ export class CourseListComponent implements OnInit {
   }]
 
   courseFormData: { courseId?: number } | null;
+  isCourseConstructorMode = false;
 
   get columnFields(): string[] {
     const arr = this.columns
@@ -156,4 +161,5 @@ export class CourseListComponent implements OnInit {
 
   protected readonly ExportTable = ExportTable;
   protected readonly getField = getField;
+  protected readonly CoursePanelMode = CoursePanelMode;
 }
