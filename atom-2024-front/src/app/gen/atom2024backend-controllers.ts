@@ -42,6 +42,10 @@ export class ChatService {
     return this.httpService.get<ChatDto[]>('chats', {responseType: 'json'});
   }
 
+ public getUsers(): Observable<UserDto[]>  {
+    return this.httpService.get<UserDto[]>('chats/all-users', {responseType: 'json'});
+  }
+
  public leaveChat(chatId: number): Observable<void>  {
     return this.httpService.delete<void>('chats/' + chatId + '/leave');
   }

@@ -63,13 +63,8 @@ public class StudyGroupReader {
     }
 
     public List<StudyGroupDto> getStudyGroupsForTutor(TutorId tutorId) {
-        QCourseWithTutors cwt = new QCourseWithTutors("cwt");
-        QTutorInCourse tic = new QTutorInCourse("tic");
         return baseQuery()
-                .innerJoin(studyGroup.courses, cwt)
-                .innerJoin(cwt.tutors, tic)
-                .where(tic.tutor.id.eq(tutorId))
-                .distinct()
+                .where(courseWithTutors.tutors.any().id.tutorId.eq(tutorId))
                 .fetch();
     }
 
@@ -94,11 +89,9 @@ public class StudyGroupReader {
     }
 
     public List<CourseWithTutorsDto> getCoursesForTutor(StudyGroupId studyGroupId, TutorId tutorId) {
-        QTutorInCourse tic = new QTutorInCourse("tic");
         return courseQuery()
                 .where(courseWithTutors.studyGroup.id.eq(studyGroupId))
-                .innerJoin(courseWithTutors.tutors, tic)
-                .where(tic.tutor.id.eq(tutorId))
+                .where(courseWithTutors.tutors.any().id.tutorId.eq(tutorId))
                 .fetch();
     }
 

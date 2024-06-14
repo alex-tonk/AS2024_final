@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {AttachmentDto, ChatDto, MessageDto} from '../../../gen/dto-chat';
-import {ChatService, UserAdminService} from '../../../gen/atom2024backend-controllers';
+import {ChatService} from '../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {UserService} from '../../../services/user.service';
 import {FormsModule} from '@angular/forms';
@@ -92,7 +92,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   constructor(private chatService: ChatService,
               private userService: UserService,
-              private userAdminService: UserAdminService,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,
               private fileService: FileService) {
@@ -132,7 +131,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.chats = await lastValueFrom(this.chatService.getChats());
-    this.allUsers = await lastValueFrom(this.userAdminService.getUsers());
+    this.allUsers = await lastValueFrom(this.chatService.getUsers());
 
     this.reloadInterval = setInterval(this.reloadChat.bind(this), 1000);
   }

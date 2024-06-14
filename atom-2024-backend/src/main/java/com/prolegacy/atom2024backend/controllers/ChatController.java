@@ -2,9 +2,11 @@ package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptIgnore;
+import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.User;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
@@ -38,6 +40,8 @@ public class ChatController {
     private ChatService chatService;
     @Autowired
     private FileUploadService fileUploadService;
+    @Autowired
+    private UserReader userReader;
 
     @GetMapping
     public List<ChatDto> getChats() {
@@ -99,5 +103,10 @@ public class ChatController {
                 .orElseThrow(() -> new BusinessLogicException("Приложение не найдено"));
 
         return fileUploadService.serveFile(attachmentDto.getFileId());
+    }
+
+    @GetMapping("all-users")
+    public List<UserDto> getUsers() {
+        return userReader.getUsers();
     }
 }
