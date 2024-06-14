@@ -115,6 +115,13 @@ public class StudyGroupController {
         return studyGroupReader.getCourses(studyGroupId);
     }
 
+    @GetMapping("{studyGroupId}/courses/for-tutor")
+    public List<CourseWithTutorsDto> getCoursesForTutor(@PathVariable StudyGroupId studyGroupId) {
+        UserDto user = userReader.getUser(userProvider.get().getId());
+        if (user.getTutorId() == null) throw new BusinessLogicException("Вы не являетесь преподавателем");
+        return studyGroupReader.getCoursesForTutor(studyGroupId, user.getTutorId());
+    }
+
     @PostMapping("{studyGroupId}/courses/search")
     public PageResponse<CourseWithTutorsDto> searchTutors(@PathVariable StudyGroupId studyGroupId, @RequestBody PageQuery pageQuery) {
         return studyGroupReader.searchCourses(studyGroupId, pageQuery);

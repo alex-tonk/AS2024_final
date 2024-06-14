@@ -1,6 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CourseService, StudentService} from '../../../../gen/atom2024backend-controllers';
-import {CourseDto, StudentDto, StudyGroupDto} from '../../../../gen/atom2024backend-dto';
+import {StudyGroupService} from '../../../../gen/atom2024backend-controllers';
+import {
+  CourseDto,
+  CourseWithTutorsDto,
+  StudentDto,
+  StudentInGroupDto,
+  StudyGroupDto
+} from '../../../../gen/atom2024backend-dto';
 import {lastValueFrom} from 'rxjs';
 import {NgForOf, NgIf} from '@angular/common';
 import {OrderListModule} from 'primeng/orderlist';
@@ -27,30 +33,27 @@ import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel
 export class StudyGroupCardComponent implements OnInit {
   @Input() studyGroup: StudyGroupDto;
 
-  courses: CourseDto[] = [];
-  students: StudentDto[] = [];
+  courses: CourseWithTutorsDto[] = [];
+  students: StudentInGroupDto[] = [];
 
   selectedCourse: CourseDto;
   selectedStudent: StudentDto;
 
   loading = false;
 
-  constructor(
-    private courseService: CourseService,
-    private studentService: StudentService,
-  ) {
+  constructor(private studyGroupService: StudyGroupService) {
   }
 
-  ngOnInit(): void {
-    this.init();
+  async ngOnInit() {
+    await this.init();
   }
 
   async init() {
     this.loading = true;
     try {
       // TODO Курсы группы для препода, студенты группы
-      this.courses = await lastValueFrom(this.courseService.getCourses());
-      this.students = await lastValueFrom(this.studentService.getStudents());
+      this.courses = await lastValueFrom(this.studyGroupService.getCoursesForTutor(this.studyGroup.id!));
+      this.students = await lastValueFrom(this.studyGroupService.getStudents(this.studyGroup.id!));
     } finally {
       this.loading = false;
     }

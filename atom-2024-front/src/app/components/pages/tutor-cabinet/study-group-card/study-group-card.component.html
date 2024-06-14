@@ -8,7 +8,7 @@
             [options]="courses"
             [(ngModel)]="selectedCourse"
             [listStyle]="{'max-height': 'unset', 'height': '100%'}"
-            optionLabel="name"
+            optionLabel="course.name"
             [filter]="true"/>
         </div>
       </div>
@@ -24,7 +24,7 @@
                 [options]="students"
                 [(ngModel)]="selectedStudent"
                 [listStyle]="{'max-height': 'unset', 'height': '100%'}"
-                optionLabel="user.fullName"
+                optionLabel="student.user.fullName"
                 [filter]="true"/>
             </div>
           </div>

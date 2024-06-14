@@ -93,6 +93,15 @@ public class StudyGroupReader {
         return courseQuery().where(courseWithTutors.id.studyGroupId.eq(studyGroupId)).fetch();
     }
 
+    public List<CourseWithTutorsDto> getCoursesForTutor(StudyGroupId studyGroupId, TutorId tutorId) {
+        QTutorInCourse tic = new QTutorInCourse("tic");
+        return courseQuery()
+                .where(courseWithTutors.studyGroup.id.eq(studyGroupId))
+                .innerJoin(courseWithTutors.tutors, tic)
+                .where(tic.tutor.id.eq(tutorId))
+                .fetch();
+    }
+
     public PageResponse<CourseWithTutorsDto> searchCourses(StudyGroupId studyGroupId, PageQuery pageQuery) {
         return pageHelper.paginate(courseQuery().where(courseWithTutors.id.studyGroupId.eq(studyGroupId)), pageQuery);
     }
