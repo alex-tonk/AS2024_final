@@ -12,7 +12,7 @@ import {ChatRegistrationDialogComponent} from '../chat-registration-dialog/chat-
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {TooltipModule} from 'primeng/tooltip';
 import {DialogService} from 'primeng/dynamicdialog';
-import {Listbox, ListboxModule} from 'primeng/listbox';
+import {ListboxModule} from 'primeng/listbox';
 import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
 import {FileService} from '../../../services/file.service';
 import FileSaver from 'file-saver';
@@ -95,12 +95,14 @@ export class ChatComponent implements OnInit, OnDestroy {
               private userAdminService: UserAdminService,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,
-              private dialogService: DialogService,
               private fileService: FileService) {
   }
 
   async onKeyPress(event: KeyboardEvent) {
-    if (event.key?.toLowerCase() !== 'enter' || !this.newMessage.content || this.selectedChat?.id == null) {
+    const content = (this.newMessage.content ?? '').trim();
+    if (event.key?.toLowerCase() !== 'enter'
+      || (!content && (!this.newMessage.attachments || this.newMessage.attachments.length === 0))
+      || this.selectedChat?.id == null) {
       return;
     }
     if (event.shiftKey) {
@@ -144,6 +146,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.newMessage.content = this.newMessage.content?.trim();
     await lastValueFrom(this.chatService.addMessage(this.selectedChat.id, this.newMessage));
     this.newMessage = new MessageDto();
     await this.reloadChat();
@@ -212,7 +215,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     try {
       if (this.selectedChat && this.addingUser) {
         await lastValueFrom(this.chatService.addUserToChat(this.selectedChat?.id!, this.addingUser?.id!));
-        this.messageService.add({severity: 'success', summary: 'Выполнено', detail: `${this.addingUser.fullName} добавлен в чат`});
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Выполнено',
+          detail: `${this.addingUser.fullName} добавлен в чат`
+        });
         await this.reloadChat();
         this.addingUser = undefined;
       }
@@ -228,7 +235,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async downloadAttachment(attachment: AttachmentDto) {
-    let blob = await lastValueFrom(this.fileService.getAttachment(attachment.fileId!));
+    let blob = await lastValueFrom(this.fileService.getAttachment(this.selectedChat?.id!, attachment.message?.id!, attachment.fileId!));
     FileSaver.saveAs(blob, attachment.fileName);
   }
 

@@ -16,14 +16,14 @@ export class FileService {
   public uploadFile(file: File): Observable<AttachmentDto> {
     let formData = new FormData();
     formData.append('file', file);
-    return this.httpService.post<AttachmentDto>('chats/attachment', formData, {responseType: 'json'});
+    return this.httpService.post<AttachmentDto>('chats/attachments', formData, {responseType: 'json'});
   }
 
   public deleteFile(fileId: number): Observable<void> {
-    return this.httpService.delete<void>('chats/attachment/' + fileId);
+    return this.httpService.delete<void>('chats/attachments/' + fileId);
   }
 
-  public getAttachment(attachment_id: number): Observable<Blob> {
-    return this.httpService.get('chats/attachment/' + attachment_id + '', {responseType: 'blob'});
+  public getAttachment(chatId: number, messageId: number, attachmentId: number): Observable<Blob> {
+    return this.httpService.get(`chats/${chatId}/messages/${messageId}/attachments/${attachmentId}`, {responseType: 'blob'});
   }
 }
