@@ -8,4 +8,5 @@ public class ModuleDto {
     ModuleId id;
     ModuleDto module;
     String name;
+    Long orderNumber;
 }

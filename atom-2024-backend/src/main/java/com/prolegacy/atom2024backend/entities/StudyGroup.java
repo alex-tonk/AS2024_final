@@ -32,6 +32,8 @@ public class StudyGroup {
     private List<CourseWithTutors> courses = new ArrayList<>();
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentInGroup> students = new ArrayList<>();
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonInStudyGroup> lessons = new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private Chat chat;

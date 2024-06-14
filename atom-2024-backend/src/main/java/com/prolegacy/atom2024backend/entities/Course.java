@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,13 @@ public class Course {
     }
 
     public void addModule(ModuleDto moduleDto) {
-        modules.add(new Module(moduleDto));
+        Module module = new Module(moduleDto);
+        module.setOrderNumber(
+                this.modules.stream()
+                        .map(Module::getOrderNumber)
+                        .max(Comparator.comparingLong(o -> o))
+                        .orElse(0L) + 1L
+        );
+        modules.add(module);
     }
 }
