@@ -46,15 +46,15 @@
   </div>
 
   <p-footer *ngIf="mode == CoursePanelMode.ADMIN" class="admin-footer">
-    <p-button label="Добавить модуль"
-              icon="pi pi-plus" severity="success"
-              (click)="createModule()">
-    </p-button>
-
     <p-button styleClass="button-clear"
               label="Назад" icon="pi pi-chevron-left"
               pTooltip="Вернуться к списку курсов"
               (click)="backToCourseList.emit()">
+    </p-button>
+
+    <p-button label="Добавить модуль"
+              icon="pi pi-plus" severity="success"
+              (click)="createModule()">
     </p-button>
   </p-footer>
 </div>

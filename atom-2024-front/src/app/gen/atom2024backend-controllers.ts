@@ -21,6 +21,10 @@ export class ChatService {
     return this.httpService.put<void>('chats/' + chatId + '', JSON.stringify(messageDto) , {headers});
   }
 
+ public addUserToChat(chatId: number, userId: number): Observable<void>  {
+    return this.httpService.post<void>('chats/' + chatId + '/users/' + userId + '', null );
+  }
+
  public constructor(httpService: HttpClient) {
     this.httpService = httpService;
   }

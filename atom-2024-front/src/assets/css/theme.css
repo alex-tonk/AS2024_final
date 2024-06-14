@@ -54,6 +54,10 @@
   border: 1px solid var(--primary-color);
 }
 
+.bordered-bottom {
+  border-bottom: 1px solid var(--primary-color);
+}
+
 .no-bordered {
   border: none;
 }

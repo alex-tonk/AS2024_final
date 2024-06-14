@@ -125,6 +125,13 @@ div.p-tabview-nav-content {
   background: var(--primary-alfa-color);
 }
 
+.p-button.p-fileupload-choose.button-clear {
+  background: none;
+  color: var(--primary-color);
+  border: none;
+  border-bottom: 1px solid transparent;
+}
+
 /* CARD & FORM */
 
 hr {
@@ -494,6 +501,10 @@ p-listbox > div {
 }
 
 /* SPLITTER */
+.p-splitter-panel-nested {
+  outline: none !important;
+}
+
 .min400-min340 .p-splitter-horizontal > :nth-child(1) {
   min-width: 400px;
 }
@@ -511,3 +522,6 @@ p-listbox > div {
   min-width: 200px;
 }
 
+p-splitter.full-width {
+  width: 100%;
+}

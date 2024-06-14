@@ -21,7 +21,7 @@ export class ApiInterceptor implements HttpInterceptor {
       req = req.clone({url: `${this.configService.baseUrl}/${req.url}`});
     }
     return next.handle(req).pipe(
-      catchError((response: HttpErrorResponse) => {
+      catchError(async (response: HttpErrorResponse) => {
         try {
           switch (response.status) {
             case 401: {
@@ -35,7 +35,10 @@ export class ApiInterceptor implements HttpInterceptor {
               break;
             }
             default: {
-              const error = typeof response.error === 'string' ? JSON.parse(response.error) : response.error;
+              let error = typeof response.error === 'string' ? JSON.parse(response.error) : response.error;
+              if (error instanceof Blob) {
+                error = JSON.parse(await error.text());
+              }
               if (this.handledErrors.includes(error.className)) {
                 this.showError(error.message);
               } else {

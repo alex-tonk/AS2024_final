@@ -2,6 +2,7 @@ package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptIgnore;
+import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
@@ -58,6 +59,11 @@ public class ChatController {
         chatService.leaveChat(chatId);
     }
 
+    @PostMapping("{chatId}/users/{userId}")
+    public void addUserToChat(@PathVariable ChatId chatId, @PathVariable UserId userId) {
+        chatService.addUserToChat(chatId, userId);
+    }
+
     @PostMapping("attachment")
     @TypescriptIgnore
     public AttachmentDto uploadFile(@RequestParam MultipartFile file) {
@@ -70,9 +76,9 @@ public class ChatController {
         fileUploadService.deleteFile(fileId);
     }
 
-    @GetMapping("attachment/{attachment_id}")
+    @GetMapping("attachment/{fileId}")
     @TypescriptIgnore
-    public Resource getAttachment(@PathVariable FileId attachment_id) {
-        return fileUploadService.serveFile(attachment_id);
+    public Resource getAttachment(@PathVariable FileId fileId) {
+        return fileUploadService.serveFile(fileId);
     }
 }

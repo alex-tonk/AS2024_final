@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {AttachmentDto, ChatDto, MessageDto} from '../../../gen/dto-chat';
-import {ChatService} from '../../../gen/atom2024backend-controllers';
+import {ChatService, UserAdminService} from '../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {UserService} from '../../../services/user.service';
 import {FormsModule} from '@angular/forms';
@@ -9,15 +9,21 @@ import {ChipsModule} from 'primeng/chips';
 import {ButtonModule} from 'primeng/button';
 import {DialogModule} from 'primeng/dialog';
 import {ChatRegistrationDialogComponent} from '../chat-registration-dialog/chat-registration-dialog.component';
-import {ConfirmationService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {TooltipModule} from 'primeng/tooltip';
 import {DialogService} from 'primeng/dynamicdialog';
-import {Listbox} from 'primeng/listbox';
+import {Listbox, ListboxModule} from 'primeng/listbox';
 import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
 import {FileService} from '../../../services/file.service';
 import FileSaver from 'file-saver';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {BadgeModule} from 'primeng/badge';
+import {SplitterModule} from 'primeng/splitter';
+import {SkeletonModule} from 'primeng/skeleton';
+import {ChatType} from '../../../gen/entities-enums';
+import {DropdownModule} from 'primeng/dropdown';
+import {UserDto} from '../../../models/UserDto';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 @Component({
   selector: 'app-chat',
@@ -34,7 +40,12 @@ import {BadgeModule} from 'primeng/badge';
     TooltipModule,
     FileUploadModule,
     OverlayPanelModule,
-    BadgeModule
+    BadgeModule,
+    SplitterModule,
+    SkeletonModule,
+    DropdownModule,
+    ListboxModule,
+    InputTextareaModule
   ],
   providers: [DialogService],
   templateUrl: './chat.component.html',
@@ -47,24 +58,52 @@ export class ChatComponent implements OnInit, OnDestroy {
   registrationDialogLoading = false;
 
   chats: ChatDto[] = [];
-  chat?: ChatDto;
+  selectedChat?: ChatDto;
   newMessage: MessageDto = new MessageDto();
 
   loading = false;
+  isChatMemberListVisible = false;
+
+  addingUser?: UserDto;
+  allUsers: UserDto[] = [];
 
   private reloadInterval: number;
 
   isNotMyMessage = (message: MessageDto) => message.author?.id !== this.userService.user?.id;
 
+  filterValue: string;
+
+  get filteredChats() {
+    if (this.filterValue) {
+      return this.chats.filter(c => JSON.stringify(c).toLowerCase().includes(this.filterValue.toLowerCase()))
+    } else {
+      return this.chats;
+    }
+  }
+
+  get filteredUsers() {
+    if (this.selectedChat && this.selectedChat.members) {
+      const currentIds = this.selectedChat.members.map(m => m.id);
+      return this.allUsers.filter(u => !currentIds.includes(u.id));
+    } else {
+      return this.allUsers;
+    }
+  }
+
   constructor(private chatService: ChatService,
               private userService: UserService,
+              private userAdminService: UserAdminService,
               private confirmationService: ConfirmationService,
+              private messageService: MessageService,
               private dialogService: DialogService,
               private fileService: FileService) {
   }
 
   async onKeyPress(event: KeyboardEvent) {
-    if (event.key !== 'enter' || !this.newMessage.content || this.chat?.id == null) {
+    if (event.key?.toLowerCase() !== 'enter' || !this.newMessage.content || this.selectedChat?.id == null) {
+      return;
+    }
+    if (event.shiftKey) {
       return;
     }
     await this.sendMessage();
@@ -75,22 +114,23 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (!this.chatListsEquals(this.chats, newChats)) {
       this.chats = newChats;
     }
-    if (this.chat?.id == null) {
+    if (this.selectedChat?.id == null) {
       return;
     }
     try {
-      let newChat = await lastValueFrom(this.chatService.getChat(this.chat.id));
-      if (!this.chatsEquals(this.chat, newChat)) {
-        this.chat = newChat;
+      let newChat = await lastValueFrom(this.chatService.getChat(this.selectedChat.id));
+      if (!this.chatsEquals(this.selectedChat, newChat)) {
+        this.selectedChat = newChat;
       }
     } catch (e) {
-      this.chat = undefined;
+      this.selectedChat = undefined;
       throw e;
     }
   }
 
   async ngOnInit(): Promise<void> {
     this.chats = await lastValueFrom(this.chatService.getChats());
+    this.allUsers = await lastValueFrom(this.userAdminService.getUsers());
 
     this.reloadInterval = setInterval(this.reloadChat.bind(this), 1000);
   }
@@ -100,11 +140,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async sendMessage() {
-    if (this.chat?.id == null) {
+    if (this.selectedChat?.id == null) {
       return;
     }
 
-    await lastValueFrom(this.chatService.addMessage(this.chat.id, this.newMessage));
+    await lastValueFrom(this.chatService.addMessage(this.selectedChat.id, this.newMessage));
     this.newMessage = new MessageDto();
     await this.reloadChat();
     this.scrollToBottom();
@@ -117,8 +157,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     try {
       this.registrationDialogLoading = true;
-      await lastValueFrom(this.chatService.createChat(event));
+      const result = await lastValueFrom(this.chatService.createChat(event));
+      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Чат создан'});
       await this.reloadChat();
+      await this.selectChat(result);
       this.registrationDialogVisible = false;
     } finally {
       this.registrationDialogLoading = false;
@@ -126,7 +168,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async selectChat(chat: ChatDto) {
-    this.chat = await lastValueFrom(this.chatService.getChat(chat.id!));
+    this.selectedChat = await lastValueFrom(this.chatService.getChat(chat.id!));
     this.scrollToBottom('instant');
   }
 
@@ -150,8 +192,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         try {
           await lastValueFrom(this.chatService.leaveChat(chat.id));
-          if (this.chat?.id === chat.id) {
-            this.chat = undefined;
+          if (this.selectedChat?.id === chat.id) {
+            this.selectedChat = undefined;
           }
         } finally {
           this.chats = await lastValueFrom(this.chatService.getChats());
@@ -161,16 +203,22 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   showMembers() {
-    let dynamicDialogRef = this.dialogService.open(Listbox, {
-      modal: true,
-      header: 'Участники чата'
-    });
-    dynamicDialogRef.onChildComponentLoaded.subscribe(value => {
-      value.readonly = true;
-      value.autoOptionFocus = false;
-      value.optionLabel = 'fullName';
-      value.options = this.chat?.members!;
-    })
+    this.addingUser = undefined;
+    this.isChatMemberListVisible = true;
+  }
+
+  async addUserToChat() {
+    this.loading = true;
+    try {
+      if (this.selectedChat && this.addingUser) {
+        await lastValueFrom(this.chatService.addUserToChat(this.selectedChat?.id!, this.addingUser?.id!));
+        this.messageService.add({severity: 'success', summary: 'Выполнено', detail: `${this.addingUser.fullName} добавлен в чат`});
+        await this.reloadChat();
+        this.addingUser = undefined;
+      }
+    } finally {
+      this.loading = false;
+    }
   }
 
   async addAttachment(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
@@ -180,7 +228,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async downloadAttachment(attachment: AttachmentDto) {
-    let blob = await lastValueFrom(this.fileService.getAttachment(attachment.id!));
+    let blob = await lastValueFrom(this.fileService.getAttachment(attachment.fileId!));
     FileSaver.saveAs(blob, attachment.fileName);
   }
 
@@ -208,4 +256,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.newMessage.attachments = this.newMessage.attachments?.filter(v => v !== attachment);
     await lastValueFrom(this.fileService.deleteFile(attachment.fileId!));
   }
+
+  protected readonly ChatType = ChatType;
 }

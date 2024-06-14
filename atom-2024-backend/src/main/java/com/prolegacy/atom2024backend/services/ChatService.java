@@ -2,6 +2,8 @@ package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.User;
+import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.common.auth.exceptions.UserNotFoundException;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
@@ -50,6 +52,13 @@ public class ChatService {
     public void addMessage(ChatId chatId, MessageDto messageDto) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
         chat.addMessage(userProvider.get(), messageDto);
+    }
+
+    public void addUserToChat(ChatId chatId, UserId userId) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        chat.addMember(user);
     }
 
     public void leaveChat(ChatId chatId) {

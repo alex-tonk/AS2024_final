@@ -1,103 +1,170 @@
 <div class="main-area" (keydown)="onKeyPress($event)">
-  <div class="room-list">
-    <div class="room-list-header">
-      <b>Список чатов</b>
-      <p-button icon="pi pi-plus"
-                styleClass="button-clear" pTooltip="Добавить новый чат"
-                (click)="registrationDialogVisible = true">
-      </p-button>
-    </div>
-    <hr>
-    <div style="overflow: auto">
-      <div *ngFor="let chatRoom of chats" style="padding: 5px">
-        <div class="chat-room"
-             [class.active-chat]="chatRoom.id === chat?.id"
-             (click)="selectChat(chatRoom)">
-          <div style="display: inline-flex">
-            <div><b>{{ chatRoom.name }}</b></div>
-            <div style="flex: auto"></div>
-            <p-button icon="pi pi-sign-out" styleClass="button-clear" class="chat-room-close-btn"
-                      pTooltip="Покинуть чат"
-                      (onClick)="leaveChat(chatRoom)">
-            </p-button>
-          </div>
-          <div class="last-message">
-            <ng-container *ngIf="!!chatRoom.lastMessage; else empty">
-              <div style="flex: none">
-                {{ chatRoom.lastMessage.author?.lastname ?? '' }} {{ chatRoom.lastMessage.author?.firstname ?? '' }}:
+  <p-splitter [style]="{ height: '100%'}" [panelSizes]="[30, 70]" class="min340-min340 full-width">
+    <ng-template pTemplate>
+      <div class="room-list">
+        <div class="room-list-header">
+          <b>Ваши чаты</b>
+          <p-button icon="pi pi-plus"
+                    styleClass="button-clear" pTooltip="Создать новый чат"
+                    (click)="registrationDialogVisible = true">
+          </p-button>
+        </div>
+        <hr>
+        <div class="p-input-icon-left" style="padding: 0 5px">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" [(ngModel)]="filterValue" style="width: 100%" placeholder="Быстрый поиск"/>
+        </div>
+        <hr>
+        <div style="overflow: auto">
+          <div *ngFor="let chatRoom of filteredChats" style="padding: 5px">
+            <div class="chat-room"
+                 [class.active-chat]="chatRoom.id === selectedChat?.id"
+                 (click)="selectChat(chatRoom)">
+              <div style="display: inline-flex">
+                <div><b>{{ chatRoom.name }}</b></div>
+                <div style="flex: auto"></div>
+                <p-button *ngIf="chatRoom.type === ChatType.PUBLIC"
+                          icon="pi pi-sign-out" styleClass="button-clear" class="chat-room-close-btn"
+                          pTooltip="Покинуть чат"
+                          (onClick)="leaveChat(chatRoom)">
+                </p-button>
               </div>
-              <div class="last-message-content">{{ chatRoom.lastMessage.content }}</div>
-            </ng-container>
-            <ng-template #empty>Сообщений нет</ng-template>
-          </div>
-          <div style="width: 100%; text-align: right; font-size: 12px; padding-bottom: 5px;">
-            {{ chatRoom.lastMessage?.createdDate | date:'dd MMM HH:mm' }}
+
+              <div class="last-message">
+                <ng-container *ngIf="!!chatRoom.lastMessage; else empty">
+                  <div style="flex: none">
+                    {{ chatRoom.lastMessage.author?.lastname ?? '' }} {{ chatRoom.lastMessage.author?.firstname ?? '' }}
+                    :
+                  </div>
+                  <div class="last-message-content">{{ chatRoom.lastMessage.content }}</div>
+                </ng-container>
+                <ng-template #empty>Сообщений нет</ng-template>
+              </div>
+
+              <div style="width: 100%; text-align: right; font-size: 12px; padding-bottom: 5px;">
+                {{ chatRoom.lastMessage?.createdDate | date:'dd MMM HH:mm' }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="chat-box" [class.content-disabled]="chat?.id == null">
-    <div class="tabPanel-content">
-      <div class="message-feed-wrapper">
-        <div class="chat-header">
-          <p-button icon="pi pi-users" rounded styleClass="button-clear"
-                    [label]="chat != undefined ? '(' + chat.members?.length + ')' : ''"
-                    (onClick)="showMembers()"></p-button>
+    </ng-template>
+
+    <ng-template pTemplate>
+      <div *ngIf="!!selectedChat; else skeleton" class="chat-box">
+        <div style="padding: 5px;">
+          <div class="chat-header">
+            <div style="width: 100%; text-align: center">{{ selectedChat.name }}</div>
+            <p-button icon="pi pi-users" rounded styleClass="button-clear"
+                      [label]="'(' + selectedChat.members?.length + ')'"
+                      pTooltip="Посмотреть участников"
+                      (onClick)="showMembers()"></p-button>
+          </div>
         </div>
-        <div *ngFor="let message of chat?.messages ?? []" style="display: grid; width: 100%;">
-          <div class="message-wrapper" [class.not-my-message]="isNotMyMessage(message)">
-            <span style="flex: auto;">{{ message.content }}</span>
-            <div *ngIf="!!message.attachments && message.attachments.length > 0"
-                 style="display: inline-flex; gap: 3px">
-              <i *ngFor="let attachment of message.attachments" class="pi pi-file"
-                 [pTooltip]="attachment.fileName" (click)="downloadAttachment(attachment)">
+        <div class="message-feed-wrapper">
+          <div *ngFor="let message of selectedChat?.messages ?? []" style="display: grid; width: 100%;">
+            <div class="message-wrapper" [class.not-my-message]="isNotMyMessage(message)">
+              <span style="flex: auto; white-space: pre-wrap;">{{ message.content }}</span>
+              <div *ngIf="!!message.attachments && message.attachments.length > 0" class="attachments-wrapper">
+                <div style="font-size: xx-small">Файлы:</div>
+                <i *ngFor="let attachment of message.attachments" class="pi pi-file" style="cursor: pointer"
+                   [pTooltip]="attachment.fileName" (click)="downloadAttachment(attachment)">
+                </i>
+              </div>
+              <div style="display: inline-flex; margin-top: 5px; font-size: x-small">
+                <b style="flex: none">{{ message.author?.lastname ?? '' }} {{ message.author?.firstname ?? '' }}:</b>
+                <span style="flex: none; margin-left: 5px"><u>{{ message.createdDate | date:'HH:mm:ss' }}</u></span>
+              </div>
+            </div>
+          </div>
+          <div #bottomAnchor></div>
+        </div>
+
+        <form #form="ngForm" [class.content-disabled]="loading">
+          <div class="new-attachments-wrapper">
+            <div *ngFor="let attachment of newMessage.attachments">
+              {{ attachment.fileName }}
+              <i class="pi pi-times"
+                 style="position: relative; transform: scale(0.6); top: -50%; cursor: pointer; color: red;"
+                 (click)="removeAttachment(attachment)">
               </i>
             </div>
-            <div style="display: inline-flex; margin-top: 5px; font-size: x-small">
-              <b style="flex: none">{{ message.author?.lastname ?? '' }} {{ message.author?.firstname ?? '' }}:</b>
-              <span style="flex: none; margin-left: 5px"><u>{{ message.createdDate | date:'HH:mm:ss' }}</u></span>
+          </div>
+
+          <div style="padding: 10px; display: inline-flex; gap: 15px; width: 100%">
+            <div pBadge
+                 [badgeDisabled]="!newMessage.attachments || newMessage.attachments.length === 0"
+                 [value]="newMessage.attachments?.length ?? 0">
+              <p-fileUpload #fileUpload
+                            mode="basic"
+                            [auto]="true"
+                            [customUpload]="true"
+                            chooseIcon="pi pi-paperclip"
+                            styleClass="button-clear"
+                            (uploadHandler)="addAttachment($event, fileUpload)">
+              </p-fileUpload>
+            </div>
+
+            <div style="display: inline-flex; gap: 5px; width: 100%">
+              <textarea pInputTextarea name="message" placeholder="Введите Ваше сообщение"
+                        [(ngModel)]="newMessage.content" [maxLength]="4000" [autoResize]="true"
+                        [rows]="1" style="width: 100%; max-height: 200px;"></textarea>
+              <p-button id="send-button" (click)="sendMessage()" icon="pi pi-send"
+                        styleClass="button-clear"
+                        [disabled]="!newMessage.content && !newMessage.attachments?.length">
+              </p-button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <ng-template #skeleton>
+        <div class="message-feed-wrapper">
+          <div class="skeleton-wrapper">
+            <div style="display: inline-flex; align-items: center; justify-content: center">
+              <div>
+                <p-skeleton width="6rem" styleClass="mb-2"/>
+                <p-skeleton width="5rem" styleClass="mb-2"/>
+                <p-skeleton width="2rem" styleClass="mb-2"/>
+              </div>
+              Выберите или создайте чат для начала переписки
             </div>
           </div>
         </div>
-        <div #bottomAnchor></div>
-      </div>
-
-      <form #form="ngForm" [class.content-disabled]="loading">
-        <div style="padding: 10px; display: inline-flex; gap: 15px">
-          <div pBadge
-               [badgeDisabled]="!newMessage.attachments || newMessage.attachments.length === 0"
-               [value]="newMessage.attachments?.length ?? 0">
-            <p-fileUpload #fileUpload
-                          mode="basic"
-                          [auto]="true"
-                          [customUpload]="true"
-                          (mouseenter)="!newMessage.attachments?.length || attachmentsPanel.show($event)"
-                          (uploadHandler)="addAttachment($event, fileUpload)">
-              <p-overlayPanel #attachmentsPanel>
-                <div style="display: inline-flex; gap: 15px">
-                  <i *ngFor="let attachment of newMessage.attachments" class="pi pi-file"
-                     [pTooltip]="attachment.fileName">
-                    <i class="pi pi-times"
-                       style="position: relative; transform: scale(0.6); top: -50%; left: -20%; cursor: pointer; color: red;"
-                    (click)="removeAttachment(attachment)"></i>
-                  </i>
-                </div>
-              </p-overlayPanel>
-            </p-fileUpload>
-          </div>
-          <input pInputText name="message" placeholder="Введите Ваше сообщение"
-                 [(ngModel)]="newMessage.content" size="255"
-                 style="width: 100%">
-          <button id="send-button" pButton (click)="sendMessage()" icon="pi pi-play"
-                  [disabled]="!newMessage.content && !newMessage.attachments?.length"></button>
-        </div>
-      </form>
-    </div>
-  </div>
+      </ng-template>
+    </ng-template>
+  </p-splitter>
 </div>
 
 <app-chat-registration-dialog *ngIf="registrationDialogVisible"
                               [loading]="registrationDialogLoading"
                               (result)="createChat($event)">
 </app-chat-registration-dialog>
+
+<p-dialog *ngIf="selectedChat" header="Участники чата"
+          [(visible)]="isChatMemberListVisible" [modal]="true"
+          [resizable]="false" [closable]="true">
+  <p-listbox
+    [options]="selectedChat.members!"
+    optionLabel="fullName"
+    [autoOptionFocus]="false"
+    [readonly]="true"/>
+  <p-footer *ngIf="selectedChat.type == ChatType.PUBLIC" [class.content-disabled]="loading">
+    <p-button label="Добавить пользователя" icon="pi pi-plus" severity="success"
+              (click)="addUserPanel.toggle($event)" styleClass="button-clear">
+    </p-button>
+  </p-footer>
+</p-dialog>
+
+<p-overlayPanel #addUserPanel>
+  <form #form="ngForm" [class.content-disabled]="loading">
+    <div class="detail-form-wrapper">
+      <p-dropdown name="user" [options]="filteredUsers" [(ngModel)]="addingUser"
+                  optionLabel="fullName" [filter]="true"
+                  [style]="{width: '100%', display: 'inline-flex'}"
+                  (onChange)="addUserToChat()"
+                  placeholder="Выберите пользователя">
+      </p-dropdown>
+    </div>
+  </form>
+</p-overlayPanel>
