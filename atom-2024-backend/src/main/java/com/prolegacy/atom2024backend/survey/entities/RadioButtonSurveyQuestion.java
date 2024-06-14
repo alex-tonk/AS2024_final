@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.survey.entities;
 
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.File;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.meta.answers.RadioButtonSurveyQuestionAnswerMeta;
 import com.prolegacy.atom2024backend.survey.meta.common.PredefinedAnswerMeta;
@@ -34,10 +35,11 @@ public class RadioButtonSurveyQuestion extends SurveyQuestion {
 
 
     public RadioButtonSurveyQuestion(Survey survey,
+                                     File file,
                                      SurveyQuestionDto questionDto,
                                      PredefinedAnswerQuestionMeta meta,
                                      RadioButtonSurveyQuestionAnswerMeta correctAnswerMeta) {
-        super(survey, questionDto);
+        super(survey, file, questionDto);
 
         this.validateMeta(meta);
         this.validateCorrectAnswerMeta(meta, correctAnswerMeta);

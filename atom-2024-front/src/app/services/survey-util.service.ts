@@ -10,11 +10,16 @@ import {
   StringSurveyQuestionAnswerMeta,
   StringSurveyQuestionCorrectAnswerMeta
 } from '../models/SurveyQuestionMeta';
+import {ConfigService} from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SurveyUtilService {
+  constructor(private configService: ConfigService) {
+
+  }
+
   toSurveyJson(question: SurveyQuestionDto, options: {withCorrectAnswers?: boolean, shuffleOptions?: boolean} = {}): any {
     const calculatedOptions: {withCorrectAnswers?: boolean, shuffleOptions?: boolean} = Object.assign({withCorrectAnswers: false, shuffleOptions: false}, options);
     const result: any = {
@@ -23,7 +28,7 @@ export class SurveyUtilService {
       elements: [
         {
           name: (question.id ?? 0).toString(),
-          title: question.wording,
+          title: question.wording ?? ' ',
           description: question.comment
         }
       ]
@@ -94,6 +99,21 @@ export class SurveyUtilService {
         break;
       }
     }
+
+    if (question.fileId != null) {
+      result.elements = [
+        {
+          "type": "image",
+          "name": "image" + (question.id ?? 0),
+          "imageLink": `${this.configService.baseUrl}/surveys/files/${question.fileId}`,
+          "imageFit": "cover",
+          "imageHeight": "auto",
+          "imageWidth": "100%"
+        },
+        ...result.elements
+      ];
+    }
+
     return result;
   }
 

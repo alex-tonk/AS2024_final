@@ -3,10 +3,15 @@ package com.prolegacy.atom2024backend.survey.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.File;
+import com.prolegacy.atom2024backend.entities.ids.FileId;
+import com.prolegacy.atom2024backend.repositories.FileRepository;
+import com.prolegacy.atom2024backend.services.FileUploadService;
 import com.prolegacy.atom2024backend.survey.dto.SurveyDto;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.entities.*;
 import com.prolegacy.atom2024backend.survey.entities.id.SurveyId;
+import com.prolegacy.atom2024backend.survey.entities.id.SurveyQuestionId;
 import com.prolegacy.atom2024backend.survey.exceptions.SurveyNotFoundException;
 import com.prolegacy.atom2024backend.survey.meta.answers.*;
 import com.prolegacy.atom2024backend.survey.meta.common.PredefinedAnswerQuestionMeta;
@@ -14,10 +19,13 @@ import com.prolegacy.atom2024backend.survey.readers.SurveyReader;
 import com.prolegacy.atom2024backend.survey.repositories.SurveyAttemptRepository;
 import com.prolegacy.atom2024backend.survey.repositories.SurveyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +42,12 @@ public class SurveyService {
 
     @Autowired
     private SurveyAttemptRepository surveyAttemptRepository;
+
+    @Autowired
+    private FileUploadService fileUploadService;
+
+    @Autowired
+    private FileRepository fileRepository;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SurveyDto createSurvey(SurveyDto surveyDto) {
@@ -67,9 +81,15 @@ public class SurveyService {
         this.surveyRepository.delete(survey);
     }
 
-    private static void addQuestionsToSurvey(SurveyDto surveyDto, Survey survey) {
-        surveyDto.getQuestions().forEach(questionDto -> {
+    private void addQuestionsToSurvey(SurveyDto surveyDto, Survey survey) {
+        surveyDto.getQuestions()
+                .stream()
+                .sorted(Comparator.comparingLong(SurveyQuestionDto::getOrderNumber))
+                .forEach(questionDto -> {
             validateQuestionType(questionDto);
+            File file = Optional.ofNullable(questionDto.getFileId())
+                    .map(fileId -> fileRepository.findById(fileId).orElseThrow(() -> new BusinessLogicException("Не найден файл, прикреплённый к вопросу %s".formatted(questionDto.getOrderNumber()))))
+                    .orElse(null);
             try {
                 switch (questionDto.getType()) {
                     case STRING -> {
@@ -77,6 +97,7 @@ public class SurveyService {
                         survey.addQuestion(
                                 new StringSurveyQuestion(
                                         survey,
+                                        file,
                                         questionDto,
                                         correctAnswerMeta
                                 )
@@ -87,6 +108,7 @@ public class SurveyService {
                         survey.addQuestion(
                                 new NumberSurveyQuestion(
                                         survey,
+                                        file,
                                         questionDto,
                                         correctAnswerMeta
                                 )
@@ -98,6 +120,7 @@ public class SurveyService {
                         survey.addQuestion(
                                 new RadioButtonSurveyQuestion(
                                         survey,
+                                        file,
                                         questionDto,
                                         meta,
                                         correctAnswerMeta
@@ -110,6 +133,7 @@ public class SurveyService {
                         survey.addQuestion(
                                 new CheckboxSurveyQuestion(
                                         survey,
+                                        file,
                                         questionDto,
                                         meta,
                                         correctAnswerMeta
@@ -122,6 +146,7 @@ public class SurveyService {
                         survey.addQuestion(
                                 new RankingSurveyQuestion(
                                         survey,
+                                        file,
                                         questionDto,
                                         meta,
                                         correctAnswerMeta
@@ -155,5 +180,22 @@ public class SurveyService {
         if (!surveyAttemptRepository.findBySurveyId(surveyId).isEmpty()) {
             throw new BusinessLogicException("Невозможно изменить или удалить тестирование, которое уже начали проходить обучающиеся");
         }
+    }
+
+    public FileId uploadQuestionFile(MultipartFile multipartFile) {
+        return this.fileUploadService.uploadFile(multipartFile).getId();
+    }
+
+    public boolean deleteQuestionFile(FileId fileId) {
+        try {
+            this.fileUploadService.deleteFile(fileId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Resource serveQuestionFile(FileId fileId) {
+        return this.fileUploadService.serveFile(fileId);
     }
 }

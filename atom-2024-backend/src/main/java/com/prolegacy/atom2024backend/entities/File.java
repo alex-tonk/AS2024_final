@@ -2,10 +2,7 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

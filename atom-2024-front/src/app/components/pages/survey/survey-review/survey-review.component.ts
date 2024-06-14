@@ -103,6 +103,7 @@ export class SurveyReviewComponent implements OnInit {
         return prev;
       }, {});
       const surveyJson = {
+        width: '95%',
         pages: questions.map(question => ({
           name: 'page' + question.orderNumber,
           elements: [

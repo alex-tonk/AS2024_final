@@ -13,17 +13,31 @@ export class FileService {
     this.httpService = httpService;
   }
 
-  public uploadFile(file: File): Observable<AttachmentDto> {
+  public uploadChatFile(file: File): Observable<AttachmentDto> {
     let formData = new FormData();
     formData.append('file', file);
     return this.httpService.post<AttachmentDto>('chats/attachments', formData, {responseType: 'json'});
   }
 
-  public deleteFile(fileId: number): Observable<void> {
+  public deleteChatFile(fileId: number): Observable<void> {
     return this.httpService.delete<void>('chats/attachments/' + fileId);
   }
 
-  public getAttachment(chatId: number, messageId: number, attachmentId: number): Observable<Blob> {
+  public getChatAttachment(chatId: number, messageId: number, attachmentId: number): Observable<Blob> {
     return this.httpService.get(`chats/${chatId}/messages/${messageId}/attachments/${attachmentId}`, {responseType: 'blob'});
+  }
+
+  public uploadSurveyQuestionFile(file: File): Observable<number> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return this.httpService.post<number>('surveys/files', formData, {responseType: 'json'});
+  }
+
+  public deleteSurveyQuestionFile(fileId: number): Observable<boolean> {
+    return this.httpService.delete<boolean>(`surveys/files/${fileId}`);
+  }
+
+  public getSurveyQuestionFile(fileId: number): Observable<Blob> {
+    return this.httpService.get(`surveys/files/${fileId}`, {responseType: 'blob'});
   }
 }

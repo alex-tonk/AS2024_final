@@ -39,7 +39,7 @@ a {
   margin-left: 5px;
 }
 
-.badge-wrapper >>> .p-badge {
+.badge-wrapper ::ng-deep .p-badge {
   font-size: 0.5rem;
   min-width: 1rem;
   height: 1rem;

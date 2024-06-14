@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.util.UUID;
 
 @Service
 @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -42,7 +43,7 @@ public class FileUploadService {
         try {
             return new UrlResource(Path.of(file.getUuid().toString()).toUri());
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new BusinessLogicException("Ошибка запроса файла");
         }
     }
 
@@ -51,9 +52,9 @@ public class FileUploadService {
                 .orElseThrow(() -> new BusinessLogicException("Файл не найден"));
         try {
             java.nio.file.Files.delete(Path.of(file.getUuid().toString()));
-            fileRepository.delete(file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BusinessLogicException("Ошибка удаления файла");
         }
+        fileRepository.delete(file);
     }
 }

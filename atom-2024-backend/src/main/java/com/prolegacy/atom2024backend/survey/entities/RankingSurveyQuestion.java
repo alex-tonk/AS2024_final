@@ -2,6 +2,7 @@ package com.prolegacy.atom2024backend.survey.entities;
 
 import com.google.common.collect.Sets;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.File;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.meta.answers.RankingSurveyQuestionAnswerMeta;
 import com.prolegacy.atom2024backend.survey.meta.common.PredefinedAnswerMeta;
@@ -35,8 +36,8 @@ public class RankingSurveyQuestion extends SurveyQuestion {
     @Column(columnDefinition = "jsonb", name = "correct_answer_meta")
     private RankingSurveyQuestionAnswerMeta correctAnswerMeta;
 
-    public RankingSurveyQuestion(Survey survey, SurveyQuestionDto questionDto, PredefinedAnswerQuestionMeta meta, RankingSurveyQuestionAnswerMeta correctAnswerMeta) {
-        super(survey, questionDto);
+    public RankingSurveyQuestion(Survey survey, File file, SurveyQuestionDto questionDto, PredefinedAnswerQuestionMeta meta, RankingSurveyQuestionAnswerMeta correctAnswerMeta) {
+        super(survey, file, questionDto);
 
         this.validateMeta(meta);
         this.validateCorrectAnswerMeta(meta, correctAnswerMeta);

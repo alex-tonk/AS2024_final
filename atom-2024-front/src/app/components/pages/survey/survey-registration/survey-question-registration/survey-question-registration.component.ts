@@ -1,10 +1,10 @@
-import {ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, Output} from '@angular/core';
 import {DropdownChangeEvent, DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from "@angular/common";
 import {SurveyQuestionDto} from "../../../../../gen/survey-dto";
-import {SelectItem} from "primeng/api";
+import {MessageService, SelectItem} from 'primeng/api';
 import {SurveyQuestionType} from "../../../../../gen/survey-enums";
 import {SurveyQuestionTypeLocaleEnum} from "../../../../../models/SurveyQuestionTypeLocaleEnum";
 import {ChipsModule} from "primeng/chips";
@@ -22,26 +22,32 @@ import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
 import {OrderListModule} from "primeng/orderlist";
 import {resetParseTemplateAsSourceFileForTest} from "@angular/compiler-cli/src/ngtsc/typecheck/diagnostics";
+import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
+import {lastValueFrom} from 'rxjs';
+import {FileService} from '../../../../../services/file.service';
+import {MessageServiceKey} from '../../../../../app.component';
+import FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-survey-question-registration',
   standalone: true,
-  imports: [
-    DropdownModule,
-    FormsModule,
-    InputTextareaModule,
-    NgIf,
-    NgSwitchCase,
-    NgSwitch,
-    NgSwitchDefault,
-    ChipsModule,
-    InputNumberModule,
-    NgForOf,
-    ButtonModule,
-    TooltipModule,
-    OrderListModule,
-    NgClass
-  ],
+    imports: [
+        DropdownModule,
+        FormsModule,
+        InputTextareaModule,
+        NgIf,
+        NgSwitchCase,
+        NgSwitch,
+        NgSwitchDefault,
+        ChipsModule,
+        InputNumberModule,
+        NgForOf,
+        ButtonModule,
+        TooltipModule,
+        OrderListModule,
+        NgClass,
+        FileUploadModule
+    ],
   templateUrl: './survey-question-registration.component.html',
   styleUrl: './survey-question-registration.component.css'
 })
@@ -50,9 +56,16 @@ export class SurveyQuestionRegistrationComponent {
   @Input()
   question: SurveyQuestionDto;
 
+  @Output()
+  loading: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   surveyQuestionTypes: SelectItem[] = Object.keys(SurveyQuestionType)
     .map(qT => ({label: SurveyQuestionTypeLocaleEnum[qT as keyof typeof SurveyQuestionTypeLocaleEnum], value: qT}));
   protected readonly SurveyQuestionType = SurveyQuestionType;
+
+  constructor(private fileService: FileService,
+              private messageService: MessageService) {
+  }
 
   onQuestionTypeChange(event: DropdownChangeEvent) {
     this.question.meta = {};
@@ -165,6 +178,55 @@ export class SurveyQuestionRegistrationComponent {
           rankingMeta.answerIdsOrdered = (meta.answers ?? []).map(a => a.id!);
         }
         break;
+    }
+  }
+
+  async addSurveyQuestionFile(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
+    this.loading.emit(true);
+    try {
+      this.question.fileName = event.files[0].name;
+      this.question.fileId = await lastValueFrom(this.fileService.uploadSurveyQuestionFile(event.files[0]));
+    } finally {
+      fileUpload.clear();
+      this.loading.emit(false);
+    }
+  }
+
+  async deleteSurveyQuestionFile() {
+    if (this.question?.fileId == null) {
+      return;
+    }
+    this.loading.emit(true);
+    try {
+      const success = await lastValueFrom(this.fileService.deleteSurveyQuestionFile(this.question.fileId));
+      if (!success) {
+        this.messageService.add(
+          {
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Ошибка удаления файла',
+            key: MessageServiceKey.OK,
+            sticky: true
+          }
+        );
+      }
+      this.question.fileName = undefined;
+      this.question.fileId = undefined;
+    } finally {
+      this.loading.emit(false);
+    }
+  }
+
+  async downloadSurveyQuestionFile() {
+    if (this.question?.fileId == null) {
+      return;
+    }
+    this.loading.emit(true);
+    try {
+      let blob = await lastValueFrom(this.fileService.getSurveyQuestionFile(this.question.fileId));
+      FileSaver.saveAs(blob, this.question.fileName);
+    } finally {
+      this.loading.emit(false);
     }
   }
 }

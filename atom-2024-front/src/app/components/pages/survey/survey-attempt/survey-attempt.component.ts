@@ -151,6 +151,7 @@ export class SurveyAttemptComponent implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       const surveyJson = {
+        width: '95%',
         pages: this.survey.questions!.map(question => ({
           name: 'page' + question.orderNumber,
           elements: [

@@ -31,7 +31,8 @@ spring:
             enable: true
           ssl:
             enable: true
-
+  servlet.multipart.max-file-size: 10MB
+  servlet.multipart.max-request-size: 10MB
   devtools:
     restart:
       enabled: false

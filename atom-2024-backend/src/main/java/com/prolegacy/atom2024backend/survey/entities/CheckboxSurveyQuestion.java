@@ -2,6 +2,7 @@ package com.prolegacy.atom2024backend.survey.entities;
 
 import com.google.common.collect.Sets;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.File;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.meta.answers.CheckboxSurveyQuestionAnswerMeta;
 import com.prolegacy.atom2024backend.survey.meta.common.PredefinedAnswerMeta;
@@ -33,8 +34,8 @@ public class CheckboxSurveyQuestion extends SurveyQuestion {
     @Column(columnDefinition = "jsonb", name = "correct_answer_meta")
     private CheckboxSurveyQuestionAnswerMeta correctAnswerMeta;
 
-    public CheckboxSurveyQuestion(Survey survey, SurveyQuestionDto questionDto, PredefinedAnswerQuestionMeta meta, CheckboxSurveyQuestionAnswerMeta correctAnswerMeta) {
-        super(survey, questionDto);
+    public CheckboxSurveyQuestion(Survey survey, File file, SurveyQuestionDto questionDto, PredefinedAnswerQuestionMeta meta, CheckboxSurveyQuestionAnswerMeta correctAnswerMeta) {
+        super(survey, file, questionDto);
 
         this.validateMeta(meta);
         this.validateCorrectAnswerMeta(meta, correctAnswerMeta);

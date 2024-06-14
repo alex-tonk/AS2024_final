@@ -37,12 +37,13 @@
                 <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
                     <p-splitter [style]="{height: '100%', border: 0}" [panelSizes]="[75, 25]" [minSizes]="[40, 10]">
                         <ng-template pTemplate>
-                            <p-tabView [class.content-disabled]="selectedQuestion == null"
+                            <p-tabView [class.content-disabled]="selectedQuestion == null || questionRegistrationLoading"
                                        [(activeIndex)]="tabviewIndex"
                                        [style]="tabviewIndex == 0 ? {minWidth: '600px'} : {minWidth: '0px'}">
                                 <p-tabPanel header="Настройка">
                                     <app-survey-question-registration *ngIf="selectedQuestion != null"
                                                                       [question]="selectedQuestion"
+                                                                      (loading)="questionRegistrationLoading = $event"
                                     ></app-survey-question-registration>
                                 </p-tabPanel>
                                 <p-tabPanel header="Предпросмотр" [cache]="false">

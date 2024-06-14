@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.survey.entities;
 
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.entities.File;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.meta.answers.NumberSurveyQuestionAnswerMeta;
 import jakarta.persistence.Column;
@@ -21,8 +22,8 @@ public class NumberSurveyQuestion extends SurveyQuestion {
     @Column(columnDefinition = "jsonb", name = "correct_answer_meta")
     private NumberSurveyQuestionAnswerMeta correctAnswerMeta;
 
-    public NumberSurveyQuestion(Survey survey, SurveyQuestionDto questionDto, NumberSurveyQuestionAnswerMeta correctAnswerMeta) {
-        super(survey, questionDto);
+    public NumberSurveyQuestion(Survey survey, File file, SurveyQuestionDto questionDto, NumberSurveyQuestionAnswerMeta correctAnswerMeta) {
+        super(survey, file, questionDto);
 
         this.validateCorrectAnswerMeta(correctAnswerMeta);
 

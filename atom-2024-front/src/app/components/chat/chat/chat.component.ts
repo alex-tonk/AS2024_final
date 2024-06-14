@@ -228,13 +228,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async addAttachment(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
-    let attachmentDto = await lastValueFrom(this.fileService.uploadFile(event.files[0]));
+    let attachmentDto = await lastValueFrom(this.fileService.uploadChatFile(event.files[0]));
     this.newMessage.attachments = [...(this.newMessage.attachments ?? []), attachmentDto];
     fileUpload.clear();
   }
 
   async downloadAttachment(attachment: AttachmentDto) {
-    let blob = await lastValueFrom(this.fileService.getAttachment(this.selectedChat?.id!, attachment.message?.id!, attachment.fileId!));
+    let blob = await lastValueFrom(this.fileService.getChatAttachment(this.selectedChat?.id!, attachment.message?.id!, attachment.fileId!));
     FileSaver.saveAs(blob, attachment.fileName);
   }
 
@@ -260,7 +260,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async removeAttachment(attachment: AttachmentDto) {
     this.newMessage.attachments = this.newMessage.attachments?.filter(v => v !== attachment);
-    await lastValueFrom(this.fileService.deleteFile(attachment.fileId!));
+    await lastValueFrom(this.fileService.deleteChatFile(attachment.fileId!));
   }
 
   protected readonly ChatType = ChatType;

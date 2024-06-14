@@ -72,6 +72,7 @@ export class SurveyRegistrationComponent implements OnInit {
 
   stepperIndex = 0;
   tabviewIndex = 0;
+  questionRegistrationLoading = false;
 
   constructor(private surveyQuestionService: SurveyQuestionService,
               private surveyService: SurveyService,

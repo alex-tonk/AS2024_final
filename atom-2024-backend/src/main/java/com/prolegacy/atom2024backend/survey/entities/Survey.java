@@ -19,7 +19,7 @@ public class Survey {
     @GeneratedValue(generator = "typed-sequence")
     private SurveyId id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String name;
     private Long timeLimitMinutes;
 

@@ -3,6 +3,7 @@ package com.prolegacy.atom2024backend.survey.readers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
+import com.prolegacy.atom2024backend.entities.QFile;
 import com.prolegacy.atom2024backend.survey.dto.SurveyQuestionDto;
 import com.prolegacy.atom2024backend.survey.entities.QSurveyQuestionView;
 import com.prolegacy.atom2024backend.survey.entities.id.SurveyId;
@@ -19,6 +20,7 @@ import java.util.List;
 public class SurveyQuestionReader {
 
     private static final QSurveyQuestionView surveyQuestionView = QSurveyQuestionView.surveyQuestionView;
+    private static final QFile file = QFile.file;
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -38,8 +40,11 @@ public class SurveyQuestionReader {
 
     private JPAQuery<SurveyQuestionDto> baseQuery(boolean hideCorrectAnswers) {
         return queryFactory.from(surveyQuestionView)
+                .leftJoin(file).on(file.id.eq(surveyQuestionView.fileId))
                 .selectDto(
                         SurveyQuestionDto.class,
+                        file.id.as("fileId"),
+                        file.fileName.as("fileName"),
                         hideCorrectAnswers ? Expressions.as(Expressions.nullExpression(JsonNode.class), "correctAnswerMeta") : null
                 );
     }

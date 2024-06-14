@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.survey.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.survey.entities.id.SurveyQuestionId;
 import com.prolegacy.atom2024backend.survey.enums.SurveyQuestionType;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ public class SurveyQuestionDto {
     private String wording;
     private String comment;
     private Long orderNumber;
+    private FileId fileId;
+    private String fileName;
     private JsonNode meta;
     private JsonNode correctAnswerMeta;
 }

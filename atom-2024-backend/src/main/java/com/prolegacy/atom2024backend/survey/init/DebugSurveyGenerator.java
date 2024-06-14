@@ -40,6 +40,7 @@ public class DebugSurveyGenerator implements ApplicationRunner {
         survey.addQuestion(
                 new StringSurveyQuestion(
                         survey,
+                        null,
                         SurveyQuestionDto.builder()
                                 .wording("Члены пробовал?")
                                 .comment("Честно")
@@ -50,6 +51,7 @@ public class DebugSurveyGenerator implements ApplicationRunner {
         survey.addQuestion(
                 new RadioButtonSurveyQuestion(
                         survey,
+                        null,
                         SurveyQuestionDto.builder()
                                 .wording("А хочешь?")
                                 .build(),

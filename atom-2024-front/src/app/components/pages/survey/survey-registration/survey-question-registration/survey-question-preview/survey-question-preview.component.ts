@@ -29,6 +29,7 @@ export class SurveyQuestionPreviewComponent implements OnInit {
 
   ngOnInit(): void {
     const surveyJson = {
+      width: '95%',
       elements: this.surveyUtilService.toSurveyJson(this.question)
     };
     this.surveyModel = new Model(surveyJson);

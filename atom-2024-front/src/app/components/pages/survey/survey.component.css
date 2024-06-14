@@ -49,6 +49,6 @@
   padding: 0.5rem;
 }
 
->>> .p-dialog-mask {
+:host ::ng-deep .p-dialog-mask {
   z-index: 1;
 }

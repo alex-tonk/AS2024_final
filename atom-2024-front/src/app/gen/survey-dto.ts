@@ -32,6 +32,8 @@ export class SurveyDto {
 export class SurveyQuestionDto {
   comment?: string;
   correctAnswerMeta?: any;
+  fileId?: number;
+  fileName?: string;
   id?: number;
   meta?: any;
   orderNumber?: number;

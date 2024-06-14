@@ -13,6 +13,27 @@
             </textarea>
     </div>
 
+    <div class="form-row">
+      <label>Иллюстрация:</label>
+      <p-fileUpload #fileUpload *ngIf="question?.fileId == null"
+                    mode="basic"
+                    [auto]="true"
+                    [customUpload]="true"
+                    [accept]="'image/*'"
+                    chooseLabel="Выберите файл"
+                    chooseIcon="pi pi-paperclip"
+                    (uploadHandler)="addSurveyQuestionFile($event, fileUpload)">
+      </p-fileUpload>
+      <div *ngIf="question?.fileId != null">
+        <div class="uploaded-file">
+          <span>{{question.fileName}}</span>
+          <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem" (click)="downloadSurveyQuestionFile()"></i>
+          <i class="pi pi-trash delete-uploaded-file-icon clickable-icon"  style="padding-left: 0.5rem" (click)="deleteSurveyQuestionFile()"></i>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
     <div class="form-row" style="align-items: flex-start">
       <label>Комментарий:</label>
       <textarea
