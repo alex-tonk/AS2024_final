@@ -19,6 +19,7 @@ import {StudyGroupCardComponent} from '../tutor-cabinet/study-group-card/study-g
 import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
 import {CalendarModule} from 'primeng/calendar';
 import {TooltipModule} from 'primeng/tooltip';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @Component({
   selector: 'app-student-cabinet',
@@ -42,7 +43,8 @@ import {TooltipModule} from 'primeng/tooltip';
     NgStyle,
     DatePipe,
     TooltipModule,
-    NgIf
+    NgIf,
+    ProgressBarModule
   ],
   templateUrl: './student-cabinet.component.html',
   styleUrl: './student-cabinet.component.css'
@@ -100,10 +102,11 @@ export class StudentCabinetComponent implements OnInit {
     this.openedCourses.splice(index - this.systemTabsCount, 1);
   }
 
-  isBusyDay(day: any): boolean {
-    console.log(day);
-    return Math.random() > 0.5
+  random() {
+    return Number((Math.random() * 100).toFixed(0));
   }
+
+
 
   protected readonly CoursePanelMode = CoursePanelMode;
 }

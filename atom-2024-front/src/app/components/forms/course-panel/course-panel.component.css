@@ -35,3 +35,13 @@
   align-items: center;
   gap: 5px;
 }
+
+.lesson-wrapper {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center
+}
+
+.lesson-is-done {
+  color: var(--green-color);
+}

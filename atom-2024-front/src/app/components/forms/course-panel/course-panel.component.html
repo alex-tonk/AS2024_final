@@ -35,8 +35,8 @@
         </ng-template>
 
         <div class="module-wrapper">
-          <div *ngFor="let lesson of module.lessons">
-            {{ lesson }}
+          <div *ngFor="let lesson of module.lessons" class="lesson-wrapper">
+            <div style="width: 20px"><i class="pi pi-check-circle lesson-is-done"></i></div> {{ lesson }}
           </div>
 
           <app-survey *ngIf="mode == CoursePanelMode.ADMIN"></app-survey>
