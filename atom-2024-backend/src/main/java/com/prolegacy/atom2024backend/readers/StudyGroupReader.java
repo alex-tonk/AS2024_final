@@ -69,10 +69,8 @@ public class StudyGroupReader {
     }
 
     public List<StudyGroupDto> getStudyGroupsForStudent(StudentId studentId) {
-        QStudentInGroup siq = new QStudentInGroup("siq");
         return baseQuery()
-                .innerJoin(studyGroup.students, siq)
-                .where(siq.student.id.eq(studentId))
+                .where(studyGroup.students.any().student.id.eq(studentId))
                 .fetch();
     }
 
@@ -92,6 +90,12 @@ public class StudyGroupReader {
         return courseQuery()
                 .where(courseWithTutors.studyGroup.id.eq(studyGroupId))
                 .where(courseWithTutors.tutors.any().id.tutorId.eq(tutorId))
+                .fetch();
+    }
+
+    public List<CourseWithTutorsDto> getCoursesForStudent(StudentId studentId) {
+        return courseQuery()
+                .where(courseWithTutors.studyGroup.students.any().student.id.eq(studentId))
                 .fetch();
     }
 
