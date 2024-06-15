@@ -5,7 +5,7 @@
 /* BASIC */
 * {
   --header-height: 70px;
-  --min-app-width: 360px;
+  --min-app-width: 720px;
   --card-max-width: 480px;
   --card-input-and-button-height: 50px;
   --button-height: 42px;
@@ -508,7 +508,6 @@ p-listbox > div {
 .min400-min340 .p-splitter-horizontal > :nth-child(1) {
   min-width: 400px;
 }
-
 .min400-min340 .p-splitter-horizontal > :nth-child(3) {
   min-width: 340px;
 }
@@ -522,6 +521,24 @@ p-listbox > div {
   min-width: 200px;
 }
 
+.min600-min340 .p-splitter-horizontal > :nth-child(1) {
+  min-width: 600px;
+}
+.min600-min340 .p-splitter-horizontal > :nth-child(3) {
+  min-width: 340px;
+}
+
 p-splitter.full-width {
   width: 100%;
+}
+
+/* PREVIEW */
+#surveyJsQuestionPreview .sd-image__image {
+  width: unset !important;
+}
+
+#surveyJsQuestionPreview .sd-image {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
 }

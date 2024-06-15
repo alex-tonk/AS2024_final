@@ -28,7 +28,7 @@ p-tabView {
 
 
 :host ::ng-deep .p-stepper .p-stepper-nav {
-  width: 40%;
+  min-width: 460px;
   padding-bottom: 0.75em;
 }
 

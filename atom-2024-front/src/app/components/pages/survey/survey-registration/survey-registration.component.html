@@ -9,7 +9,7 @@
           [header]="surveyId != null ? 'Редактирование тестирования' : 'Создание тестирования'"
           [(visible)]="visible"
           (onHide)="result.emit(null)">
-    <div style="width: 100%; height: 100%;">
+    <div style="width: 100%; height: 100%; padding: 10px">
         <p-stepper [(activeStep)]="stepperIndex" [linear]="true">
             <p-stepperPanel header="Тестирование">
                 <ng-template pTemplate="content">
@@ -35,16 +35,22 @@
             </p-stepperPanel>
             <p-stepperPanel header="Вопросы">
                 <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-                    <p-splitter [style]="{height: '100%', border: 0}" [panelSizes]="[75, 25]" [minSizes]="[40, 10]">
+                    <p-splitter [style]="{height: '100%', border: 0}" [panelSizes]="[75, 25]"
+                                [minSizes]="[40, 10]" class="min600-min340">
                         <ng-template pTemplate>
                             <p-tabView [class.content-disabled]="selectedQuestion == null || questionRegistrationLoading"
                                        [(activeIndex)]="tabviewIndex"
                                        [style]="tabviewIndex == 0 ? {minWidth: '600px'} : {minWidth: '0px'}">
                                 <p-tabPanel header="Настройка">
-                                    <app-survey-question-registration *ngIf="selectedQuestion != null"
+                                    <app-survey-question-registration *ngIf="selectedQuestion != null; else emptyMessage"
                                                                       [question]="selectedQuestion"
                                                                       (loading)="questionRegistrationLoading = $event"
                                     ></app-survey-question-registration>
+                                  <ng-template #emptyMessage>
+                                    <div class="full-width-height-center">
+                                      Добавьте вопрос для конфигурации
+                                    </div>
+                                  </ng-template>
                                 </p-tabPanel>
                                 <p-tabPanel header="Предпросмотр" [cache]="false">
                                     <ng-template pTemplate="content">
