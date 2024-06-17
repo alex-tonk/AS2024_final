@@ -1,14 +1,79 @@
-<div class="full-width-height-center img-container">
-  <div class="img-wrapper">
-    <img #imgSource id="scan" src="/assets/images/anime.jpg" alt="scan"
-         width="100%" (load)="onImageLoad(imgSource)">
+<p-splitter [style]="{ height: '100%'}"
+            [panelSizes]="[70, 30]" class="min400-min340 full-width"
+            (onResizeEnd)="calculateStyles()">
+  <ng-template pTemplate>
+    <div class="full-width-height-center img-container" style="flex-direction: column;">
+      <div *ngIf="isTutorMode" class="tutor-panel">
+        <p-button label="Добавить комментарий" icon="pi pi-plus"
+                  (click)="addFeedback(FeedbackType.COMMENT)">
+        </p-button>
+        <p-button label="Добавить замечание" icon="pi pi-plus" severity="warning"
+                  (click)="addFeedback(FeedbackType.WARN)">
+        </p-button>
+        <p-button label="Добавить ошибку" icon="pi pi-plus" severity="danger"
+                  (click)="addFeedback(FeedbackType.ERROR)">
+        </p-button>
+      </div>
 
-    <div class="feedback" *ngFor="let feedback of feedbacks"
-         pTooltip="THIS IS MVP"
-         [class.warn]="feedback.type == FeedbackType.WARN"
-         [class.error]="feedback.type == FeedbackType.ERROR"
-         [style]="feedback.style"
-    >
+      <div #imgWrapper class="img-wrapper"
+           (mousedown)="onMouseDown($event, imgWrapper)"
+           (mousemove)="onMouseMove($event, imgWrapper)"
+           (mouseup)="onMouseUp()">
+        <div id="tutorSelection" [hidden]="true"
+             [class.warn]="creatingFeedbackType == FeedbackType.WARN"
+             [class.error]="creatingFeedbackType == FeedbackType.ERROR"></div>
+
+        <img #imgSource src="/assets/images/anime.jpg" alt="scan"
+             width="100%" (load)="onImageLoad(imgSource)"
+             style="pointer-events: none; user-select: none;">
+
+        <div class="feedback" *ngFor="let feedback of feedbacks"
+             [pTooltip]="op.overlayVisible ? '' : 'Нажмите для подробной информации'"
+             [class.warn]="feedback.type == FeedbackType.WARN"
+             [class.error]="feedback.type == FeedbackType.ERROR"
+             [class.zoom-in]="!op.overlayVisible"
+             [class.zoom-out]="op.overlayVisible"
+             [class.hovered]="hoveredFeedback == feedback"
+             [style]="feedback.style"
+             (click)="op.toggle($event)">
+          <p-overlayPanel #op [showCloseIcon]="true" [dismissable]="false">
+            <div class="comment-wrapper">
+              <ng-container *ngIf="feedback.isEditing; else comment">
+                <div class="comment-editor-wrapper">
+              <textarea pInputTextarea placeholder="Введите комментарий"
+                        [(ngModel)]="feedback.comment" [maxLength]="255" [autoResize]="true"
+                        style="width: 100%; min-height: 46px; max-height: 200px">
+            </textarea>
+                  <p-footer>
+                    <div class="full-width" style="padding: 10px 5px 5px; text-align: center">
+                      <p-button icon="pi pi-check" styleClass="button-clear bordered"
+                                label="Сохранить">
+                      </p-button>
+                    </div>
+                  </p-footer>
+                </div>
+              </ng-container>
+              <ng-template #comment>
+                <div>{{ feedback.comment }}</div>
+
+                <div style="text-align: right">
+                  <h6 style="margin: 0">Комментарий от Лехи</h6>
+                </div>
+              </ng-template>
+            </div>
+          </p-overlayPanel>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </ng-template>
+  <ng-template pTemplate>
+    <div class="feedback-list">
+      <div class="feedback-list-header">
+        <b>Замечания по заданию</b>
+      </div>
+      <div *ngFor="let feedback of feedbacks" class="feedback-in-list" (mouseenter)="onHoverFeedbackInList(feedback)">
+        {{ feedback.comment ? feedback.comment : 'Комментарий не указан' }}
+      </div>
+    </div>
+  </ng-template>
+</p-splitter>

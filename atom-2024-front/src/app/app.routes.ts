@@ -13,6 +13,9 @@ import {ChatComponent} from "./components/chat/chat/chat.component";
 import {StudentCabinetComponent} from "./components/pages/student-cabinet/student-cabinet.component";
 import {TutorCabinetComponent} from './components/pages/tutor-cabinet/tutor-cabinet.component';
 import {StudyGroupCardComponent} from './components/pages/tutor-cabinet/study-group-card/study-group-card.component';
+import {
+  ImageWithFeedbackViewerComponent
+} from './components/common/image-with-feedback-viewer/image-with-feedback-viewer.component';
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -29,5 +32,6 @@ export const routes: Routes = [
   {path: 'tutor-cabinet', component: TutorCabinetComponent},
   {path: 'chat', component: ChatComponent},
   {path: 'survey', component: SurveyComponent},
+  {path: 'images', component: ImageWithFeedbackViewerComponent},
   {path: '**', redirectTo: ''}
 ];

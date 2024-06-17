@@ -542,3 +542,10 @@ p-splitter.full-width {
   width: 100%;
   justify-content: center;
 }
+
+/* IMG */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+

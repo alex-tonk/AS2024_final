@@ -11,6 +11,7 @@
         <p-button *ngIf="userService.user.tutorId != null" label="Кабинет преподавателя" styleClass="button-clear"
                   routerLink="tutor-cabinet"></p-button>
         <p-button label="Тестирование" styleClass="button-clear" routerLink="survey"></p-button>
+        <p-button label="ФИДБЕКИ" styleClass="button-clear" routerLink="images" (click)="op.hide()"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
                   styleClass="button-clear" routerLink="admin-panel"></p-button>
         <p-button label="Чаты" styleClass="button-clear" routerLink="chat"></p-button>
@@ -47,6 +48,7 @@
     <p-button label="Кабинет преподавателя" styleClass="button-clear" routerLink="tutor-cabinet"
               (click)="op.hide()"></p-button>
     <p-button label="Тестирование" styleClass="button-clear" routerLink="survey" (click)="op.hide()"></p-button>
+    <p-button label="ФИДБЕКИ" styleClass="button-clear" routerLink="images" (click)="op.hide()"></p-button>
     <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
               styleClass="button-clear" routerLink="admin-panel" (click)="op.hide()">
     </p-button>
