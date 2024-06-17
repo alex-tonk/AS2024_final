@@ -1,34 +1,24 @@
 package com.prolegacy.atom2024backend.entities;
 
-import com.prolegacy.atom2024backend.entities.ids.TraitId;
+import com.prolegacy.atom2024backend.entities.ids.FeatureId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Data
 @Setter(AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor
-public class Trait {
+public class Feature {
     @Id
     @GeneratedValue(generator = "typed-sequence")
-    private TraitId id;
+    private FeatureId id;
 
     @Column(columnDefinition = "text")
     private String code;
     @Column(columnDefinition = "text")
     private String name;
-    @Column(columnDefinition = "text")
-    private String description;
-
-    public Trait(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
-    }
 }

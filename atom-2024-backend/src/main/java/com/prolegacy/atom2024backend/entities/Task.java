@@ -19,7 +19,7 @@ public class Task {
     @GeneratedValue(generator = "typed-sequence")
     private TaskId id;
 
-    @Column(unique = true, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String code;
     @Column(columnDefinition = "text")
     private String title;
@@ -28,4 +28,12 @@ public class Task {
     @Column(columnDefinition = "numeric(19, 6)")
     private BigDecimal difficulty;
     private Integer time;
+
+    public Task(String code, String title, String content, BigDecimal difficulty, Integer time) {
+        this.code = code;
+        this.title = title;
+        this.content = content;
+        this.difficulty = difficulty;
+        this.time = time;
+    }
 }

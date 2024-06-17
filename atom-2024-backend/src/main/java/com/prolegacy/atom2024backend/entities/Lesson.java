@@ -1,5 +1,6 @@
 package com.prolegacy.atom2024backend.entities;
 
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ public class Lesson {
     @GeneratedValue(generator = "typed-sequence")
     private LessonId id;
 
-    @Column(unique = true, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String code;
     @Column(columnDefinition = "text")
     private String title;
@@ -31,6 +32,7 @@ public class Lesson {
             inverseJoinColumns = @JoinColumn(name = "trait_id")
     )
     private List<Trait> traits = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "lesson_task",
@@ -42,4 +44,10 @@ public class Lesson {
     @Column(columnDefinition = "text")
     private String author;
 
+    public Lesson(String code, String title, String content, String author) {
+        this.code = code;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
 }

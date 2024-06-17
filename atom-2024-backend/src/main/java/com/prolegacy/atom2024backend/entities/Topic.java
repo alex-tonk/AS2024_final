@@ -19,7 +19,7 @@ public class Topic {
     @GeneratedValue(generator = "typed-sequence")
     private TopicId id;
 
-    @Column(unique = true, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String code;
     @Column(columnDefinition = "text")
     private String title;

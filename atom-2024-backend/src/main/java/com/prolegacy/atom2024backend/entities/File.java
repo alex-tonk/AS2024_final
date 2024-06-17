@@ -2,10 +2,7 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +19,16 @@ public class File {
     private FileId id;
     private UUID uuid;
 
+
+    @Column(columnDefinition = "text")
     private String fileName;
 
     public File(AttachmentDto attachmentDto) {
         this.fileName = attachmentDto.getFileName();
+    }
+
+    public File(String fileName) {
+        this.fileName = fileName;
     }
 
     public File(MultipartFile file) {
