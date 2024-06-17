@@ -16,7 +16,7 @@ import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {StudyGroupCardComponent} from '../tutor-cabinet/study-group-card/study-group-card.component';
-import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
+import {TopicPanelComponent, TopicPanelMode} from '../../forms/lesson-panel/topic-panel.component';
 import {CalendarModule} from 'primeng/calendar';
 import {TooltipModule} from 'primeng/tooltip';
 import {ProgressBarModule} from 'primeng/progressbar';
@@ -38,7 +38,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
     NgForOf,
     CardModule,
     StudyGroupCardComponent,
-    CoursePanelComponent,
+    TopicPanelComponent,
     CalendarModule,
     NgStyle,
     DatePipe,
@@ -108,5 +108,5 @@ export class StudentCabinetComponent implements OnInit {
 
 
 
-  protected readonly CoursePanelMode = CoursePanelMode;
+  protected readonly CoursePanelMode = TopicPanelMode;
 }

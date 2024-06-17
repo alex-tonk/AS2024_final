@@ -69,7 +69,7 @@
 
   <p-tabPanel *ngFor="let course of openedCourses" [header]="course.title" closable="true">
     <ng-template pTemplate="content">
-      <app-course-panel [course]="course.value" [mode]="CoursePanelMode.STUDENT"></app-course-panel>
+      <app-topic-panel [topic]="course.value" [mode]="CoursePanelMode.STUDENT"></app-topic-panel>
     </ng-template>
   </p-tabPanel>
 </p-tabView>

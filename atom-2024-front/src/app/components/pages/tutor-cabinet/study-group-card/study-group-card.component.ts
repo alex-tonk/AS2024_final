@@ -13,7 +13,7 @@ import {OrderListModule} from 'primeng/orderlist';
 import {ListboxModule} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
 import {SplitterModule} from 'primeng/splitter';
-import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel/course-panel.component';
+import {TopicPanelComponent, TopicPanelMode} from '../../../forms/lesson-panel/topic-panel.component';
 
 @Component({
   selector: 'app-study-group-card',
@@ -25,7 +25,7 @@ import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel
     FormsModule,
     SplitterModule,
     NgIf,
-    CoursePanelComponent
+    TopicPanelComponent
   ],
   templateUrl: './study-group-card.component.html',
   styleUrl: './study-group-card.component.css'
@@ -59,5 +59,5 @@ export class StudyGroupCardComponent implements OnInit {
     }
   }
 
-  protected readonly CoursePanelMode = CoursePanelMode;
+  protected readonly CoursePanelMode = TopicPanelMode;
 }

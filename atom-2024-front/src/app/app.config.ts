@@ -13,6 +13,7 @@ import {ConfigService} from './services/config.service';
 import {NGX_MONACO_EDITOR_CONFIG} from "ngx-monaco-editor-v2";
 import myLocaleRu from '@angular/common/locales/ru';
 import {registerLocaleData} from '@angular/common';
+import {MarkdownModule} from 'ngx-markdown';
 
 registerLocaleData(myLocaleRu);
 
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     MessageService,
+    MarkdownModule,
     {
       provide: APP_INITIALIZER,
       multi: true,

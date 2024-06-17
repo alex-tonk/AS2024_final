@@ -1,0 +1,34 @@
+<div class="content" [class.content-disabled]="loading">
+  <div class="table-toolbar header">
+    <div class="table-toolbar-left">
+      <b>{{ header }}</b>
+    </div>
+
+    <div class="table-toolbar-right">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
+        </span>
+    </div>
+  </div>
+
+  <div class="lesson-list-wrapper">
+    <p-accordion [multiple]="true">
+      <p-accordionTab *ngFor="let lesson of filteredLessons">
+        <ng-template pTemplate="header">
+          <div style="flex: none">
+            {{ lesson.title }}
+          </div>
+          <div class="lesson-controls" (click)="onControlsClick($event)">
+            <p-inputSwitch [(ngModel)]="isOriginalContent"
+                           [pTooltip]="isOriginalContent ? 'Показать улучшенный вид' : 'Показать исходный вид'"/>
+          </div>
+        </ng-template>
+
+        <div class="lesson-wrapper">
+          <markdown [data]="isOriginalContent ? lesson.content : lesson.beautyContent"></markdown>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>

@@ -1,7 +1,7 @@
-<app-course-panel *ngIf="isCourseConstructorMode && selected; else tableMode"
-                  [mode]="CoursePanelMode.ADMIN" [course]="selected!"
+<app-topic-panel *ngIf="isCourseConstructorMode && selected; else tableMode"
+                  [topic]="selected!"
                   (backToCourseList)="isCourseConstructorMode = false">
-</app-course-panel>
+</app-topic-panel>
 
 <ng-template #tableMode>
   <p-table #table [value]="courses" [scrollable]="true" scrollHeight="flex" sortMode="multiple"

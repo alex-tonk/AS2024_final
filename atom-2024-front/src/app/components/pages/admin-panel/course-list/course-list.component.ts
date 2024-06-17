@@ -21,7 +21,7 @@ import {FormsModule} from '@angular/forms';
 import {CourseRegistrationFormComponent} from './course-registration-form/course-registration-form.component';
 import {getField} from '../../../../services/field-accessor';
 import {SplitterModule} from 'primeng/splitter';
-import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel/course-panel.component';
+import {TopicPanelComponent, TopicPanelMode} from '../../../forms/lesson-panel/topic-panel.component';
 
 @Component({
   selector: 'app-course-list',
@@ -42,7 +42,7 @@ import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel
     FormsModule,
     CourseRegistrationFormComponent,
     SplitterModule,
-    CoursePanelComponent
+    TopicPanelComponent
   ],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css'
@@ -161,5 +161,5 @@ export class CourseListComponent implements OnInit {
 
   protected readonly ExportTable = ExportTable;
   protected readonly getField = getField;
-  protected readonly CoursePanelMode = CoursePanelMode;
+  protected readonly CoursePanelMode = TopicPanelMode;
 }
