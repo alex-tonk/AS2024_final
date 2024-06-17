@@ -1,54 +1,36 @@
-import {UserDto} from '../models/UserDto';
 
-export class CourseDto {
+export class LessonDto {
+  author?: string;
+  code?: string;
+  content?: string;
   id?: number;
-  modules?: ModuleDto[];
-  name?: string;
+  tasks?: TaskDto[];
+  title?: string;
+  traits?: TraitDto[];
 }
 
-export class CourseWithTutorsDto {
-  course?: CourseDto;
-  studyGroup?: StudyGroupDto;
-  tutorNames?: string;
-  tutors?: TutorDto[];
-  tutorsCount?: number;
-}
-
-export class ModuleDto {
+export class TaskDto {
+  code?: string;
+  content?: string;
+  difficulty?: number;
   id?: number;
-  module?: ModuleDto;
-  name?: string;
+  time?: number;
+  title?: string;
 }
 
-export class StudentDto {
+export class TopicDto {
+  code?: string;
+  description?: string;
   id?: number;
-  user?: UserDto;
+  lessonsCount?: number;
+  title?: string;
+  traits?: TraitDto[];
 }
 
-export class StudentInGroupDto {
-  student?: StudentDto;
-  studyGroup?: StudyGroupDto;
-}
-
-export class StudyGroupDto {
-  courseNames?: string;
-  courses?: CourseWithTutorsDto[];
-  coursesCount?: number;
+export class TraitDto {
+  code?: string;
+  description?: string;
   id?: number;
   name?: string;
-  studentNames?: string;
-  students?: StudentInGroupDto[];
-  studentsCount?: number;
-}
-
-export class TutorDto {
-  id?: number;
-  user?: UserDto;
-}
-
-export class TutorInCourseDto {
-  course?: CourseDto;
-  studyGroup?: StudyGroupDto;
-  tutor?: TutorDto;
 }
 

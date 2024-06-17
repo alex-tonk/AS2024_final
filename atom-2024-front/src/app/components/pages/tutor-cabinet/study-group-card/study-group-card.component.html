@@ -32,10 +32,10 @@
 
         <ng-template pTemplate>
           <div class="course-card">
-            <app-topic-panel *ngIf="selectedCourse && selectedStudent && studyGroup"
+            <app-course-panel *ngIf="selectedCourse && selectedStudent && studyGroup"
                               [mode]="CoursePanelMode.TUTOR"
-                              [topic]="selectedCourse" [student]="selectedStudent" [studyGroup]="studyGroup">
-            </app-topic-panel>
+                               [student]="selectedStudent">
+            </app-course-panel>
           </div>
         </ng-template>
       </p-splitter>

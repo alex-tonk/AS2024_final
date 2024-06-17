@@ -12,9 +12,8 @@ import java.util.stream.Collectors;
 @Getter
 public enum Role {
     ADMIN("ROLE_admin", "Администратор"),
-    STUDENT("ROLE_student", "Студент"),
-    TUTOR("ROLE_tutor", "Преподаватель"),
-    METHODIST("ROLE_methodist", "Методист");
+    STUDENT("ROLE_student", "Обучающийся"),
+    TUTOR("ROLE_tutor", "Наставник");
 
     private final String roleName;
     private final String localization;

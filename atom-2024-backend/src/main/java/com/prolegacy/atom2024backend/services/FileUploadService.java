@@ -16,8 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 
 @Service
 @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -30,6 +30,18 @@ public class FileUploadService {
 
         try (OutputStream os = new FileOutputStream(saved.getUuid().toString())) {
             os.write(file.getBytes());
+        } catch (IOException e) {
+            throw new BusinessLogicException("Не удалось сохранить файл");
+        }
+
+        return saved;
+    }
+
+    public File createFromFile(java.io.File file) {
+        File saved = fileRepository.save(new File(file.getName()));
+
+        try {
+            Files.copy(file.toPath(), Path.of(saved.getUuid().toString()));
         } catch (IOException e) {
             throw new BusinessLogicException("Не удалось сохранить файл");
         }

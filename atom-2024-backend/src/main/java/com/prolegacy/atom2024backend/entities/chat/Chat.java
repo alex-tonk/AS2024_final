@@ -4,7 +4,6 @@ import com.prolegacy.atom2024backend.common.auth.entities.User;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.chat.ChatDto;
 import com.prolegacy.atom2024backend.dto.chat.MessageDto;
-import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.enums.ChatType;
 import com.prolegacy.atom2024backend.entities.ids.chat.ChatId;
 import jakarta.persistence.*;
@@ -32,9 +31,6 @@ public class Chat {
     @ManyToMany
     private Set<User> members = new HashSet<>();
 
-    @OneToOne
-    private StudyGroup studyGroup;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ChatType type = ChatType.PUBLIC;
@@ -51,23 +47,11 @@ public class Chat {
         this.type = ChatType.FAVORITE;
     }
 
-    public Chat(StudyGroup studyGroup) {
-        this.name = ("%s %s").formatted(GROUP_CHAT, studyGroup.getName());
-        this.studyGroup = studyGroup;
-        this.members.addAll(studyGroup.getStudents().stream().map(StudentInGroup::getStudent).map(Student::getUser).toList());
-        this.members.addAll(studyGroup.getCourses().stream().flatMap(c -> c.getTutors().stream()).map(TutorInCourse::getTutor).map(Tutor::getUser).toList());
-        this.type = ChatType.GROUP;
-    }
-
     public void addMember(User user) {
         members.add(user);
     }
 
     public void removeUser(User user) {
-        if (studyGroup != null && !user.getArchived()) {
-            throw new BusinessLogicException("Из чата учебной группы можно удалять только архивных пользователей");
-        }
-
         members.removeIf(u -> Objects.equals(user.getId(), u.getId()));
     }
 

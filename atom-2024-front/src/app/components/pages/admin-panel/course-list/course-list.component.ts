@@ -12,16 +12,16 @@ import {TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {UserRegistrationFormComponent} from '../user-list/user-registration-form/user-registration-form.component';
 import {Column} from '../../../common/table/Column';
-import {CourseService} from '../../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {ExportTable} from '../../../common/table/ExportTable';
-import {CourseDto} from '../../../../gen/atom2024backend-dto';
+import {TopicDto} from '../../../../gen/atom2024backend-dto';
 import {Object} from 'core-js';
 import {FormsModule} from '@angular/forms';
 import {CourseRegistrationFormComponent} from './course-registration-form/course-registration-form.component';
 import {getField} from '../../../../services/field-accessor';
 import {SplitterModule} from 'primeng/splitter';
-import {TopicPanelComponent, TopicPanelMode} from '../../../forms/lesson-panel/topic-panel.component';
+import {CoursePanelComponent, CoursePanelMode} from '../../../forms/course-panel/course-panel.component';
+import {TopicService} from '../../../../gen/atom2024backend-controllers';
 
 @Component({
   selector: 'app-course-list',
@@ -42,14 +42,14 @@ import {TopicPanelComponent, TopicPanelMode} from '../../../forms/lesson-panel/t
     FormsModule,
     CourseRegistrationFormComponent,
     SplitterModule,
-    TopicPanelComponent
+    CoursePanelComponent
   ],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css'
 })
 export class CourseListComponent implements OnInit {
-  courses: CourseDto[] = [];
-  selected?: CourseDto;
+  courses: TopicDto[] = [];
+  selected?: TopicDto;
   loading = false;
   filter = false;
 
@@ -80,7 +80,7 @@ export class CourseListComponent implements OnInit {
   }
 
   constructor(
-    private courseService: CourseService,
+    private topicService: TopicService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService) {
   }
@@ -98,8 +98,7 @@ export class CourseListComponent implements OnInit {
     this.selected = undefined;
     this.loading = true;
     try {
-      this.courses = (await lastValueFrom(this.courseService.getCourses()))
-        .map(c => Object.assign(new CourseDto(), c));
+      this.courses = (await lastValueFrom(this.topicService.getTopics()));
     } finally {
       this.loading = false;
     }
@@ -152,7 +151,7 @@ export class CourseListComponent implements OnInit {
     }
   }
 
-  async onCourseFormResult(result: CourseDto | null) {
+  async onCourseFormResult(result: TopicDto | null) {
     this.courseFormData = null;
     if (result) {
       await this.initTable();
@@ -161,5 +160,5 @@ export class CourseListComponent implements OnInit {
 
   protected readonly ExportTable = ExportTable;
   protected readonly getField = getField;
-  protected readonly CoursePanelMode = TopicPanelMode;
+  protected readonly CoursePanelMode = CoursePanelMode;
 }

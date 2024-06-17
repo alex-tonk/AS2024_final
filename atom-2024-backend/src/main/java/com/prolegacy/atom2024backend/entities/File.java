@@ -1,6 +1,5 @@
 package com.prolegacy.atom2024backend.entities;
 
-import com.prolegacy.atom2024backend.dto.chat.AttachmentDto;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,10 +18,11 @@ public class File {
     private FileId id;
     private UUID uuid;
 
+    @Column(columnDefinition = "text")
     private String fileName;
 
-    public File(AttachmentDto attachmentDto) {
-        this.fileName = attachmentDto.getFileName();
+    public File(String fileName) {
+        this.fileName = fileName;
     }
 
     public File(MultipartFile file) {

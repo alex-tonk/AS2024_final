@@ -29,14 +29,12 @@
              placeholder="Введите email" required>
     </div>
 
-    <div class="form-row" *ngIf="!isEditMode">
+    <div class="form-row">
       <label class="required">Роль:</label>
       <p-dropdown name="role" [options]="roles" [(ngModel)]="selectedRole"
                   optionLabel="localeName"
                   appendTo="body"
                   placeholder="Выберите роль"
-                  [pTooltip]="isEditMode ? 'Роли нельзя редактировать' : undefined"
-                  [disabled]="isEditMode"
                   [style]="{width: '100%', display: 'inline-flex'}"
                   [required]="true">
       </p-dropdown>

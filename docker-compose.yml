@@ -1,47 +1,11 @@
 services:
   rest:
     image: localhost:5000/pro-legacy_backend
-    container_name: pro-legacy_backend
     build:
       dockerfile: Dockerfile
       target: rest
-    environment:
-      spring.datasource.url: jdbc:postgresql://postgres:5432/postgres
-      spring.jpa.properties.hibernate.default_schema: public
-      spring.datasource.username: postgres
-      spring.datasource.password: postgres
-    ports:
-      - 8085:8085
-    depends_on:
-      - postgres
   web:
     image: localhost:5000/pro-legacy_front
-    container_name: pro-legacy_front
     build:
       dockerfile: Dockerfile
       target: front
-    environment:
-      baseUrl: http://localhost:8085
-    ports:
-      - 4963:80
-    depends_on:
-      - rest
-#  integration:
-#    image: localhost:5000/pro-legacy_integration
-#    container_name: pro-legacy_integration
-#    build:
-#      dockerfile: Dockerfile
-#      target: integration
-#    environment:
-#      spring.datasource.url: jdbc:postgresql://172.30.8.124:5433/nwd-atomskills-2024
-#      spring.datasource.username: sys
-#      spring.datasource.password: postgres
-
-  postgres:
-    image: postgres:latest
-    ports:
-      - 5496:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres

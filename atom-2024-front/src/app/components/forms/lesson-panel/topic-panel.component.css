@@ -9,22 +9,31 @@
   padding: 16px;
 }
 
-.lesson-list-wrapper {
+.module-list-wrapper {
   flex: auto;
   overflow: auto;
 }
 
-.lesson-wrapper {
+.module-wrapper {
   display: flex;
   flex-direction: column;
 }
 
-.lesson-controls {
+.admin-module-controls {
   display: inline-flex;
   gap: 10px;
   justify-content: end;
   width: 100%;
-  align-items:center;
+  height: 0;
+  margin-top: -46px;
+}
+
+.admin-footer {
+  display: inline-flex;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .lesson-wrapper {
@@ -32,3 +41,63 @@
   gap: 5px;
   align-items: center
 }
+
+.lesson-is-done {
+  color: var(--green-color);
+}
+
+.survey-list-container {
+  display: flex;
+  flex-flow: column;
+  gap: 0.5em;
+  padding: 0.5em;
+  background-color: rgb(249, 250, 251);
+  min-width: 700px;
+}
+
+.h-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.v-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.survey-label {
+  text-align: start;
+  word-break: break-word;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.survey-toolbar {
+  padding: 0.5em 0.5em 0.5em 1em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.survey-status {
+  width: 20rem;
+  height: 1rem;
+}
+
+:host ::ng-deep .p-dataview-list {
+  background-color: rgb(249, 250, 251);
+}
+
+:host ::ng-deep .p-card {
+  width: 100%;
+  max-width: unset;
+}
+
+:host ::ng-deep .p-card-content {
+  padding: 0.5rem;
+}
+
+>>> .p-dialog-mask {
+  z-index: 1;
+}
+
