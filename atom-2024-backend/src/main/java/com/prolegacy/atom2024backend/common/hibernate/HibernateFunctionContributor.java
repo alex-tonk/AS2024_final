@@ -29,5 +29,10 @@ public class HibernateFunctionContributor implements FunctionContributor {
                 "extract(epoch from ?1 - ?2)",
                 functionContributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.LONG)
         );
+        functionContributions.getFunctionRegistry().registerPattern(
+                "maxNumberOfAttempts",
+                "(select max(ac.c) from (select count(*) c from attempt group by task_id) as ac)",
+                functionContributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.LONG)
+        );
     }
 }

@@ -17,4 +17,10 @@ public class TaskDto {
     private String content;
     private BigDecimal difficulty;
     private Integer time;
+
+    private BigDecimal NAS;
+    private BigDecimal NNA;
+    private BigDecimal NTL;
+    private BigDecimal NAT;
+    private BigDecimal difficultyScore;
 }

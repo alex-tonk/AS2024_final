@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
+import com.prolegacy.atom2024backend.dto.TaskDto;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
+import com.prolegacy.atom2024backend.readers.TaskReader;
 import com.prolegacy.atom2024backend.repositories.*;
 import com.prolegacy.atom2024backend.services.FileUploadService;
 import lombok.extern.log4j.Log4j2;
@@ -53,6 +55,8 @@ public class InitialDataLoader implements ApplicationRunner {
 
     @Autowired
     private FeatureRepository featureRepository;
+    @Autowired
+    private TaskReader taskReader;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -100,6 +104,11 @@ public class InitialDataLoader implements ApplicationRunner {
         }
 
         loadFeatures();
+
+
+
+        List<TaskDto> tasks = taskReader.getTasks();
+        System.out.println(tasks);
     }
 
     private void loadTraits(Map<String, Trait> traitsByCode) {
