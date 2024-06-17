@@ -1,0 +1,14 @@
+<div class="full-width-height-center img-container">
+  <div class="img-wrapper">
+    <img #imgSource id="scan" src="/assets/images/anime.jpg" alt="scan"
+         width="100%" (load)="onImageLoad(imgSource)">
+
+    <div class="feedback" *ngFor="let feedback of feedbacks"
+         pTooltip="THIS IS MVP"
+         [class.warn]="feedback.type == FeedbackType.WARN"
+         [class.error]="feedback.type == FeedbackType.ERROR"
+         [style]="feedback.style"
+    >
+    </div>
+  </div>
+</div>
