@@ -1,0 +1,36 @@
+services:
+  rest:
+    image: localhost:5000/pro-legacy_backend_with_files
+    container_name: pro-legacy_backend
+    build:
+      dockerfile: Dockerfile
+    environment:
+      spring.datasource.url: jdbc:postgresql://postgres:5432/postgres
+      spring.jpa.properties.hibernate.default_schema: public
+      spring.datasource.username: postgres
+      spring.datasource.password: postgres
+    ports:
+      - 8085:8085
+    depends_on:
+      - postgres
+  web:
+    image: localhost:5000/pro-legacy_front
+    container_name: pro-legacy_front
+    build:
+      dockerfile: Dockerfile
+      target: front
+    environment:
+      baseUrl: http://localhost:8085
+    ports:
+      - 4963:80
+    depends_on:
+      - rest
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5496:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
