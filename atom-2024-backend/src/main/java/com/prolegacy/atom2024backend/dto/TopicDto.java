@@ -14,4 +14,6 @@ public class TopicDto {
     private String code;
     private String title;
     private String description;
+
+    private Long lessonsCount;
 }

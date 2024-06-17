@@ -3,7 +3,8 @@
     <ng-template pTemplate="content">
       <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]" class="min400-min340">
         <ng-template pTemplate>
-          <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid" emptyMessage="Не найдено ни одного курса">
+          <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid"
+                      emptyMessage="Не найдено ни одного курса">
             <ng-template pTemplate="grid" let-topics>
               <div class="quick-search-wrapper">
                 <div class="p-input-icon-left">
@@ -18,9 +19,10 @@
                     <hr>
                     <div>{{ topic.description }}</div>
                     <p-footer>
-                      <p-progressBar pTooltip="Прогресс прохождения" [value]="30" [showValue]="false" [style]="{ height: '6px' }"/>
+                      <p-progressBar pTooltip="Прогресс прохождения" [value]="30" [showValue]="false"
+                                     [style]="{ height: '6px' }"/>
                       <hr>
-                      Кол-во модулей: 5
+                      Кол-во уроков: {{ topic.lessonsCount }}
                     </p-footer>
                   </p-card>
                 </div>
@@ -50,11 +52,11 @@
             </p-calendar>
 
             <div *ngIf="selectedDate" class="selected-date-wrapper">
-              {{selectedDate | date}}
+              {{ selectedDate | date }}
               <p-button pTooltip="Очистить фильтр по дате" icon="pi pi-times"
                         (click)="selectedDate = undefined"
                         styleClass="button-mini button-clear">
-            </p-button>
+              </p-button>
             </div>
 
             <div class="schedule-wrapper">
