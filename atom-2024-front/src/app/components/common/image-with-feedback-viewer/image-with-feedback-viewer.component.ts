@@ -9,6 +9,7 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SplitterModule} from 'primeng/splitter';
+import {AngularDraggableModule} from 'angular2-draggable';
 
 export enum FeedbackType {
   COMMENT = 'COMMENT', WARN = 'WARN', ERROR = 'ERROR'
@@ -29,7 +30,8 @@ export enum FeedbackType {
     ReactiveFormsModule,
     InputTextModule,
     InputTextareaModule,
-    SplitterModule
+    SplitterModule,
+    AngularDraggableModule
   ],
   templateUrl: './image-with-feedback-viewer.component.html',
   styleUrl: './image-with-feedback-viewer.component.css'
@@ -43,6 +45,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   imgSource: HTMLImageElement;
 
   tutorSelectionMode = false;
+  tutorMoveMode = false;
   tutorSelectionDiv: HTMLElement;
   x1 = 0;
   y1 = 0;
@@ -112,6 +115,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   calculateStyles() {
     this.scaleCoefficient = this.imgSource.clientWidth / this.imgSource.naturalWidth;
     this.feedbacks.forEach(f => this.calculateStyle(f))
+    console.log(this.feedbacks);
   }
 
   calculateStyle(feedback: any) {
@@ -195,4 +199,32 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   onHoverFeedbackInList(feedback: any) {
     this.hoveredFeedback = feedback;
   }
+
+  /*DRAG*/
+  onDragStart(event: MouseEvent, imgWrapper: HTMLDivElement) {
+    this.tutorMoveMode = true;
+    this.x1 = event.clientX - imgWrapper.offsetLeft;
+    this.y1 = event.clientY - imgWrapper.offsetTop;
+  }
+
+  onDragEnd(feedback: any, event: any, imgWrapper: HTMLDivElement) {
+
+    this.tutorMoveMode = false;
+
+    this.x2 = event.clientX - imgWrapper.offsetLeft;
+    this.y2 = event.clientY - imgWrapper.offsetTop;
+
+    const movedFeedback = this.feedbacks.find(f => f = feedback);
+    if (movedFeedback) {
+      const deltaX = this.getUnscaledPx(this.x2 - this.x1);
+      const deltaY = this.getUnscaledPx(this.y2 - this.y1);
+      movedFeedback.x1 = movedFeedback.x1 + deltaX;
+      movedFeedback.y1 = movedFeedback.y1 + deltaY;
+      movedFeedback.x2 = movedFeedback.x2 + deltaX;
+      movedFeedback.y2 = movedFeedback.y2 + deltaX;
+    }
+    console.log(movedFeedback);
+    this.calculateStyle(feedback);
+  }
+
 }
