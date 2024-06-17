@@ -14,45 +14,50 @@
 
   <div class="module-list-wrapper">
     <p-accordion [multiple]="true">
-      <p-accordionTab *ngFor="let module of filteredModules"
-                      [selected]="mode != CoursePanelMode.ADMIN">
+      <p-accordionTab *ngFor="let lesson of filteredLessons">
         <ng-template pTemplate="header">
           <div style="flex: none">
-            {{ module.name }}
-          </div>
-
-          <div *ngIf="mode == CoursePanelMode.ADMIN" class="admin-module-controls">
-            <p-button pTooltip="Редактировать название текущего модуля" icon="pi pi-pencil"
-                      styleClass="button-clear" tooltipPosition="left"
-                      (click)="editModule(module, $event)">
-            </p-button>
-
-            <p-button pTooltip="Удалить текущий модуль" icon="pi pi-trash" severity="danger"
-                      styleClass="button-clear" tooltipPosition="left"
-                      (click)="deleteModule(module, $event)">
-            </p-button>
+            {{ lesson.title }}
           </div>
         </ng-template>
 
         <div class="module-wrapper">
-          <div *ngFor="let lesson of module.lessons" class="lesson-wrapper">
-            <div style="width: 20px"><i class="pi pi-check-circle lesson-is-done"></i></div> {{ lesson }}
-          </div>
+          <p-dataView [value]="tasksByLesson[lesson.id!]">
+            <ng-template pTemplate="list" let-tasks>
+              <div class="survey-list-container">
+                <p-card *ngFor="let task of tasks" [class]="'survey-card'">
+                  <div class="h-flex" style="gap: 1rem">
+                    <div class="h-flex" style="flex: 1">
+                      <i class="pi pi-question-circle" style="font-size: 2rem; padding-right: 1rem"></i>
+                      <div class="survey-label" (click)="$event">
+                        {{task.title}}
+                      </div>
+                    </div>
+
+                    <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
+                    </div>
+                    <div class="h-flex" style="justify-content: flex-end">
+                      <div *ngIf="task.lastSurveyAttempt == null" class="survey-status">
+                        Не пройдено
+                      </div>
+                      <div *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate == null"
+                           class="survey-status">
+                        В процессе
+                      </div>
+                      <div class="v-flex"
+                           *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate != null">
+<!--                        <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>-->
+<!--                        <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"-->
+<!--                                       [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>-->
+                      </div>
+                    </div>
+                  </div>
+                </p-card>
+              </div>
+            </ng-template>
+          </p-dataView>
         </div>
       </p-accordionTab>
     </p-accordion>
   </div>
-
-  <p-footer *ngIf="mode == CoursePanelMode.ADMIN" class="admin-footer">
-    <p-button styleClass="button-clear"
-              label="Назад" icon="pi pi-chevron-left"
-              pTooltip="Вернуться к списку курсов"
-              (click)="backToCourseList.emit()">
-    </p-button>
-
-    <p-button label="Добавить модуль"
-              icon="pi pi-plus" severity="success"
-              (click)="createModule()">
-    </p-button>
-  </p-footer>
 </div>

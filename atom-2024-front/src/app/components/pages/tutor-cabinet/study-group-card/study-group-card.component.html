@@ -34,7 +34,7 @@
           <div class="course-card">
             <app-course-panel *ngIf="selectedCourse && selectedStudent && studyGroup"
                               [mode]="CoursePanelMode.TUTOR"
-                              [course]="selectedCourse" [student]="selectedStudent" [studyGroup]="studyGroup">
+                               [student]="selectedStudent">
             </app-course-panel>
           </div>
         </ng-template>

@@ -8,10 +8,16 @@ import {InputTextModule} from 'primeng/inputtext';
 import {TooltipModule} from 'primeng/tooltip';
 import {FormsModule} from '@angular/forms';
 import {PanelModule} from 'primeng/panel';
+import {DataViewModule} from 'primeng/dataview';
+import {CardModule} from 'primeng/card';
+import {LessonDto, TaskDto, TopicDto} from '../../../gen/atom2024backend-dto';
+import {UserDto} from '../../../models/UserDto';
+import {lastValueFrom} from 'rxjs';
+import {TopicService} from '../../../gen/atom2024backend-controllers';
 
 
 export enum CoursePanelMode {
-  STUDENT = 'STUDENT', TUTOR = 'TUTOR', ADMIN = 'ADMIN'
+  STUDENT = 'STUDENT', TUTOR = 'TUTOR'
 }
 
 @Component({
@@ -27,7 +33,9 @@ export enum CoursePanelMode {
     NgIf,
     TooltipModule,
     FormsModule,
-    PanelModule
+    PanelModule,
+    DataViewModule,
+    CardModule
   ],
   templateUrl: './course-panel.component.html',
   styleUrl: './course-panel.component.css'
@@ -35,54 +43,47 @@ export enum CoursePanelMode {
 export class CoursePanelComponent implements OnInit {
   @Input() mode: CoursePanelMode = CoursePanelMode.STUDENT;
 
-  @Input() studyGroup: any;
-  @Input() student: any;
-  @Input() course: any;
+  @Input() student: UserDto;
+  @Input() topic: TopicDto;
 
   @Output() backToCourseList = new EventEmitter();
 
-  courseModules: any[] = [
-    {
-      name: 'Бизнес-анализ',
-      lessons: ['Урок 1', 'Урок 2', 'Промежуточный тест', 'Воркшоп', 'Контрольный тест']
-    },
-    {
-      name: 'UI / UX',
-      lessons: ['Адаптивность', 'User-friendly', 'Домашнее задание']
-    },
-    {
-      name: 'Фронтенд разработка',
-      lessons: ['HTML', 'CSS', 'TYPESCRIPT', 'Контрольный тест']
-    },
-    {
-      name: 'Бэкэнд',
-      lessons: ['JAVA', 'SPRING BOOT', 'Контрольный тест']
-    }
-  ];
-
+  lessons: LessonDto[] = [];
+  tasksByLesson: { [key: number]: { title?: string, task?: TaskDto, type: 'task' | 'lecture' }[] } = {}
   loading = false;
   filterValue: string;
 
-  get filteredModules() {
+  get filteredLessons() {
     if (this.filterValue) {
-      return this.courseModules.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      return this.lessons.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
     } else {
-      return this.courseModules;
+      return this.lessons;
     }
   }
 
   get header(): string {
     switch (this.mode) {
-      case CoursePanelMode.STUDENT: return `Курс: ${this.course.name!}`
-      case CoursePanelMode.ADMIN: return `Конфигуратор курса: ${this.course.name!}`;
-      case CoursePanelMode.TUTOR: return `${this.studyGroup.name!} / ${this.course.name!} / ${this.student.user?.fullName!}`
+      case CoursePanelMode.STUDENT:
+        return `Курс: ${this.topic.title!}`
+      case CoursePanelMode.TUTOR:
+        return `${this.topic.title!} / ${this.student.fullName!}`
     }
   }
 
-  constructor() {
+  constructor(private topicService: TopicService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.lessons = await lastValueFrom(this.topicService.getTopicLessons(this.topic.id!));
+    this.tasksByLesson = {};
+    this.lessons.forEach(lesson => {
+      this.tasksByLesson[lesson.id!] = [];
+      this.tasksByLesson[lesson.id!].push({title: 'Лекция', type: 'lecture'});
+      (lesson.tasks ?? []).forEach(task => {
+        this.tasksByLesson[lesson.id!].push({title: task.title, task: task, type: 'task'});
+      })
+
+    });
   }
 
   createModule() {

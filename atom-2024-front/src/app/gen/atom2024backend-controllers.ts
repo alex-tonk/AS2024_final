@@ -2,7 +2,7 @@ import {RoleDto} from '../models/RoleDto';
 import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {TopicDto} from './atom2024backend-dto';
+import {LessonDto, TopicDto} from './atom2024backend-dto';
 import {ChatDto, MessageDto} from './dto-chat';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
@@ -61,6 +61,10 @@ export class TopicService {
 
  public constructor(httpService: HttpClient) {
     this.httpService = httpService;
+  }
+
+ public getTopicLessons(topicId: number): Observable<LessonDto[]>  {
+    return this.httpService.get<LessonDto[]>('topics/' + topicId + '/lessons', {responseType: 'json'});
   }
 
  public getTopics(): Observable<TopicDto[]>  {

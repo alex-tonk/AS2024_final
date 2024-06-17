@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {lastValueFrom} from 'rxjs';
 import {NgForOf, NgIf} from '@angular/common';
 import {OrderListModule} from 'primeng/orderlist';
 import {ListboxModule} from 'primeng/listbox';

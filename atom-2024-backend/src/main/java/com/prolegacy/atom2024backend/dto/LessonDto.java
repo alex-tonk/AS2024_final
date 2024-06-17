@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,4 +16,7 @@ public class LessonDto {
     private String title;
     private String content;
     private String author;
+
+    private List<TraitDto> traits;
+    private List<TaskDto> tasks;
 }

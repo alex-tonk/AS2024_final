@@ -19,10 +19,21 @@
                     <hr>
                     <div>{{ topic.description }}</div>
                     <p-footer>
+                      <div style="display: flex; flex-direction: column;">
+                      <div style="width: 100%; text-align: end; font-size: smaller;">Пройдено 0 из {{topic.lessonsCount}}</div>
                       <p-progressBar pTooltip="Прогресс прохождения" [value]="30" [showValue]="false"
                                      [style]="{ height: '6px' }"/>
+                      </div>
                       <hr>
-                      Кол-во уроков: {{ topic.lessonsCount }}
+                      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                        <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
+                               [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
+                          <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
+                            <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
+                            <span>{{ trait.name }}</span>
+                          </div>
+                        </p-tag>
+                      </div>
                     </p-footer>
                   </p-card>
                 </div>
@@ -69,9 +80,9 @@
     </ng-template>
   </p-tabPanel>
 
-  <p-tabPanel *ngFor="let course of openedTopics" [header]="course.title" closable="true">
+  <p-tabPanel *ngFor="let topic of openedTopics" [header]="topic.title" closable="true">
     <ng-template pTemplate="content">
-      <app-course-panel [course]="course.value" [mode]="CoursePanelMode.STUDENT"></app-course-panel>
+      <app-course-panel [topic]="topic.value" [student]="userService.user!"  [mode]="CoursePanelMode.STUDENT"></app-course-panel>
     </ng-template>
   </p-tabPanel>
 </p-tabView>

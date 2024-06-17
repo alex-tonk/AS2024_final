@@ -20,6 +20,8 @@ import {TooltipModule} from 'primeng/tooltip';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {TopicDto} from '../../../gen/atom2024backend-dto';
 import {TopicService} from '../../../gen/atom2024backend-controllers';
+import {TagModule} from 'primeng/tag';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-student-cabinet',
@@ -44,7 +46,8 @@ import {TopicService} from '../../../gen/atom2024backend-controllers';
     DatePipe,
     TooltipModule,
     NgIf,
-    ProgressBarModule
+    ProgressBarModule,
+    TagModule
   ],
   templateUrl: './student-cabinet.component.html',
   styleUrl: './student-cabinet.component.css'
@@ -69,11 +72,12 @@ export class StudentCabinetComponent implements OnInit {
     }
   }
 
-  constructor(private topicService: TopicService) {
+  constructor(private topicService: TopicService,
+              protected userService: UserService) {
   }
 
-  ngOnInit() {
-    this.init();
+  async ngOnInit() {
+    await this.init();
   }
 
   async init() {
