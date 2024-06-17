@@ -1,19 +1,15 @@
 package com.prolegacy.atom2024backend.init;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
-import com.prolegacy.atom2024backend.entities.Lesson;
-import com.prolegacy.atom2024backend.entities.Task;
-import com.prolegacy.atom2024backend.entities.Topic;
-import com.prolegacy.atom2024backend.entities.Trait;
+import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
-import com.prolegacy.atom2024backend.repositories.LessonRepository;
-import com.prolegacy.atom2024backend.repositories.TaskRepository;
-import com.prolegacy.atom2024backend.repositories.TopicRepository;
-import com.prolegacy.atom2024backend.repositories.TraitRepository;
+import com.prolegacy.atom2024backend.repositories.*;
 import com.prolegacy.atom2024backend.services.FileUploadService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,6 +32,7 @@ public class InitialDataLoader implements ApplicationRunner {
     private static final String lessonSubfolderName = "lessons";
     private static final String topicPrefix = "topic";
     private static final String traitsFilename = "traits.json";
+    private static final String featuresFilename = "features.json";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -53,6 +50,9 @@ public class InitialDataLoader implements ApplicationRunner {
 
     @Autowired
     private FileUploadService fileUploadService;
+
+    @Autowired
+    private FeatureRepository featureRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -98,6 +98,8 @@ public class InitialDataLoader implements ApplicationRunner {
         if (topics.isEmpty()) {
             throw new IllegalStateException("Не удалось загрузить ни одной темы обучения");
         }
+
+        loadFeatures();
     }
 
     private void loadTraits(Map<String, Trait> traitsByCode) {
@@ -114,11 +116,11 @@ public class InitialDataLoader implements ApplicationRunner {
                 try {
                     Trait trait = constructTrait(traitJson);
                     traitsByCode.put(trait.getCode(), trait);
-                    traitRepository.save(trait);
                 } catch (Exception e) {
                     log.warn("Ошибка чтения тега");
                 }
             }
+            traitRepository.saveAll(traitsByCode.values());
         } catch (Exception exception) {
             throw new BusinessLogicException("Ошибка чтения тегов из файла %s".formatted(traitsFile.getName()), exception);
         }
@@ -384,6 +386,26 @@ public class InitialDataLoader implements ApplicationRunner {
                         return json.toString();
                     }
                 }).orElse(null);
+    }
+
+    private void loadFeatures() {
+        Map<String, Feature> featuresByCode = new HashMap<>();
+
+        File featuresFile = new File(dataFolderName + File.separator + featuresFilename);
+        if (!featuresFile.exists()) {
+            throw new BusinessLogicException("Файл %s не существует".formatted(featuresFile.getName()));
+        }
+        try {
+            Map<String, String> features = mapper.readValue(featuresFile, new TypeReference<>() {
+            });
+            features.forEach((code, name) -> {
+                Feature feature = new Feature(code, name);
+                featureRepository.save(feature);
+            });
+
+        } catch (Exception exception) {
+            throw new BusinessLogicException("Ошибка чтения особенностeй из файла %s".formatted(featuresFile.getName()), exception);
+        }
     }
 
 }

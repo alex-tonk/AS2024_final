@@ -21,4 +21,9 @@ public class Feature {
     private String code;
     @Column(columnDefinition = "text")
     private String name;
+
+    public Feature(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 }
