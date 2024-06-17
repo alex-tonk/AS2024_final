@@ -7,12 +7,9 @@ import {RestorePasswordComponent} from "./components/pages/login/restore-passwor
 import {UserPanelComponent} from "./components/pages/user-panel/user-panel.component";
 import {adminGuard} from "./services/guards/admin.guard";
 import {unauthorizedGuard} from "./services/guards/unauthorized.guard";
-import { SurveyComponent } from './components/pages/survey/survey.component';
-import {SurveyRegistrationComponent} from "./components/pages/survey/survey-registration/survey-registration.component";
 import {ChatComponent} from "./components/chat/chat/chat.component";
 import {StudentCabinetComponent} from "./components/pages/student-cabinet/student-cabinet.component";
 import {TutorCabinetComponent} from './components/pages/tutor-cabinet/tutor-cabinet.component';
-import {StudyGroupCardComponent} from './components/pages/tutor-cabinet/study-group-card/study-group-card.component';
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -28,6 +25,5 @@ export const routes: Routes = [
   {path: 'student-cabinet', component: StudentCabinetComponent},
   {path: 'tutor-cabinet', component: TutorCabinetComponent},
   {path: 'chat', component: ChatComponent},
-  {path: 'survey', component: SurveyComponent},
   {path: '**', redirectTo: ''}
 ];

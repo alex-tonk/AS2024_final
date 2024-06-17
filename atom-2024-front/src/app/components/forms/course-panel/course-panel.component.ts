@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CourseDto, StudentDto, StudyGroupDto} from '../../../gen/atom2024backend-dto';
 import {VideoLessonsComponent} from '../../pages/student-cabinet/samples/video-lessons/video-lessons.component';
 import {AccordionModule} from 'primeng/accordion';
 import {NgForOf, NgIf} from '@angular/common';
@@ -8,7 +7,6 @@ import {Button} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {TooltipModule} from 'primeng/tooltip';
 import {FormsModule} from '@angular/forms';
-import {SurveyComponent} from '../../pages/survey/survey.component';
 import {PanelModule} from 'primeng/panel';
 
 
@@ -29,7 +27,6 @@ export enum CoursePanelMode {
     NgIf,
     TooltipModule,
     FormsModule,
-    SurveyComponent,
     PanelModule
   ],
   templateUrl: './course-panel.component.html',
@@ -38,9 +35,9 @@ export enum CoursePanelMode {
 export class CoursePanelComponent implements OnInit {
   @Input() mode: CoursePanelMode = CoursePanelMode.STUDENT;
 
-  @Input() studyGroup: StudyGroupDto;
-  @Input() student: StudentDto;
-  @Input() course: CourseDto;
+  @Input() studyGroup: any;
+  @Input() student: any;
+  @Input() course: any;
 
   @Output() backToCourseList = new EventEmitter();
 

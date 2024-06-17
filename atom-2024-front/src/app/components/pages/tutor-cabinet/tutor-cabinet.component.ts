@@ -8,13 +8,12 @@ import {StudyGroupCardComponent} from './study-group-card/study-group-card.compo
 import {NgForOf} from '@angular/common';
 import {setTimeout} from 'core-js';
 import {DataViewModule} from 'primeng/dataview';
-import {StudyGroupService} from '../../../gen/atom2024backend-controllers';
-import {StudyGroupDto} from '../../../gen/atom2024backend-dto';
-import {lastValueFrom} from 'rxjs';
 import {InputTextModule} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
 import {OnlineLessonsComponent} from '../student-cabinet/samples/online-lessons/online-lessons.component';
-import {PresentationLessonsComponent} from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
+import {
+  PresentationLessonsComponent
+} from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
 
 @Component({
   selector: 'app-tutor-cabinet',
@@ -42,8 +41,8 @@ export class TutorCabinetComponent implements OnInit {
 
   systemTabsCount = 3;
 
-  availableStudyGroups: StudyGroupDto[] = [];
-  openedGroups: { value: StudyGroupDto, title: string }[] = [];
+  availableStudyGroups: any[] = [];
+  openedGroups: { value: any, title: string }[] = [];
 
   filterValue: string;
 
@@ -55,7 +54,7 @@ export class TutorCabinetComponent implements OnInit {
     }
   }
 
-  constructor(private studyGroupService: StudyGroupService) {
+  constructor() {
   }
 
   async ngOnInit() {
@@ -65,7 +64,7 @@ export class TutorCabinetComponent implements OnInit {
   async init() {
     this.loading = true;
     try {
-      this.availableStudyGroups = await lastValueFrom(this.studyGroupService.getStudyGroupsForTutor());
+      this.availableStudyGroups = [];
     } finally {
       this.loading = false;
     }
@@ -75,7 +74,7 @@ export class TutorCabinetComponent implements OnInit {
     return courseNames?.split(',');
   }
 
-  openGroup(group: StudyGroupDto) {
+  openGroup(group: any) {
     const idx = this.openedGroups.findIndex(g => g.value.id === group.id);
     if (idx > -1) {
       this.activeIndex = idx + this.systemTabsCount;

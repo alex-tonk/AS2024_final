@@ -58,6 +58,10 @@ public class InitialUserGenerator implements ApplicationRunner {
         Role role = roleRepository.findByName("ROLE_" + adminRoleName)
                 .orElseThrow(() -> new BusinessLogicException("Отсутствует роль администратора"));
 
+        // TODO: убрать нахер
+        Role studentRole = roleRepository.findByName("ROLE_student")
+                        .orElseThrow(() -> new BusinessLogicException("Отсутствует роль обучающегося"));
+
         userService.createUser(UserDto.builder()
                 .email(this.email)
                 .password(Base64.getEncoder().encodeToString(DigestUtils.sha256(this.password)))
@@ -65,6 +69,16 @@ public class InitialUserGenerator implements ApplicationRunner {
                 .lastname(this.lastname)
                 .surname(this.surname)
                 .roles(new HashSet<>(List.of(new RoleDto(role.getId(), null, null))))
+                .build()
+        );
+
+        userService.createUser(UserDto.builder()
+                .email("user@user.com")
+                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("user")))
+                .firstname(this.firstname)
+                .lastname(this.lastname)
+                .surname(this.surname)
+                .roles(new HashSet<>(List.of(new RoleDto(studentRole.getId(), null, null))))
                 .build()
         );
     }

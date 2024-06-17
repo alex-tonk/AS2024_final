@@ -4,24 +4,9 @@
       <app-user-list></app-user-list>
     </ng-template>
   </p-tabPanel>
-  <p-tabPanel #students header="Ученики">
-    <ng-template pTemplate="content">
-      <app-student-list *ngIf="students.selected"></app-student-list>
-    </ng-template>
-  </p-tabPanel>
-  <p-tabPanel #tutors header="Преподаватели">
-    <ng-template pTemplate="content">
-      <app-tutor-list *ngIf="tutors.selected"></app-tutor-list>
-    </ng-template>
-  </p-tabPanel>
   <p-tabPanel #courses header="Курсы">
     <ng-template pTemplate="content">
       <app-course-list *ngIf="courses.selected"></app-course-list>
-    </ng-template>
-  </p-tabPanel>
-  <p-tabPanel #studyGroups header="Учебные группы">
-    <ng-template pTemplate="content">
-      <app-study-group-list *ngIf="studyGroups.selected"></app-study-group-list>
     </ng-template>
   </p-tabPanel>
 </p-tabView>

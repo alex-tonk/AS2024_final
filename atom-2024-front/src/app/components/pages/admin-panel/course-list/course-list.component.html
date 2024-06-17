@@ -118,11 +118,6 @@
     </ng-template>
   </p-table>
 
-  <app-course-registration-form *ngIf="!!courseFormData"
-                                [courseId]="courseFormData.courseId"
-                                (result)="onCourseFormResult($event)">
-  </app-course-registration-form>
-
   <p-menu #menu [model]="(ExportTable.exportMenu | async)!" [popup]="true"
           (onShow)="ExportTable.showMenu(table, columns, courses)"
           appendTo="body">

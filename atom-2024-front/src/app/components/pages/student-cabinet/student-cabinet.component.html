@@ -4,7 +4,7 @@
       <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]" class="min400-min340">
         <ng-template pTemplate>
           <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid" emptyMessage="Не найдено ни одного курса">
-            <ng-template pTemplate="grid" let-courses>
+            <ng-template pTemplate="grid" let-topics>
               <div class="quick-search-wrapper">
                 <div class="p-input-icon-left">
                   <i class="pi pi-search"></i>
@@ -12,11 +12,11 @@
                 </div>
               </div>
               <div class="grid" style="justify-content: center; overflow: auto">
-                <div *ngFor="let course of courses" style="padding: 0.5rem">
-                  <p-card (click)="openCourse(course)" class="clickable-card">
-                    <h3 class="no-margin header">{{ course.name }}</h3>
+                <div *ngFor="let topic of topics" style="padding: 0.5rem">
+                  <p-card (click)="openTopic(topic)" class="clickable-card">
+                    <h3 class="no-margin header">{{ topic.title }}</h3>
                     <hr>
-                    <div>Какое-то описание курса, даты, разная инфа</div>
+                    <div>{{ topic.description }}</div>
                     <p-footer>
                       <p-progressBar pTooltip="Прогресс прохождения" [value]="30" [showValue]="false" [style]="{ height: '6px' }"/>
                       <hr>
@@ -28,7 +28,7 @@
             </ng-template>
 
             <ng-template pTemplate="footer">
-              <div>Всего ваших курсов: {{ availableCourses ? availableCourses.length : 0 }}</div>
+              <div>Всего ваших курсов: {{ topics ? topics.length : 0 }}</div>
             </ng-template>
           </p-dataView>
         </ng-template>
@@ -67,7 +67,7 @@
     </ng-template>
   </p-tabPanel>
 
-  <p-tabPanel *ngFor="let course of openedCourses" [header]="course.title" closable="true">
+  <p-tabPanel *ngFor="let course of openedTopics" [header]="course.title" closable="true">
     <ng-template pTemplate="content">
       <app-course-panel [course]="course.value" [mode]="CoursePanelMode.STUDENT"></app-course-panel>
     </ng-template>
