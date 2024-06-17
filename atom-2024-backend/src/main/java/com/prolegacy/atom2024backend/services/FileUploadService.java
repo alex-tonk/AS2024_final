@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.UUID;
 
 @Service
 @Transactional(isolation = Isolation.SERIALIZABLE)

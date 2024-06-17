@@ -13,14 +13,8 @@ import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.auth.repositories.RoleRepository;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
-import com.prolegacy.atom2024backend.dto.StudentDto;
-import com.prolegacy.atom2024backend.dto.TutorDto;
-import com.prolegacy.atom2024backend.entities.Student;
-import com.prolegacy.atom2024backend.entities.Tutor;
 import com.prolegacy.atom2024backend.entities.chat.Chat;
 import com.prolegacy.atom2024backend.repositories.ChatRepository;
-import com.prolegacy.atom2024backend.repositories.StudentRepository;
-import com.prolegacy.atom2024backend.repositories.TutorRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +52,6 @@ public class UserService {
     @Autowired
     private ChatRepository chatRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TutorRepository tutorRepository;
-
     /**
      * Регистрация юзера (для бичей)
      */
@@ -91,23 +79,6 @@ public class UserService {
         );
         userRepository.save(user);
         chatRepository.save(new Chat(user));
-
-        for (Role role : user.getRoles()) {
-            var r = com.prolegacy.atom2024backend.enums.Role.getRoleByName(role.getName());
-            if (r == null) {
-                continue;
-            }
-            switch (r) {
-                case ADMIN, METHODIST -> {
-                }
-                case STUDENT -> {
-                    studentRepository.save(new Student(user, new StudentDto()));
-                }
-                case TUTOR -> {
-                    tutorRepository.save(new Tutor(user, new TutorDto()));
-                }
-            }
-        }
 
         return userReader.getUser(user.getId());
     }

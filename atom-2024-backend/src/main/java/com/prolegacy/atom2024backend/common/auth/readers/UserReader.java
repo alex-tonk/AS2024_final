@@ -11,8 +11,6 @@ import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
-import com.prolegacy.atom2024backend.entities.QStudent;
-import com.prolegacy.atom2024backend.entities.QTutor;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -33,9 +31,6 @@ public class UserReader {
     private static final QUser dummyUser = new QUser("dummyUser");
     private static final QRole role = QRole.role;
     private static final QRole userRole = new QRole("userRole");
-
-    private static final QTutor tutor = QTutor.tutor;
-    private static final QStudent student = QStudent.student;
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -129,13 +124,9 @@ public class UserReader {
 
         return queryFactory
                 .from(user)
-                .leftJoin(tutor).on(tutor.user.id.eq(user.id))
-                .leftJoin(student).on(student.user.id.eq(user.id))
                 .selectDto(
                         UserDto.class,
                         Expressions.as(Expressions.nullExpression(String.class), "password"),
-                        tutor.id.as("tutorId"),
-                        student.id.as("studentId"),
                         getShortName(user).as("shortName"),
                         getFullName(user).as("fullName"),
                         Expressions.as(rolesAsString, "rolesAsString")
