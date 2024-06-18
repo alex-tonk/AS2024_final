@@ -61,12 +61,14 @@ export class SupplementDto {
 }
 
 export class TaskDto {
+  averageTime?: number;
   code?: string;
   content?: string;
   difficulty?: number;
   difficultyScore?: number;
   id?: number;
   lastAttempt?: AttemptDto;
+  numOfAttempts?: number;
   supplements?: SupplementDto[];
   time?: number;
   title?: string;

@@ -1,10 +1,10 @@
 <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeCourse($event.index)">
-  <p-tabPanel header="Ваши курсы" leftIcon="pi pi-graduation-cap">
+  <p-tabPanel header="Учебные материалы" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
       <p-splitter [style]="{ height: '100%'}" [panelSizes]="[70, 30]" class="min400-min340">
         <ng-template pTemplate>
           <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid"
-                      emptyMessage="Не найдено ни одного курса">
+                      emptyMessage="Не найдено ни одной темы">
             <ng-template pTemplate="grid" let-topics>
               <div class="quick-search-wrapper">
                 <div class="p-input-icon-left">
