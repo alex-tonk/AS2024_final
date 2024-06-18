@@ -45,7 +45,7 @@
   <ng-template pTemplate="header">
     <tr>
       <ng-container *ngFor="let col of columns">
-        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" pResizableColumn pReorderableColumn>
+        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" [pTooltip]="col.header" [showDelay]="1000" pResizableColumn pReorderableColumn>
           {{ col.header }}
           <p-sortIcon [field]="col.field"></p-sortIcon>
         </th>
@@ -72,10 +72,36 @@
             </td>
           }
           @case ("date") {
-            <td style="text-align: center">{{ getField(row, col) }}</td>
+            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              {{ getField(row, col) }}
+            </td>
+          }
+          @case ("status") {
+            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              <p-tag severity="secondary" *ngIf="getField(row, col) != null"
+                     [rounded]="true"
+                     [style]="getStatusTagStyle(getField(row, col))">
+                <div>
+                  {{ getField(row, col) }}
+                </div>
+              </p-tag>
+            </td>
+          }
+          @case ("mark") {
+            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              <p-tag severity="secondary" *ngIf="getField(row, col) != null"
+                     [rounded]="true"
+                     [style]="getMarkStyle(getField(row, col))">
+                <div>
+                  {{ getField(row, col) }}
+                </div>
+              </p-tag>
+            </td>
           }
           @default {
-            <td [class.cell-center]="col.field == 'id'">{{ getField(row, col) }}</td>
+            <td [class.cell-center]="col.field == 'id'" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              {{ getField(row, col) }}
+            </td>
           }
         }
       </ng-container>

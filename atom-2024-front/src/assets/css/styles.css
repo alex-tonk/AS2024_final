@@ -554,3 +554,11 @@ img {
 mark.current-mark {
   background-color: orange;
 }
+
+td {
+  text-overflow: ellipsis;
+}
+
+th {
+  text-overflow: ellipsis;
+}

@@ -15,6 +15,7 @@ import {ExportTable} from '../common/table/ExportTable';
 import {MenuModule} from 'primeng/menu';
 import {AttemptService} from '../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
+import {TagModule} from 'primeng/tag';
 import {DialogModule} from 'primeng/dialog';
 import {
   ImageWithFeedbackViewerComponent
@@ -37,7 +38,9 @@ import {
     AsyncPipe,
     MenuModule,
     DialogModule,
-    ImageWithFeedbackViewerComponent
+    ImageWithFeedbackViewerComponent,
+    MenuModule,
+    TagModule
   ],
   templateUrl: './attempt.component.html',
   styleUrl: './attempt.component.css'
@@ -59,22 +62,32 @@ export class AttemptComponent implements OnInit {
       field: 'id',
       type: 'numeric',
       width: 10
-    }, {
+    },
+    {
       header: 'Обучающийся',
       field: 'user.fullName',
       width: 25
-    }, {
-      header: 'Тема',
-      field: 'topic.title'
-    }, {
-      header: 'Учебный материал',
-      field: 'lesson.title'
-    }, {
-      header: 'Задание',
-      field: 'task.title'
-    }, {
+    },
+    {
       header: 'Статус',
       field: 'statusLocale',
+      type: 'status'
+    },
+    {
+      header: 'Тема',
+      field: 'topic.title'
+    },
+    {
+      header: 'Учебный материал',
+      field: 'lesson.title'
+    },
+    {
+      header: 'Задание',
+      field: 'task.title'
+    },
+    {
+      header: 'Сложность задания',
+      field: 'difficultyLocale'
     },
     {
       header: 'Статус обработки ИИ',
@@ -84,17 +97,23 @@ export class AttemptComponent implements OnInit {
       header: 'Дата начала выполнения',
       field: 'formattedStartDate',
       type: 'date'
-    }, {
+    },
+    {
       header: 'Дата завершения выполнения',
       field: 'formattedEndDate',
       type: 'date'
-    }, {
+    },
+    {
       header: 'Оценка системы ИИ',
       field: 'autoMarkLocale',
-    }, {
+      type: 'mark'
+    },
+    {
       header: 'Оценка наставника',
       field: 'tutorMarkLocale',
-    }, {
+      type: 'mark'
+    },
+    {
       header: 'Архив',
       field: 'archived',
       type: 'boolean'
@@ -116,13 +135,43 @@ export class AttemptComponent implements OnInit {
   }
 
   async getAttemptsFromApi() {
-      this.loading = true;
-      this.selectedAttempt = undefined;
+    this.loading = true;
+    this.selectedAttempt = undefined;
       try {
         this.attempts = await lastValueFrom(this.attemptService.getAttempts());
       } finally {
         this.loading = false;
       }
+  }
+
+  getStatusTagStyle(statusLocale: string) {
+    const style = {padding: '0.6rem', fontSize: '15px', fontWeight: '600', color: 'black'};
+    switch (statusLocale) {
+      case 'Взято в работу':
+        return {...style, backgroundColor: 'var(--border-color)', color: 'black'};
+      case 'Отправлено на проверку':
+        return {...style, backgroundColor: '#009fe3'};
+      case 'Проверено':
+        return {...style, backgroundColor: 'var(--green-color)'};
+      default:
+        return style;
+    }
+  }
+
+  getMarkStyle(markLocale: string) {
+    const style = {padding: '0.6rem', fontSize: '15px', fontWeight: '600', color: 'black'};
+    switch (markLocale) {
+      case 'Отлично':
+        return {...style, backgroundColor: 'var(--green-color)'};
+      case 'Хорошо':
+        return {...style, backgroundColor: '#ede636'};
+      case 'Удовлетворительно':
+        return {...style, backgroundColor: 'orange'};
+      case 'Неудовлетворительно':
+        return {...style, backgroundColor: 'var(--red-color)'};
+      default:
+        return style;
+    }
   }
 
   async ngOnInit() {

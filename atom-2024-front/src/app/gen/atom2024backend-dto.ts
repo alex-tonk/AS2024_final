@@ -75,6 +75,7 @@ export class TaskDto {
   code?: string;
   content?: string;
   difficulty?: number;
+readonly   difficultyLocale?: string;
   difficultyScore?: number;
   id?: number;
   lastAttempt?: AttemptDto;
