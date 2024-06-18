@@ -16,37 +16,39 @@
       </div>
 
       <div #imgWrapper class="img-wrapper"
-           (mousedown)="onMouseDown($event, imgWrapper)"
-           (mousemove)="onMouseMove($event, imgWrapper)"
-           (mouseup)="onMouseUp()">
-        <div id="tutorSelection" [hidden]="true"
-             [class.warn]="creatingFeedbackType == FeedbackType.WARN"
-             [class.error]="creatingFeedbackType == FeedbackType.ERROR"></div>
-
-        <img #imgSource src="/assets/images/anime.jpg" alt="scan"
-             width="100%" (load)="onImageLoad(imgSource)"
-             style="pointer-events: none; user-select: none; opacity: 0.5">
-
+           (mousedown)="onDrawStart($event, imgWrapper)"
+           (mousemove)="onDraw($event, imgWrapper)"
+           (mouseup)="onDrawEnd()">
         <div class="feedback" *ngFor="let feedback of feedbacks"
-             ngDraggable [inBounds]="true" [bounds]="imgWrapper"
-             [pTooltip]="op.overlayVisible ? '' : 'Нажмите для подробной информации'"
-             [tooltipDisabled]="tutorMoveMode"
-             [class.warn]="feedback.type == FeedbackType.WARN"
-             [class.error]="feedback.type == FeedbackType.ERROR"
+             [ngDraggable]="isTutorMode" [inBounds]="true" [bounds]="imgWrapper" [trackPosition]="true"
+             zIndex=1 zIndexMoving=999 [handle]="moveHandler"
+             (endOffset)="onDragEndPro(feedback, $event)"
+             [ngResizable]="isTutorMode"
+             [style]="feedback.style"
              [class.zoom-in]="!op.overlayVisible"
              [class.zoom-out]="op.overlayVisible"
-             [class.hovered]="hoveredFeedback == feedback"
-             [style]="feedback.style"
-             (click)="op.toggle($event)"
-             (mousedown)="op.hide(); onDragStart($event, imgWrapper)"
-             (mouseup)="op.hide(); onDragEnd(feedback, $event, imgWrapper)">
+             [class.warn]="feedback.type == FeedbackType.WARN"
+             [class.error]="feedback.type == FeedbackType.ERROR"
+             (click)="op.toggle($event)">
+          <div class="border"
+               [class.warn]="feedback.type == FeedbackType.WARN"
+               [class.error]="feedback.type == FeedbackType.ERROR"
+               [class.hovered]="hoveredFeedback == feedback"
+          ></div>
+
+          <i #moveHandler class="pi pi-arrows-alt move-handler"
+             [class.warn]="feedback.type == FeedbackType.WARN"
+             [class.error]="feedback.type == FeedbackType.ERROR"
+             [class.display-none]="!isTutorMode"
+          ></i>
+
           <p-overlayPanel #op [showCloseIcon]="true" [dismissable]="false">
             <div class="comment-wrapper">
               <ng-container *ngIf="feedback.isEditing; else comment">
                 <div class="comment-editor-wrapper">
               <textarea pInputTextarea placeholder="Введите комментарий"
                         [(ngModel)]="feedback.comment" [maxLength]="255" [autoResize]="true"
-                        style="width: 100%; min-height: 46px; max-height: 200px">
+                        style="width: 100%; min-height: 100px; max-height: 200px; min-width: 480px">
             </textarea>
                   <p-footer>
                     <div class="full-width" style="padding: 10px 5px 5px; text-align: center">
@@ -61,12 +63,21 @@
                 <div>{{ feedback.comment }}</div>
 
                 <div style="text-align: right">
+                  <!--TODO ИМЯ ПОДСТАВИТЬ??-->
                   <h6 style="margin: 0">Комментарий от Лехи</h6>
                 </div>
               </ng-template>
             </div>
           </p-overlayPanel>
         </div>
+
+        <div id="tutorSelection" [hidden]="true"
+             [class.warn]="creatingFeedbackType == FeedbackType.WARN"
+             [class.error]="creatingFeedbackType == FeedbackType.ERROR"></div>
+
+        <img #imgSource src="/assets/images/anime.jpg" alt="scan"
+             width="100%" (load)="onImageLoad(imgSource)"
+             style="pointer-events: none; user-select: none; opacity: 0.5">
       </div>
     </div>
   </ng-template>
