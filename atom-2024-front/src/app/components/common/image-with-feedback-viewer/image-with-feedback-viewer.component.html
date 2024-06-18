@@ -19,7 +19,7 @@
            (mousedown)="onDrawStart($event, imgWrapper)"
            (mousemove)="onDraw($event, imgWrapper)"
            (mouseup)="onDrawEnd()">
-        <div class="feedback" *ngFor="let feedback of feedbacks"
+        <div class="feedback" *ngFor="let feedback of results"
              [ngDraggable]="isTutorMode" [inBounds]="true" [bounds]="imgWrapper" [trackPosition]="true"
              zIndex=1 zIndexMoving=999 [handle]="moveHandler"
              (endOffset)="onDragEndPro(feedback, $event)"
@@ -75,7 +75,7 @@
              [class.warn]="creatingFeedbackType == FeedbackType.WARN"
              [class.error]="creatingFeedbackType == FeedbackType.ERROR"></div>
 
-        <img #imgSource src="/assets/images/anime.jpg" alt="scan"
+        <img #imgSource [src]="baseUrl + '/tasks/files/' + fileIds[0]" alt="scan"
              width="100%" (load)="onImageLoad(imgSource)"
              style="pointer-events: none; user-select: none; opacity: 0.5">
       </div>
@@ -86,7 +86,7 @@
       <div class="feedback-list-header">
         <b>Замечания по заданию</b>
       </div>
-      <div *ngFor="let feedback of feedbacks" class="feedback-in-list" (mouseenter)="onHoverFeedbackInList(feedback)">
+      <div *ngFor="let feedback of results" class="feedback-in-list" (mouseenter)="onHoverFeedbackInList(feedback)">
         {{ feedback.comment ? feedback.comment : 'Комментарий не указан' }}
       </div>
     </div>

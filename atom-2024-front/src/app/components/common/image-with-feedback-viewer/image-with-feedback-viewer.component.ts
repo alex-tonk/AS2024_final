@@ -10,9 +10,11 @@ import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SplitterModule} from 'primeng/splitter';
 import {AngularDraggableModule, IPosition} from 'angular2-draggable';
-import {AttemptDto} from '../../../gen/atom2024backend-dto';
+import {AttemptCheckResultDto, AttemptDto} from '../../../gen/atom2024backend-dto';
 import {lastValueFrom} from 'rxjs';
 import {AttemptService} from '../../../gen/atom2024backend-controllers';
+import {MessageService} from 'primeng/api';
+import {ConfigService} from '../../../services/config.service';
 
 export enum FeedbackType {
   COMMENT = 'COMMENT', WARN = 'WARN', ERROR = 'ERROR'
@@ -45,6 +47,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   @Input() attemptId: number;
   attempt: AttemptDto;
   loading = false;
+  baseUrl: string;
 
   @ViewChild('imgWrapper') imgWrapper: ElementRef;
   creatingFeedbackType: FeedbackType;
@@ -59,44 +62,9 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   lastCoordinates = {x1: 0, y1: 0, x2: 0, y2: 0};
   hoveredFeedback: any;
 
-  feedbacks = [
-    {
-      x1: 0,
-      y1: 10,
-      x2: 80,
-      y2: 100,
-      type: FeedbackType.WARN,
-      comment: 'Вау какой дурачок',
-      isEditing: false,
-      style: {},
-      initialTop: 0,
-      initialLeft: 0
-    },
-    {
-      x1: 60,
-      y1: 90,
-      x2: 100,
-      y2: 150,
-      type: FeedbackType.WARN,
-      comment: 'Блин реально какой-то дурачок',
-      isEditing: false,
-      style: {},
-      initialTop: 0,
-      initialLeft: 0
-    },
-    {
-      x1: 200,
-      y1: 200,
-      x2: 300,
-      y2: 300,
-      type: FeedbackType.ERROR,
-      comment: 'Вы знаете какой тут эмодзи',
-      isEditing: false,
-      style: {},
-      initialTop: 0,
-      initialLeft: 0
-    }
-  ];
+  fileIds = [102, 101];
+  results: any [];
+  resultsAIBackup: AttemptCheckResultDto[];
 
 
   // TODO Надо пофиксить ресайз, пока пофиг
@@ -108,21 +76,67 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   protected readonly FeedbackType = FeedbackType;
 
   constructor(
-    private attemptService: AttemptService
+    private attemptService: AttemptService,
+    private messageService: MessageService,
+    private configService: ConfigService,
   ) {
+    this.baseUrl = this.configService.baseUrl;
   }
 
   async ngOnInit() {
+  }
+
+  async onImageLoad(imgSource: any) {
+    this.imgSource = imgSource;
     await this.init();
+    this.calculateStyles();
+    this.setInitialOffset();
   }
 
   async init() {
     this.loading = true;
     try {
-      // this.attempt = await lastValueFrom(this.attemptService);
+      this.attempt = await lastValueFrom(this.attemptService.getAttempt(this.attemptId));
+      if (!this.attempt) {
+        this.messageService.add({severity: 'error', summary: 'Внимание', detail: 'Работа не найдена в БД'});
+      } else {
+        this.prepareData();
+        if (this.attempt.autoCheckResults) {
+          this.resultsAIBackup = this.attempt.autoCheckResults?.map(r => r);
+        }
+      }
     } finally {
       this.loading = false;
     }
+  }
+
+  prepareData() {
+    this.results = [];
+    if (this.attempt.autoStatus === 'В обработке') {
+      this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Система ИИ все еще проверяет работу'});
+    }
+    if (!this.attempt.autoCheckResults || this.attempt.autoCheckResults.length === 0) {
+      this.messageService.add({severity: 'info', summary: 'Внимание', detail: 'Система ИИ не нашла ошибок в работе'});
+    } else {
+      this.attempt.autoCheckResults.forEach(r => {
+        this.results.push(
+          {
+            x1: r.x1!,
+            y1: r.y1!,
+            x2: r.x2!,
+            y2: r.y2!,
+            features: r.features ? r.features.map(f => f) : [],
+            type: FeedbackType.ERROR,
+            file: this.attempt.files!.find(f => f.id === r.fileId),
+            style: {},
+            isEditing: true,
+            tutorComment: '',
+            initialTop: 0,
+            initialLeft: 0
+          })
+      })
+    }
+
   }
 
   addFeedback(type: FeedbackType) {
@@ -131,14 +145,8 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     this.tutorSelectionDiv = document.getElementById('tutorSelection')!;
   }
 
-  onImageLoad(imgSource: any) {
-    this.imgSource = imgSource;
-    this.calculateStyles();
-    this.setInitialOffset();
-  }
-
   setInitialOffset() {
-    this.feedbacks.forEach(f => {
+    this.results.forEach(f => {
       f.initialTop = this.getScaledPx(f.x1);
       f.initialLeft = this.getScaledPx(f.x1);
     });
@@ -146,7 +154,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   calculateStyles() {
     this.scaleCoefficient = this.imgSource.clientWidth / this.imgSource.naturalWidth;
-    this.feedbacks.forEach(f => this.calculateStyle(f));
+    this.results.forEach(f => this.calculateStyle(f));
   }
 
   calculateStyle(feedback: any) {
@@ -197,6 +205,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
       y1: this.getUnscaledPx(this.lastCoordinates.y1),
       x2: this.getUnscaledPx(this.lastCoordinates.x2),
       y2: this.getUnscaledPx(this.lastCoordinates.y2),
+      features: [],
       type: this.creatingFeedbackType,
       style: {},
       isEditing: true,
@@ -206,7 +215,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     };
     this.calculateStyle(newFeedback);
 
-    this.feedbacks.push(newFeedback);
+    this.results.push(newFeedback);
     this.tutorSelectionDiv.hidden = true;
     this.isDrawingNow = false;
   }
