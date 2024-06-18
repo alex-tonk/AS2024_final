@@ -19,7 +19,10 @@ public class TaskDto {
     private BigDecimal difficulty;
     private Integer time;
 
+    private BigDecimal numOfAttempts;
+    private BigDecimal averageTime;
     private BigDecimal difficultyScore;
+
     private AttemptDto lastAttempt;
     private List<SupplementDto> supplements;
 }

@@ -54,7 +54,7 @@ public class Attempt {
 
     private Boolean isLastAttempt = true;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<File> files = new ArrayList<>();
 
     public Attempt(
@@ -92,6 +92,7 @@ public class Attempt {
 
     public void failByTime() {
         status = AttemptStatus.DONE;
+        tutorMark = Mark.FAILED;
         isNewTryAllowed = true;
     }
 
@@ -99,7 +100,7 @@ public class Attempt {
         tutorMark = mark;
         tutorCheckResults = checkResults;
         tutorComment = comment;
-        isNewTryAllowed = false;
+        isNewTryAllowed = mark.equals(Mark.FAILED);
         status = AttemptStatus.DONE;
     }
 

@@ -25,7 +25,7 @@ public class ScheduleService {
 
     @Scheduled(fixedRate = 1000L)
     public void apiPinger() {
-        List<Attempt> uncheckedAttempts = attemptRepository.getAttemptsByIsLastAttemptIsTrueAndAutoMarkIsNull();
+        List<Attempt> uncheckedAttempts = attemptRepository.getAllByAutoMarkIsNullAndAutoCheckFailedIsFalseAndStatusEquals(AttemptStatus.VALIDATION);
         for (Attempt uncheckedAttempt : uncheckedAttempts) {
             try {
                 attemptService.checkAttempt(uncheckedAttempt);

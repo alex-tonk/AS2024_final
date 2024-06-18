@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface AttemptRepository extends JpaRepository<Attempt, AttemptId> {
     Optional<Attempt> getByTopicAndLessonAndTaskAndUserAndIsLastAttemptTrue(Topic topic, Lesson lesson, Task task, User user);
 
-    List<Attempt> getAttemptsByIsLastAttemptIsTrueAndAutoMarkIsNull();
+    List<Attempt> getAllByAutoMarkIsNullAndAutoCheckFailedIsFalseAndStatusEquals(AttemptStatus status);
 
     List<Attempt> getAllByStatusEquals(AttemptStatus status);
 }
