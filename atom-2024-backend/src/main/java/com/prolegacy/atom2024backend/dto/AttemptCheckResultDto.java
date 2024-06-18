@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.dto;
 
 import com.prolegacy.atom2024backend.entities.ids.AttemptCheckResultId;
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,8 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class AttemptCheckResultDto {
     private AttemptCheckResultId id;
+
+    private FileId fileId;
 
     private BigDecimal x1;
     private BigDecimal y1;

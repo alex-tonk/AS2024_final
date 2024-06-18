@@ -13,6 +13,7 @@ import {TutorCabinetComponent} from './components/pages/tutor-cabinet/tutor-cabi
 import {
   ImageWithFeedbackViewerComponent
 } from './components/common/image-with-feedback-viewer/image-with-feedback-viewer.component';
+import {AttemptComponent} from './components/attempt/attempt.component';
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -29,5 +30,6 @@ export const routes: Routes = [
   {path: 'tutor-cabinet', component: TutorCabinetComponent},
   {path: 'chat', component: ChatComponent},
   {path: 'images', component: ImageWithFeedbackViewerComponent},
+  {path: 'attempts', component: AttemptComponent},
   {path: '**', redirectTo: ''}
 ];

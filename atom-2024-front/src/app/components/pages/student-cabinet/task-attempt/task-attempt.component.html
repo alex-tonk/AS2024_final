@@ -159,9 +159,6 @@
                 (click)="sendToCheck()"
       />
 
-      <!--TODO Что это за валидация
-      [disabled]="!((taskAttempt!.files ?? []).length > 0 && (taskAttempt!.files ?? [])[0].id != null)"
-      -->
       <p-button label="Закрыть"
                 styleClass="button-clear bordered"
                 (click)="taskAttemptClose.emit()"

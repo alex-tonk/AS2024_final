@@ -3,6 +3,7 @@ import {AttemptStatus, Mark} from './atom2024backend-enums';
 
 export class AttemptCheckResultDto {
   features?: FeatureDto[];
+  fileId?: number;
   id?: number;
   isAutomatic?: boolean;
   x1?: number;
@@ -12,21 +13,29 @@ export class AttemptCheckResultDto {
 }
 
 export class AttemptDto {
+readonly   archived?: boolean;
+  autoCheckFailed?: boolean;
   autoCheckResults?: AttemptCheckResultDto[];
   autoMark?: Mark;
+readonly   autoMarkLocale?: string;
+readonly   autoStatus?: string;
   endDate?: Date;
   files?: AttemptFileDto[];
+readonly   formattedEndDate?: string;
+readonly   formattedStartDate?: string;
   id?: number;
   isLastAttempt?: boolean;
   isNewTryAllowed?: boolean;
   lesson?: LessonDto;
   startDate?: Date;
   status?: AttemptStatus;
+readonly   statusLocale?: string;
   task?: TaskDto;
   topic?: TopicDto;
   tutorCheckResults?: AttemptCheckResultDto[];
   tutorComment?: string;
   tutorMark?: Mark;
+readonly   tutorMarkLocale?: string;
   user?: UserDto;
 }
 

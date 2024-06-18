@@ -174,10 +174,12 @@ export class TaskAttemptComponent implements OnInit {
     this.stepperIndex -= 1;
   }
 
-  sendToCheck() {
+  async sendToCheck() {
     this.loading = false;
     try {
+      await lastValueFrom(this.attemptService.finishAttempt(this.taskAttempt.id!, this.taskAttempt));
       this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Вы отправили задание на проверку'});
+      this.taskAttemptClose.emit(true);
     } finally {
       this.loading = false;
     }
@@ -197,7 +199,7 @@ export class TaskAttemptComponent implements OnInit {
 
   onFileRemove(index: number) {
     if (this.taskAttempt.files) {
-      this.taskAttempt.files = this.taskAttempt.files.splice(index, 1);
+      this.taskAttempt.files.splice(index, 1);
     }
   }
 }

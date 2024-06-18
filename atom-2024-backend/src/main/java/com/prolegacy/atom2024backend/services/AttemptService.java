@@ -84,11 +84,9 @@ public class AttemptService {
                 topic, lesson, task, user
         );
         Boolean newAttemptAllowed = lastAttempt
-                .map(a -> !(AttemptStatus.DONE.equals(a.getStatus())
+                .map(a -> AttemptStatus.DONE.equals(a.getStatus())
                                 && (a.getIsNewTryAllowed() || Mark.FAILED.equals(a.getTutorMark()))
-                        )
-                )
-                .orElse(true);
+                ).orElse(true);
         if (!newAttemptAllowed) {
             throw new BusinessLogicException("Вы не можете повторно пройти данное задание");
         }
@@ -134,7 +132,12 @@ public class AttemptService {
         attempt.setTutorMark(
                 mark,
                 checkResults.stream()
-                        .map(checkResult -> new AttemptCheckResult(attempt, checkResult, featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList())))
+                        .map(checkResult -> new AttemptCheckResult(
+                                attempt,
+                                checkResult.getFileId(),
+                                checkResult,
+                                featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList()))
+                        )
                         .toList(),
                 comment
         );
@@ -163,6 +166,7 @@ public class AttemptService {
                 for (com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto : attemptCheckResultDtos) {
                     attemptCheckResults.add(new AttemptCheckResult(
                             uncheckedAttempt,
+                            file.getId(),
                             dto,
                             featureRepository.findAllByCodeIn(dto.getFeatures())
                     ));

@@ -25,6 +25,10 @@ export class AttemptService {
     return this.httpService.put<AttemptDto>('attempts/' + attemptId + '', JSON.stringify(attemptDto) , {headers, responseType: 'json'});
   }
 
+ public getAttempts(): Observable<AttemptDto[]>  {
+    return this.httpService.get<AttemptDto[]>('attempts', {responseType: 'json'});
+  }
+
  public getLastAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {
     return this.httpService.get<AttemptDto>('attempts/topics/' + topicId + '/lessons/' + lessonId + '/tasks/' + taskId + '', {responseType: 'json'});
   }

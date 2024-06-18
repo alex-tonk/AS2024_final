@@ -30,6 +30,10 @@ public class AttemptReader {
     @Autowired
     private JPAQueryFactory queryFactory;
 
+    public List<AttemptDto> getAttempts() {
+        return baseQuery().fetch();
+    }
+
     public AttemptDto getLastAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, UserId userId) {
         AttemptDto lastAttempt = baseQuery()
                 .where(attempt.topic.id.eq(topicId))

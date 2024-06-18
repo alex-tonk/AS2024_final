@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("attempts")
@@ -66,5 +68,10 @@ public class AttemptController {
     @TypescriptIgnore
     public FileId uploadAttemptFile(@RequestBody MultipartFile file) {
         return fileUploadService.uploadFile(file).getId();
+    }
+
+    @GetMapping
+    public List<AttemptDto> getAttempts() {
+        return attemptReader.getAttempts();
     }
 }

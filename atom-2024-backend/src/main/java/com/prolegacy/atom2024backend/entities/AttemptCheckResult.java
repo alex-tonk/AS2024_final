@@ -2,6 +2,7 @@ package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.dto.AttemptCheckResultDto;
 import com.prolegacy.atom2024backend.entities.ids.AttemptCheckResultId;
+import com.prolegacy.atom2024backend.entities.ids.FileId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class AttemptCheckResult {
     private BigDecimal x2;
     @Column(columnDefinition = "numeric(19, 6)")
     private BigDecimal y2;
+    private FileId fileId;
 
     @OneToMany
     @JoinTable(
@@ -44,6 +46,7 @@ public class AttemptCheckResult {
 
     public AttemptCheckResult(
             Attempt attempt,
+            FileId fileId,
             AttemptCheckResultDto dto,
             List<Feature> features
     ) {
@@ -54,9 +57,10 @@ public class AttemptCheckResult {
         this.y2 = dto.getY2();
         this.isAutomatic = dto.getIsAutomatic();
         this.features = features;
+        this.fileId = fileId;
     }
 
-    public AttemptCheckResult(Attempt attempt, com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto, List<Feature> features) {
+    public AttemptCheckResult(Attempt attempt, FileId fileId, com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto, List<Feature> features) {
         this.attempt = attempt;
         this.x1 = dto.getArea().getX1();
         this.y1 = dto.getArea().getY1();
@@ -64,5 +68,6 @@ public class AttemptCheckResult {
         this.y2 = dto.getArea().getY2();
         this.isAutomatic = true;
         this.features = features;
+        this.fileId = fileId;
     }
 }
