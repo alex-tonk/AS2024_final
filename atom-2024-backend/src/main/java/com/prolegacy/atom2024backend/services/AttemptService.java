@@ -10,7 +10,6 @@ import com.prolegacy.atom2024backend.dto.AttemptDto;
 import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.dto.FeatureDto;
 import com.prolegacy.atom2024backend.entities.*;
-import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TaskId;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;

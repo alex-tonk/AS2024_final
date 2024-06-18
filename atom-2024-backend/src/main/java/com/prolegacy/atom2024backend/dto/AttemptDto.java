@@ -1,7 +1,6 @@
 package com.prolegacy.atom2024backend.dto;
 
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
-import com.prolegacy.atom2024backend.entities.File;
 import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.enums.Mark;

@@ -1,24 +1,19 @@
 package com.prolegacy.atom2024backend.readers;
 
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
-import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
-import com.prolegacy.atom2024backend.common.util.QueryUtils;
 import com.prolegacy.atom2024backend.dto.*;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TaskId;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;
-import com.querydsl.core.group.GroupBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)

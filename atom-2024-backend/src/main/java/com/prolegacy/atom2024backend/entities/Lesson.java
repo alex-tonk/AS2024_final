@@ -1,6 +1,5 @@
 package com.prolegacy.atom2024backend.entities;
 
-import com.prolegacy.atom2024backend.entities.ids.FileId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import jakarta.persistence.*;
 import lombok.*;
