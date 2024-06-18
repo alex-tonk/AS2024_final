@@ -77,10 +77,21 @@
             </td>
           }
           @case ("status") {
-            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+            <td style="text-align: center; text-overflow: unset;" [pTooltip]="getField(row, col)" [showDelay]="1000">
               <p-tag severity="secondary" *ngIf="getField(row, col) != null"
                      [rounded]="true"
-                     [style]="getStatusTagStyle(getField(row, col))">
+                     [style]="getStatusStyle(getField(row, col))">
+                <div>
+                  {{ getField(row, col) }}
+                </div>
+              </p-tag>
+            </td>
+          }
+          @case ("autoStatus") {
+            <td style="text-align: center; text-overflow: unset;" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              <p-tag severity="secondary" *ngIf="getField(row, col) != null"
+                     [rounded]="true"
+                     [style]="getAutoStatusStyle(getField(row, col))">
                 <div>
                   {{ getField(row, col) }}
                 </div>
@@ -88,10 +99,21 @@
             </td>
           }
           @case ("mark") {
-            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+            <td style="text-align: center; text-overflow: unset;" [pTooltip]="getField(row, col)" [showDelay]="1000">
               <p-tag severity="secondary" *ngIf="getField(row, col) != null"
                      [rounded]="true"
                      [style]="getMarkStyle(getField(row, col))">
+                <div>
+                  {{ getField(row, col) }}
+                </div>
+              </p-tag>
+            </td>
+          }
+          @case ("difficulty") {
+            <td style="text-align: center; text-overflow: unset;" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              <p-tag severity="secondary" *ngIf="getField(row, col) != null"
+                     [rounded]="true"
+                     [style]="getDifficultyStyle(getField(row, col))">
                 <div>
                   {{ getField(row, col) }}
                 </div>
