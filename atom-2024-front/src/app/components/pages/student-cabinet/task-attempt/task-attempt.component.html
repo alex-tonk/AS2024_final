@@ -1,4 +1,5 @@
 <p-dialog #dialog
+          header="Выполнение задания [Осталось: {{this.remainingTime ?? '-- мин.'}}]"
           [style]="{width: '95%', height: '95%'}"
           [baseZIndex]="99"
           [autoZIndex]="false"
@@ -6,7 +7,6 @@
           [resizable]="false"
           [draggable]="false"
           [closable]="true"
-          [header]="getHeader()"
           [(visible)]="visible"
           (onHide)="taskAttemptClose.emit(!!taskAttempt)">
   <div *ngIf="!taskAttempt" class="full-size begin-attempt-container" [class.content-disabled]="loading">
