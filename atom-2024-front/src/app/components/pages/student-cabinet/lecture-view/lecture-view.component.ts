@@ -10,6 +10,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {lastValueFrom} from 'rxjs';
 import {FileService} from '../../../../services/file.service';
 import FileSaver from 'file-saver';
+import {TooltipModule} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-lecture-view',
@@ -21,7 +22,8 @@ import FileSaver from 'file-saver';
     FormsModule,
     StepperModule,
     NgIf,
-    NgForOf
+    NgForOf,
+    TooltipModule
   ],
   templateUrl: './lecture-view.component.html',
   styleUrl: './lecture-view.component.css',

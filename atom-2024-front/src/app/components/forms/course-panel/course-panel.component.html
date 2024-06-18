@@ -37,20 +37,34 @@
 
                     <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
                     </div>
-                    <div class="h-flex" style="justify-content: flex-end" *ngIf="task.type == 'task'">
-                      <div *ngIf="task.task.lastAttempt == null" class="survey-status">
-                        Не пройдено
-                      </div>
-                      <div *ngIf="task.task.lastAttempt?.status == AttemptStatus.IN_PROGRESS"
-                           class="survey-status">
-                        В процессе
-                      </div>
-                      <div class="v-flex"
-                           *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate != null">
-                        <!--                        <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>-->
-                        <!--                        <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"-->
-                        <!--                                       [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>-->
-                      </div>
+                    <div class="extra-info-wrapper">
+                      <ng-container *ngIf="task.type == 'task'; else lectureInfo">
+                        <!--TODO-->
+                        <div *ngIf="task.time">Время выполнения: {{ task.time }} мин.</div>
+                        <p-knob [(ngModel)]="task.difficulty"
+                                [rangeColor]="getDifficultColor(task.difficulty)"
+                                [max]="5" [readonly]="true" [size]="50"
+                                [pTooltip]="getDifficultLabel(task.difficulty)"/>
+
+                        <div *ngIf="task.task.lastAttempt == null">
+                          Не пройдено
+                        </div>
+                        <div *ngIf="task.task.lastAttempt?.status == AttemptStatus.IN_PROGRESS">
+                          В процессе выполнения
+                        </div>
+
+                        <!--TODO что тут должно происходить-->
+                        <div class="v-flex"
+                             *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate != null">
+                          <!--                        <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>-->
+                          <!--                        <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"-->
+                          <!--                                       [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>-->
+                        </div>
+                      </ng-container>
+
+                      <ng-template #lectureInfo>
+                        <div>{{ isWasOpened(task.lesson.id) ? 'Прочитано' : 'Не прочитано' }}</div>
+                      </ng-template>
                     </div>
                   </div>
                 </p-card>
@@ -69,7 +83,6 @@
 </app-lecture-view>
 
 <app-task-attempt *ngIf="taskAttemptVisible"
-[formData]="taskAttemptFormData!"
-(taskAttemptClose)="onTaskAttemptClose()">
-
+                  [formData]="taskAttemptFormData!"
+                  (taskAttemptClose)="onTaskAttemptClose($event)">
 </app-task-attempt>

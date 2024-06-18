@@ -97,6 +97,16 @@ export class TaskService {
     this.httpService = httpService;
   }
 
+ public getRecommendations(lessonId: number): Observable<LessonDto[]>  {
+    const queryParamsList: { name: string, value: string }[] = [];
+    queryParamsList.push({name: 'lessonId', value: lessonId.toString()});
+      let params = new HttpParams();
+    for (const queryParam of queryParamsList) {
+      params = params.append(queryParam.name, queryParam.value);
+    }
+    return this.httpService.get<LessonDto[]>('tasks', {params, responseType: 'json'});
+  }
+
 }
 
 @Injectable({

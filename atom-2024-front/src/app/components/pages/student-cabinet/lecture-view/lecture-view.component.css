@@ -24,7 +24,7 @@
 }
 
 :host .form-row label {
-  width: 300px;
+  width: auto;
   font-weight: bold;
 }
 

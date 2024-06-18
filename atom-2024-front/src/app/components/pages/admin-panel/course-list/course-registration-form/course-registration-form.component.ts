@@ -57,7 +57,7 @@ export class CourseRegistrationFormComponent implements OnInit {
       // } else {
       //   this.course = await lastValueFrom(this.courseService.createCourse(this.course));
       // }
-      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Курс сохранен'});
+      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Тема сохранена'});
       this.result.emit(this.course)
     } finally {
       this.loading = false;

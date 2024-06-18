@@ -59,7 +59,7 @@ export class CourseListComponent implements OnInit {
     type: 'numeric',
     width: 10
   }, {
-    header: 'Название курса',
+    header: 'Название темы',
     field: 'name'
   }, {
     header: 'Архив',
@@ -118,7 +118,7 @@ export class CourseListComponent implements OnInit {
       key: 'popup',
       target: event.target as EventTarget,
       icon: 'pi pi-info-circle',
-      message: 'Вы действительно хотите архивировать выбранный курс?',
+      message: 'Вы действительно хотите архивировать выбранную тему?',
       accept: () => this.archive()
     });
   }
@@ -131,7 +131,7 @@ export class CourseListComponent implements OnInit {
       this.loading = true;
       // TODO archive
       await this.getCoursesFromApi();
-      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Курс добавлен в архив'});
+      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Тема добавлена в архив'});
     } finally {
       this.loading = false;
     }
@@ -145,7 +145,7 @@ export class CourseListComponent implements OnInit {
       this.loading = true;
       // TODO unarchive
       await this.getCoursesFromApi();
-      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Курс восстановлен из архива'});
+      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Тема восстановлена из архива'});
     } finally {
       this.loading = false;
     }

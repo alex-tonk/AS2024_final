@@ -22,20 +22,20 @@
 
         <div class="splitter"></div>
 
-        <p-button pTooltip="Добавить курс" icon="pi pi-plus" severity="success"
+        <p-button pTooltip="Добавить тему" icon="pi pi-plus" severity="success"
                   (click)="createCourse()">
         </p-button>
 
-        <p-button pTooltip="Редактировать выбранный курс" icon="pi pi-pencil"
+        <p-button pTooltip="Редактировать выбранную тему" icon="pi pi-pencil"
                   styleClass="button-primary" [disabled]="!selected" (click)="isCourseConstructorMode = true">
         </p-button>
 
         <p-button *ngIf="$any(selected)?.archived; else archiveButton"
-                  pTooltip="Восстановить курс" icon="pi pi-undo" severity="warning"
+                  pTooltip="Восстановить тему" icon="pi pi-undo" severity="warning"
                   [disabled]="!selected" (click)="unarchive()">
         </p-button>
         <ng-template #archiveButton>
-          <p-button pTooltip="Архивировать курс" icon="pi pi-trash" severity="danger"
+          <p-button pTooltip="Архивировать тему" icon="pi pi-trash" severity="danger"
                     [disabled]="!selected" (click)="confirmArchive($event)">
           </p-button>
         </ng-template>

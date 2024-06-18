@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogModule} from 'primeng/dialog';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {MarkdownComponent, provideMarkdown} from 'ngx-markdown';
 import {NgForOf, NgIf} from '@angular/common';
-import {PrimeTemplate} from 'primeng/api';
+import {MessageService, PrimeTemplate} from 'primeng/api';
 import {StepperModule} from 'primeng/stepper';
 import {AttemptDto, LessonDto, SupplementDto, TaskDto, TopicDto} from '../../../../gen/atom2024backend-dto';
 import {ConfigService} from '../../../../services/config.service';
@@ -17,6 +17,10 @@ import {AttemptStatus} from '../../../../gen/atom2024backend-enums';
 import {PanelModule} from 'primeng/panel';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
+import {TabViewModule} from 'primeng/tabview';
+import {UserListComponent} from '../../admin-panel/user-list/user-list.component';
+import {TooltipModule} from 'primeng/tooltip';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-task-attempt',
@@ -33,13 +37,17 @@ import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/file
     Button,
     PanelModule,
     InputTextareaModule,
-    FileUploadModule
+    FileUploadModule,
+    TabViewModule,
+    UserListComponent,
+    TooltipModule,
+    RouterLink
   ],
   templateUrl: './task-attempt.component.html',
   styleUrl: './task-attempt.component.css',
   providers: [provideMarkdown()]
 })
-export class TaskAttemptComponent {
+export class TaskAttemptComponent implements OnInit {
   @Input()
   formData: { topic: TopicDto, lesson: LessonDto, task: TaskDto };
 
@@ -47,7 +55,7 @@ export class TaskAttemptComponent {
   taskAttempt: AttemptDto;
 
   @Output()
-  taskAttemptClose: EventEmitter<void> = new EventEmitter<void>();
+  taskAttemptClose: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   get task() {
     return this.formData.task;
@@ -66,11 +74,14 @@ export class TaskAttemptComponent {
   original = false;
   content: string;
   beautifiedContent: string;
+  lessonOriginal = false;
+  lessonBeautifiedContent: string;
   stepperIndex = 0;
   stepsCount = 3;
 
   constructor(private configService: ConfigService,
               private fileService: FileService,
+              private messageService: MessageService,
               private attemptService: AttemptService) {
   }
 
@@ -79,6 +90,7 @@ export class TaskAttemptComponent {
     try {
       this.content = (this.task?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
       this.beautifiedContent = this.content.replaceAll('<br>', '\n');
+      this.lessonBeautifiedContent = this.lesson.content?.replaceAll('<br>', '\n')!;
       const lastAttempt = await lastValueFrom(this.attemptService.getLastAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
       // TODO: viewAttempt after check
       if (lastAttempt != null && lastAttempt.status === AttemptStatus.IN_PROGRESS) {
@@ -88,6 +100,11 @@ export class TaskAttemptComponent {
     } finally {
       this.loading = false;
     }
+  }
+
+  getHeader() {
+    // TODO TIMER
+    return `Выполнение задания [Осталось: ${'50'} минут]`;
   }
 
   async downloadTaskFile(s: SupplementDto) {
@@ -140,10 +157,12 @@ export class TaskAttemptComponent {
   async startTaskAttempt() {
     this.loading = true;
     try {
-      let attempt = await lastValueFrom(this.attemptService.startNewAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
-      this.taskAttempt = attempt;
+      this.taskAttempt = await lastValueFrom(this.attemptService.startNewAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
+      this.messageService.add({severity: 'info', summary: 'Внимание', detail: 'Вы начали выполнение задания'});
     } finally {
-      this.loading = false;
+      setTimeout(() => {
+        this.loading = false
+      }, 500);
     }
   }
 
@@ -156,7 +175,12 @@ export class TaskAttemptComponent {
   }
 
   sendToCheck() {
-
+    this.loading = false;
+    try {
+      this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Вы отправили задание на проверку'});
+    } finally {
+      this.loading = false;
+    }
   }
 
   async addAttemptFile(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
@@ -168,6 +192,12 @@ export class TaskAttemptComponent {
     } finally {
       setTimeout(() => fileUpload.clear());
       this.loading = false;
+    }
+  }
+
+  onFileRemove(index: number) {
+    if (this.taskAttempt.files) {
+      this.taskAttempt.files = this.taskAttempt.files.splice(index, 1);
     }
   }
 }

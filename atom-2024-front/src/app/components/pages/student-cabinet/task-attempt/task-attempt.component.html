@@ -6,17 +6,21 @@
           [resizable]="false"
           [draggable]="false"
           [closable]="true"
-          header="Выполнение задания"
+          [header]="getHeader()"
           [(visible)]="visible"
-          (onHide)="taskAttemptClose.emit()">
-  <div *ngIf="taskAttempt == null"
-       class="full-size begin-attempt-container">
+          (onHide)="taskAttemptClose.emit(!!taskAttempt)">
+  <div *ngIf="!taskAttempt" class="full-size begin-attempt-container" [class.content-disabled]="loading">
     <div class="begin-attempt-label-container-wrapper">
       <div class="begin-attempt-label-container">
         <div class="begin-attempt-label">{{ task.title }}</div>
-        <div style="text-align: center" *ngIf="task.time != null"> Ограничение по времени: {{ getTimeLimitString() }}
+        <div style="text-align: center" *ngIf="task.time != null">
+          Ограничение по времени: {{ getTimeLimitString() }}
         </div>
-        <div style="text-align: center" *ngIf="task.time == null"> Ограничение по времени отсутствует</div>
+        <div style="text-align: center" *ngIf="task.time == null">
+          Ограничение по времени отсутствует
+        </div>
+        <!--TODO-->
+        <div style="text-align: center">СЛОЖНОСТЬ ЗАДАНИЯ</div>
       </div>
     </div>
     <div class="begin-attempt-button-wrapper">
@@ -26,109 +30,142 @@
       </p-button>
     </div>
   </div>
-  <div [class.content-disabled]="loading" class="full-size" *ngIf="taskAttempt != null">
+  <div class="full-size" *ngIf="taskAttempt" [class.content-disabled]="loading">
     <div *ngIf="stepperIndex == 0"
          style="width: fit-content; position: absolute; right: 24px; transform: translate(-8px, 0px); display: flex; align-items: center; gap: 1em;">
       <div
         style="padding: 8px; display: inline-flex; align-items: center;">
         <span style="padding-right: 1rem;">Исходный вид</span>
-        <p-inputSwitch [(ngModel)]="original"/>
+        <p-inputSwitch [(ngModel)]="original" tooltipPosition="left"
+                       pTooltip="По умолчанию показывается улучшенный вид"/>
       </div>
     </div>
     <p-stepper [(activeStep)]="stepperIndex">
       <p-stepperPanel header="Задание">
         <ng-template pTemplate="content">
-          <div class="full-size">
+          <div class="full-size" style="overflow: auto">
             <markdown [data]="!original ? beautifiedContent : content"></markdown>
           </div>
         </ng-template>
       </p-stepperPanel>
-      <p-stepperPanel header="Информация">
+
+      <p-stepperPanel header="Учебный материал">
         <ng-template pTemplate="content">
-          <div class="full-size">
-            <div class="form-row">
-              <label>Наименование задания:</label>
-              <div>{{ taskAttempt.task!.title }}</div>
-            </div>
-            <div class="form-row">
-              <label>Код задания:</label>
-              <div>{{ taskAttempt.task!.code }}</div>
-            </div>
-
-            <div class="form-row">
-              <label>Ограничение по времени:</label>
-              <div>{{ taskAttempt.task!.time }} мин.</div>
-            </div>
-
-            <div class="form-row" style="align-items: flex-start"
-                 *ngIf="(taskAttempt.task!.supplements ?? []).length > 0">
-              <label>Приложения:</label>
-              <div style="display: flex; flex-flow: column; gap: 0.5rem;">
-                <div class="uploaded-file" *ngFor="let s of taskAttempt.task!.supplements">
-                  <span>{{ s.title || s.fileName }}</span>
-                  <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem"
-                     (click)="downloadTaskFile(s)"></i>
+          <p-tabView [scrollable]="true" [class.tab-view]="true">
+            <p-tabPanel header="Лекция">
+              <ng-template pTemplate="content">
+                <div
+                  style="padding: 8px; display: inline-flex; align-items: center; position: absolute; right: 30px; top: 130px">
+                  <span style="padding-right: 1rem;">Исходный вид</span>
+                  <p-inputSwitch [(ngModel)]="lessonOriginal"
+                                 tooltipPosition="left"
+                                 pTooltip="По умолчанию показывается улучшенный вид"/>
                 </div>
-              </div>
-              <div></div>
-            </div>
+                <markdown [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
+                </markdown>
+              </ng-template>
+            </p-tabPanel>
+            <p-tabPanel header="Доп. информация">
+              <ng-template pTemplate="content">
+                <div class="form-row">
+                  <label>Наименование задания:</label>
+                  <div>{{ taskAttempt.task!.title }}</div>
+                </div>
+                <div class="form-row">
+                  <label>Код задания:</label>
+                  <div>{{ taskAttempt.task!.code }}</div>
+                </div>
 
-          </div>
+                <div class="form-row">
+                  <label>Ограничение по времени:</label>
+                  <div>{{ taskAttempt.task!.time }} мин.</div>
+                </div>
+
+                <div class="form-row" style="align-items: flex-start"
+                     *ngIf="(taskAttempt.task!.supplements ?? []).length > 0">
+                  <label>Приложения:</label>
+                  <div style="display: flex; flex-flow: column; gap: 0.5rem;">
+                    <div class="uploaded-file" *ngFor="let s of taskAttempt.task!.supplements">
+                      <span>{{ s.title || s.fileName }}</span>
+                      <i class="pi pi-download download-uploaded-file-icon clickable-icon"
+                         style="padding-left: 1.5rem"
+                         pTooltip="Скачать файл"
+                         (click)="downloadTaskFile(s)"></i>
+                    </div>
+                  </div>
+                  <div></div>
+                </div>
+              </ng-template>
+            </p-tabPanel>
+          </p-tabView>
         </ng-template>
       </p-stepperPanel>
-      <p-stepperPanel header="Выполнение">
+
+      <p-stepperPanel header="Загрузка результатов">
         <ng-template pTemplate="content">
-          <p-panel [toggleable]="true" [collapsed]="true" *ngFor="let file of taskAttempt.files; let i = index">
-            <ng-template pTemplate="header">
-              {{ file.fileName }}
-            </ng-template>
-            <ng-template pTemplate="icons">
-              <!--            <button class="p-panel-header-icon p-link mr-2" (click)="men$event">-->
-              <!--              <span class="pi pi-cog"></span>-->
-              <!--            </button>-->
-            </ng-template>
-            <textarea
-              pInputTextarea
-              [style]="{width: '100%'}"
-              [name]="'fileComment' + 1"
-              placeholder="Введите комментарий"
-              [rows]="1"
-              [autoResize]="true"
-              [(ngModel)]="file.comment">
-            </textarea>
-          </p-panel>
-          <p-fileUpload #fileUpload
-                        mode="basic"
-                        [auto]="true"
-                        [customUpload]="true"
-                        [accept]="'image/*'"
-                        chooseLabel="Добавить файл"
-                        chooseIcon="pi pi-paperclip"
-                        (uploadHandler)="addAttemptFile($event, fileUpload)">
-          </p-fileUpload>
+          <div style="padding: 40px; display: flex; flex-direction: column; gap: 30px; align-items: center">
+            <div style="width: 100%; text-align: center">
+              Загрузите свои файлы и если нужно, добавьте комментарии
+            </div>
+
+            <p-fileUpload #fileUpload
+                          mode="basic"
+                          [auto]="true"
+                          [customUpload]="true"
+                          [accept]="'image/*'"
+                          chooseLabel="Добавить файл"
+                          chooseIcon="pi pi-paperclip"
+                          (uploadHandler)="addAttemptFile($event, fileUpload)">
+            </p-fileUpload>
+
+            <div style="width: 100%; flex: auto">
+              <div *ngFor="let file of taskAttempt.files; let i = index" class="form-row" style="overflow: auto">
+                <label style="width: 200px">{{ file.fileName }} </label>
+                <textarea
+                  pInputTextarea
+                  style="width: 100%; max-height: 200px;"
+                  [name]="'fileComment' + 1"
+                  placeholder="Введите комментарий"
+                  [rows]="1"
+                  [autoResize]="true"
+                  [(ngModel)]="file.comment">
+                </textarea>
+                <p-button styleClass="button-clear"
+                          icon="pi pi-trash" pTooltip="Удалить файл"
+                          (click)="onFileRemove(i)">
+                </p-button>
+              </div>
+            </div>
+          </div>
         </ng-template>
       </p-stepperPanel>
     </p-stepper>
   </div>
 
   <ng-template pTemplate="footer">
-    <p-button #previousStepButton *ngIf="stepperIndex > 0"
-              label="Назад"
-              (click)="previousStep()"
-    />
-    <p-button *ngIf="stepperIndex < (stepsCount - 1)"
-              label="Далее"
-              (click)="nextStep()"
-    />
-    <p-button *ngIf="stepperIndex == stepsCount - 1"
-              label="Отправить на проверку"
-              severity="success"
-              [disabled]="!((taskAttempt!.files ?? []).length > 0 && (taskAttempt!.files ?? [])[0].id != null)"
-              (click)="sendToCheck()"
-    />
-    <p-button label="Закрыть"
-              styleClass="button-clear bordered"
-              (click)="taskAttemptClose.emit()"
-    />
+    <ng-container *ngIf="taskAttempt">
+      <p-button #previousStepButton *ngIf="stepperIndex > 0"
+                label="Назад"
+                (click)="previousStep()"
+      />
+      <p-button *ngIf="stepperIndex < (stepsCount - 1)"
+                label="Далее"
+                (click)="nextStep()"
+      />
+      <p-button *ngIf="stepperIndex == stepsCount - 1"
+                label="Отправить на проверку"
+                severity="success"
+                [disabled]="!taskAttempt.files || taskAttempt.files.length == 0"
+                (click)="sendToCheck()"
+      />
+
+      <!--TODO Что это за валидация
+      [disabled]="!((taskAttempt!.files ?? []).length > 0 && (taskAttempt!.files ?? [])[0].id != null)"
+      -->
+      <p-button label="Закрыть"
+                styleClass="button-clear bordered"
+                (click)="taskAttemptClose.emit()"
+      />
+    </ng-container>
   </ng-template>
 </p-dialog>

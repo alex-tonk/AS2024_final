@@ -24,7 +24,7 @@
 }
 
 :host .form-row label {
-  width: 300px;
+  width: auto;
   font-weight: bold;
 }
 
@@ -48,7 +48,6 @@
   padding-left: 24px;
   padding-right: 24px;
   padding-bottom: 24px;
-  overflow-y: scroll;
 }
 
 :host ::ng-deep .p-stepper .p-stepper-panels {
@@ -95,6 +94,7 @@
   font-size: x-large;
   text-align: center;
   padding-bottom: 1em;
+  gap: 10px;
 }
 
 .begin-attempt-button-wrapper {

@@ -13,10 +13,12 @@ import {CardModule} from 'primeng/card';
 import {LessonDto, TaskDto, TopicDto} from '../../../gen/atom2024backend-dto';
 import {UserDto} from '../../../models/UserDto';
 import {lastValueFrom} from 'rxjs';
-import {TopicService} from '../../../gen/atom2024backend-controllers';
+import {TopicService, UserAdminService} from '../../../gen/atom2024backend-controllers';
 import {LectureViewComponent} from '../../pages/student-cabinet/lecture-view/lecture-view.component';
 import {TaskAttemptComponent} from '../../pages/student-cabinet/task-attempt/task-attempt.component';
 import { AttemptStatus } from '../../../gen/atom2024backend-enums';
+import {KnobModule} from 'primeng/knob';
+import {UserService} from '../../../services/user.service';
 
 
 export enum CoursePanelMode {
@@ -40,7 +42,8 @@ export enum CoursePanelMode {
     DataViewModule,
     CardModule,
     LectureViewComponent,
-    TaskAttemptComponent
+    TaskAttemptComponent,
+    KnobModule
   ],
   templateUrl: './course-panel.component.html',
   styleUrl: './course-panel.component.css'
@@ -77,13 +80,16 @@ export class CoursePanelComponent implements OnInit {
   get header(): string {
     switch (this.mode) {
       case CoursePanelMode.STUDENT:
-        return `Курс: ${this.topic.title!}`
+        return `Учебная тема: ${this.topic.title!}`
       case CoursePanelMode.TUTOR:
         return `${this.topic.title!} / ${this.student.fullName!}`
     }
   }
 
-  constructor(private topicService: TopicService) {
+  constructor(
+    private topicService: TopicService,
+    private userService: UserService
+  ) {
   }
 
   async ngOnInit() {
@@ -99,7 +105,7 @@ export class CoursePanelComponent implements OnInit {
     this.tasksByLesson = {};
     this.lessons.forEach(lesson => {
       this.tasksByLesson[lesson.id!] = [];
-      this.tasksByLesson[lesson.id!].push({title: 'Лекция', lesson: lesson, type: 'lecture'});
+      this.tasksByLesson[lesson.id!].push({title: 'Учебный материал', lesson: lesson, type: 'lecture'});
       (lesson.tasks ?? []).forEach(task => {
         this.tasksByLesson[lesson.id!].push({title: task.title, lesson: lesson, task: task, type: 'task'});
       })
@@ -107,32 +113,43 @@ export class CoursePanelComponent implements OnInit {
     });
   }
 
-  createModule() {
-    alert('Создание нового модуля')
-  }
-
-  editModule(module: any, event: MouseEvent) {
-    // Для предотвращения открытия аккардиона
-    event.stopImmediatePropagation();
-    alert('Редактирование модуля ' + module.name)
-  }
-
-  deleteModule(module: any, event: MouseEvent) {
-    event.stopImmediatePropagation();
-    alert('Удаление модуля ' + module.name)
-  }
-
-  protected readonly CoursePanelMode = CoursePanelMode;
   protected readonly AttemptStatus = AttemptStatus;
 
   openLectureOrTask(task: { title?: string, lesson: LessonDto, task?: TaskDto, type: 'task' | 'lecture' }) {
     if (task.type === 'lecture') {
       this.lessonForLectureView = task.lesson;
       this.lectureViewVisible = true;
+      this.saveOpenHistory(task.lesson.id!)
     } else if (task.type === 'task') {
       this.taskAttemptFormData = {topic: this.topic, lesson: task.lesson, task: task.task!};
       this.taskAttemptVisible = true;
     }
+  }
+
+  saveOpenHistory(lessonId: number) {
+    const key = 'openedLessons' + this.userService.user?.id;
+    const val = localStorage.getItem(key);
+    if (val) {
+      const arr = JSON.parse(val);
+      if (!arr.includes(lessonId)) {
+        arr.push(lessonId);
+      }
+      localStorage.setItem(key, JSON.stringify(arr))
+    } else {
+      localStorage.setItem(key, JSON.stringify([lessonId]))
+    }
+  }
+
+  isWasOpened(lessonId: number): boolean {
+    const key = 'openedLessons' + this.userService.user?.id;
+    const val = localStorage.getItem(key);
+    if (val) {
+      const arr = JSON.parse(val)
+      if (arr.includes(lessonId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   onLectureViewEnd() {
@@ -140,9 +157,34 @@ export class CoursePanelComponent implements OnInit {
     this.lessonForLectureView = undefined;
   }
 
-  async onTaskAttemptClose() {
+  async onTaskAttemptClose(needReload: boolean) {
     this.taskAttemptVisible = false;
     this.taskAttemptFormData = undefined;
-    await this.reload();
+    if (needReload) {
+      await this.reload();
+    }
+  }
+
+  getDifficultLabel(val: number) {
+    if (!val) {
+      return 'Сложность задания еще не определена';
+    }
+    if (val < 3) {
+      return 'Простое задание';
+    }
+    if (val < 5) {
+      return 'Среднее задание';
+    }
+    return 'Сложное задание';
+  }
+
+  getDifficultColor(val: number) {
+    if (!val || val < 3) {
+      return '#0077ce';
+    }
+    if (val < 5) {
+      return '#FEBB02';
+    }
+    return 'rgba(227, 77, 77, 0.66)';
   }
 }

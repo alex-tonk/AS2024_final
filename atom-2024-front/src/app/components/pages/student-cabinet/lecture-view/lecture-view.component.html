@@ -14,40 +14,47 @@
     <div
       style="padding: 8px; display: inline-flex; align-items: center;">
       <span style="padding-right: 1rem;">Исходный вид</span>
-      <p-inputSwitch [(ngModel)]="original"/>
+      <p-inputSwitch [(ngModel)]="original" tooltipPosition="left" pTooltip="По умолчанию показывается улучшенный вид"/>
     </div>
   </div>
   <div [class.content-disabled]="loading" class="full-size">
     <p-stepper [(activeStep)]="stepperIndex">
-      <p-stepperPanel header="Лекция">
+      <p-stepperPanel header="Учебный материал">
         <ng-template pTemplate="content">
           <div class="full-size">
             <markdown [data]="!original ? beautifiedContent : content"></markdown>
           </div>
         </ng-template>
       </p-stepperPanel>
-      <p-stepperPanel header="Информация">
+      <p-stepperPanel header="Доп. информация">
         <ng-template pTemplate="content">
           <div class="full-size">
             <div class="form-row">
               <label>Наименование учебного материала:</label>
-              <div>{{lesson.title}}</div>
+              <div>{{ lesson.title }}</div>
             </div>
             <div class="form-row">
               <label>Код учебного материала:</label>
-              <div>{{lesson.code}}</div>
+              <div>{{ lesson.code }}</div>
             </div>
             <div class="form-row">
               <label>Автор:</label>
-              <div>{{lesson.author}}</div>
+              <div>{{ lesson.author }}</div>
+            </div>
+            <div class="form-row">
+              <label>Обьем:</label>
+              <div>{{ lesson.content?.length }} символов</div>
             </div>
 
-            <div class="form-row" style="align-items: flex-start" *ngIf="(lesson.supplements ?? []).length > 0" >
+            <div class="form-row" style="align-items: flex-start" *ngIf="(lesson.supplements ?? []).length > 0">
               <label>Приложения:</label>
               <div style="display: flex; flex-flow: column; gap: 0.5rem;">
                 <div class="uploaded-file" *ngFor="let s of lesson.supplements">
-                  <span>{{s.title || s.fileName}}</span>
-                  <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem" (click)="downloadLessonFile(s)"></i>
+                  <span>{{ s.title || s.fileName }}</span>
+                  <i class="pi pi-download download-uploaded-file-icon clickable-icon"
+                     style="padding-left: 1.5rem"
+                     pTooltip="Скачать файл"
+                     (click)="downloadLessonFile(s)"></i>
                 </div>
               </div>
               <div></div>
