@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DialogModule} from 'primeng/dialog';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {MarkdownComponent, provideMarkdown} from 'ngx-markdown';
@@ -21,6 +21,7 @@ import {TabViewModule} from 'primeng/tabview';
 import {UserListComponent} from '../../admin-panel/user-list/user-list.component';
 import {TooltipModule} from 'primeng/tooltip';
 import {RouterLink} from '@angular/router';
+import {setInterval} from 'core-js';
 
 @Component({
   selector: 'app-task-attempt',
@@ -47,7 +48,7 @@ import {RouterLink} from '@angular/router';
   styleUrl: './task-attempt.component.css',
   providers: [provideMarkdown()]
 })
-export class TaskAttemptComponent implements OnInit {
+export class TaskAttemptComponent implements OnInit, OnDestroy {
   @Input()
   formData: { topic: TopicDto, lesson: LessonDto, task: TaskDto };
 
@@ -79,6 +80,9 @@ export class TaskAttemptComponent implements OnInit {
   stepperIndex = 0;
   stepsCount = 3;
 
+  remainingTimeInterval: number;
+  remainingTime: string;
+
   constructor(private configService: ConfigService,
               private fileService: FileService,
               private messageService: MessageService,
@@ -97,14 +101,16 @@ export class TaskAttemptComponent implements OnInit {
         this.taskAttempt = lastAttempt;
         this.stepperIndex = 2;
       }
+      this.remainingTimeInterval = setInterval(() => {
+        this.remainingTime = this.taskAttempt?.status === AttemptStatus.IN_PROGRESS ? this.calcRemainingTime(this.taskAttempt) : `${this.task.time} мин.`;
+      }, 1);
     } finally {
       this.loading = false;
     }
   }
 
-  getHeader() {
-    // TODO TIMER
-    return `Выполнение задания [Осталось: ${'50'} минут]`;
+  ngOnDestroy() {
+    clearInterval(this.remainingTimeInterval);
   }
 
   async downloadTaskFile(s: SupplementDto) {
@@ -201,5 +207,13 @@ export class TaskAttemptComponent implements OnInit {
     if (this.taskAttempt.files) {
       this.taskAttempt.files.splice(index, 1);
     }
+  }
+
+  private calcRemainingTime(attempt: AttemptDto) {
+    let diffSecs = attempt?.task?.time! * 60 - (new Date().getTime() - attempt?.startDate?.getTime()!) / 1000;
+    if (diffSecs < 0) diffSecs = 0;
+    const minutes = Math.floor(diffSecs / 60);
+    const seconds = diffSecs - minutes * 60;
+    return `${minutes.toString()} мин. ${seconds.toFixed(0)} сек.`;
   }
 }

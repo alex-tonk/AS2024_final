@@ -27,6 +27,7 @@ readonly   formattedStartDate?: string;
   isLastAttempt?: boolean;
   isNewTryAllowed?: boolean;
   lesson?: LessonDto;
+readonly   remainingTimeSec?: number;
   startDate?: Date;
   status?: AttemptStatus;
 readonly   statusLocale?: string;

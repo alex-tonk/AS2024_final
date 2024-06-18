@@ -37,7 +37,7 @@ public class ScheduleService {
         attemptRepository.saveAll(uncheckedAttempts);
     }
 
-    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.SECONDS)
     public void autoCompleteTasks() {
         Instant now = Instant.now();
         List<Attempt> inProgressAttempts = attemptRepository.getAllByStatusEquals(AttemptStatus.IN_PROGRESS);

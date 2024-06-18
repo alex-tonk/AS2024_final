@@ -29,10 +29,10 @@
                       <!--TODO кол-во пройденного и прогресс-->
                       <div style="display: flex; flex-direction: column;">
                         <div style="width: 100%; text-align: end; font-size: smaller;">
-                          Пройдено 0 из {{ topic.lessonsCount }}
+                          Пройдено {{ topic.taskPassedCount }} из {{ topic.taskCount }}
                         </div>
                         <p-progressBar pTooltip="Прогресс прохождения"
-                                       [value]="30" [showValue]="false"
+                                       [value]="(topic.taskPassedCount / topic.taskCount) * 100" [showValue]="false"
                                        [style]="{ height: '6px' }"/>
                       </div>
                       <hr>

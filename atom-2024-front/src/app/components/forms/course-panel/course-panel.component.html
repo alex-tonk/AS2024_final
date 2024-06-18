@@ -39,8 +39,12 @@
                     </div>
                     <div class="extra-info-wrapper">
                       <ng-container *ngIf="task.type == 'task'; else lectureInfo">
-                        <!--TODO-->
-                        <div *ngIf="task.time">Время выполнения: {{ task.time }} мин.</div>
+                        <div *ngIf="task.task.lastAttempt?.status === AttemptStatus.IN_PROGRESS; else time"> Осталось
+                          времени: {{ remainingTimeByAttemptId[task.task.lastAttempt.id.toString()] }}
+                        </div>
+                        <ng-template #time>
+                          <div *ngIf="task.task.time"> Время выполнения: {{ task.task.time }} мин.</div>
+                        </ng-template>
                         <p-knob [(ngModel)]="task.difficulty"
                                 [rangeColor]="getDifficultColor(task.difficulty)"
                                 [max]="5" [readonly]="true" [size]="50"
