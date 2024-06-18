@@ -89,6 +89,19 @@ export class LessonService {
 @Injectable({
 providedIn:'root'
 })
+export class TaskService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+}
+
+@Injectable({
+providedIn:'root'
+})
 export class TopicService {
   httpService: HttpClient;
 

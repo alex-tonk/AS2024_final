@@ -1,5 +1,4 @@
 import {UserDto} from '../models/UserDto';
-import {File} from './atom2024backend-entities';
 import {AttemptStatus, Mark} from './atom2024backend-enums';
 
 export class AttemptCheckResultDto {
@@ -16,7 +15,7 @@ export class AttemptDto {
   autoCheckResults?: AttemptCheckResultDto[];
   autoMark?: Mark;
   endDate?: Date;
-  files?: File[];
+  files?: AttemptFileDto[];
   id?: number;
   isLastAttempt?: boolean;
   isNewTryAllowed?: boolean;
@@ -29,6 +28,13 @@ export class AttemptDto {
   tutorComment?: string;
   tutorMark?: Mark;
   user?: UserDto;
+}
+
+export class AttemptFileDto {
+  comment?: string;
+  fileId?: number;
+  fileName?: string;
+  id?: number;
 }
 
 export class FeatureDto {

@@ -7,6 +7,7 @@ import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.AttemptCheckResultDto;
 import com.prolegacy.atom2024backend.dto.AttemptDto;
+import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.dto.FeatureDto;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
@@ -95,7 +96,7 @@ public class AttemptService {
     }
 
     @Retryable
-    public void finishAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, List<FileId> fileIds) {
+    public void finishAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, List<AttemptFileDto> files) {
         User user = userProvider.get();
         Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
         Lesson lesson = topic.getLessons().stream()
@@ -112,7 +113,7 @@ public class AttemptService {
         if (!lastAttempt.getStatus().equals(AttemptStatus.IN_PROGRESS))
             throw new BusinessLogicException("Закончить можно только задания, находящиеся в работе");
 
-        lastAttempt.finish(Instant.now(), fileRepository.findAllById(fileIds));
+        lastAttempt.finish(Instant.now(), files);
         // TODO: начать пинать машину
     }
 
@@ -154,7 +155,10 @@ public class AttemptService {
 
     @Retryable
     public void checkAttempt(Attempt uncheckedAttempt) {
-        for (File file : uncheckedAttempt.getFiles()) {
+        List<File> files = fileRepository.findAllById(
+                uncheckedAttempt.getFiles().stream().map(AttemptFile::getFileId).toList()
+        );
+        for (File file : files) {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();

@@ -14,6 +14,9 @@ import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {AttemptService} from '../../../../gen/atom2024backend-controllers';
 import {AttemptStatus} from '../../../../gen/atom2024backend-enums';
+import {PanelModule} from 'primeng/panel';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import {FileUpload, FileUploadHandlerEvent, FileUploadModule} from 'primeng/fileupload';
 
 @Component({
   selector: 'app-task-attempt',
@@ -27,7 +30,10 @@ import {AttemptStatus} from '../../../../gen/atom2024backend-enums';
     PrimeTemplate,
     StepperModule,
     FormsModule,
-    Button
+    Button,
+    PanelModule,
+    InputTextareaModule,
+    FileUploadModule
   ],
   templateUrl: './task-attempt.component.html',
   styleUrl: './task-attempt.component.css',
@@ -61,6 +67,7 @@ export class TaskAttemptComponent {
   content: string;
   beautifiedContent: string;
   stepperIndex = 0;
+  stepsCount = 3;
 
   constructor(private configService: ConfigService,
               private fileService: FileService,
@@ -133,8 +140,33 @@ export class TaskAttemptComponent {
   async startTaskAttempt() {
     this.loading = true;
     try {
-      this.taskAttempt = await lastValueFrom(this.attemptService.startNewAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
+      let attempt = await lastValueFrom(this.attemptService.startNewAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
+      this.taskAttempt = attempt;
     } finally {
+      this.loading = false;
+    }
+  }
+
+  nextStep() {
+    this.stepperIndex += 1;
+  }
+
+  previousStep() {
+    this.stepperIndex -= 1;
+  }
+
+  sendToCheck() {
+
+  }
+
+  async addAttemptFile(event: FileUploadHandlerEvent, fileUpload: FileUpload) {
+    this.loading = true;
+    try {
+      const fileName = event.files[0].name;
+      const fileId = await lastValueFrom(this.fileService.uploadAttemptFile(event.files[0]));
+      this.taskAttempt.files = [...(this.taskAttempt.files ?? []), {fileId: fileId, fileName: fileName}];
+    } finally {
+      setTimeout(() => fileUpload.clear());
       this.loading = false;
     }
   }

@@ -26,6 +26,7 @@ public class AttemptReader {
     private static final QAttempt attempt = QAttempt.attempt;
     private static final QAttemptCheckResult attemptCheckResult = QAttemptCheckResult.attemptCheckResult;
     private static final QFeature feature = QFeature.feature;
+    private static final QAttemptFile attemptFile = QAttemptFile.attemptFile;
     private static final QFile file = QFile.file;
     private static final QTask task = QTask.task;
     private static final QSupplement taskSupplement = new QSupplement("taskSupplement");
@@ -50,9 +51,10 @@ public class AttemptReader {
         setTutorCheckResults(lastAttempt);
 
         lastAttempt.setFiles(
-                queryFactory.from(file)
-                        .innerJoin(attempt).on(attempt.id.eq(lastAttempt.getId()).and(attempt.files.any().id.eq(file.id)))
-                        .selectDto(File.class)
+                queryFactory.from(attemptFile)
+                        .leftJoin(file).on(attemptFile.fileId.eq(file.id))
+                        .where(attemptFile.attempt.id.eq(lastAttempt.getId()))
+                        .selectDto(AttemptFileDto.class, file.fileName.as("fileName"))
                         .fetch()
         );
 
@@ -84,9 +86,10 @@ public class AttemptReader {
         setTutorCheckResults(attempt);
 
         attempt.setFiles(
-                queryFactory.from(file)
-                        .innerJoin(AttemptReader.attempt).on(AttemptReader.attempt.id.eq(attempt.getId()).and(AttemptReader.attempt.files.any().id.eq(file.id)))
-                        .selectDto(File.class)
+                queryFactory.from(attemptFile)
+                        .leftJoin(file).on(attemptFile.fileId.eq(file.id))
+                        .where(attemptFile.attempt.id.eq(attempt.getId()))
+                        .selectDto(AttemptFileDto.class, file.fileName.as("fileName"))
                         .fetch()
         );
 

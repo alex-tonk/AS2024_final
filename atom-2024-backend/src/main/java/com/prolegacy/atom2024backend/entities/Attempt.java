@@ -1,6 +1,8 @@
 package com.prolegacy.atom2024backend.entities;
 
 import com.prolegacy.atom2024backend.common.auth.entities.User;
+import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
+import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.enums.Mark;
@@ -54,8 +56,8 @@ public class Attempt {
 
     private Boolean isLastAttempt = true;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<File> files = new ArrayList<>();
+    @OneToMany(mappedBy = "attempt", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<AttemptFile> files = new ArrayList<>();
 
     public Attempt(
             Topic topic,
@@ -75,9 +77,16 @@ public class Attempt {
         lastAttempt.ifPresent(Attempt::close);
     }
 
-    public void finish(Instant endDate, List<File> files) {
+    public void finish(Instant endDate, List<AttemptFileDto> files) {
         this.endDate = endDate;
-        this.files = files;
+        if (files.isEmpty()) {
+            throw new BusinessLogicException("Для отправки задания на проверку должен быть прикреплён хотя бы один файл");
+        }
+        this.files.addAll(
+                files.stream()
+                .map(dto -> new AttemptFile(this, dto))
+                .toList()
+        );
         this.status = AttemptStatus.VALIDATION;
     }
 
