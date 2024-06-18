@@ -1,57 +1,12 @@
-<p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeGroup($event.index)">
-  <p-tabPanel header="Учебные группы" leftIcon="pi pi-graduation-cap">
-    <ng-template pTemplate="content">
-      <p-dataView [value]="filteredGroups" layout="grid" class="clickable-card-grid"
-                  emptyMessage="Не найдено ни одной учебной группы">
-        <ng-template pTemplate="grid" let-groups>
-          <div class="quick-search-wrapper">
-            <div class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
-            </div>
-          </div>
-          <div class="grid" style="justify-content: center; overflow: auto">
-            <div *ngFor="let group of groups" class="col-12 md:col-6 lg:col-3">
-              <p-card (click)="openGroup(group)" class="clickable-card full-width">
-                <h3 class="no-margin header">{{ group.name }}</h3>
-                <hr>
-                <div style="text-align: left">
-                  <div style="padding-bottom: 10px">Проходимые курсы:</div>
-                  <div style="padding-left: 20px">
-                    <div *ngFor="let course of splitCourses(group.courseNames)">{{ course }}</div>
-                  </div>
-                </div>
-                <p-footer>
-                  <hr>
-                  Кол-во учеников: {{ group.studentsCount }}
-                </p-footer>
-              </p-card>
-            </div>
-          </div>
-        </ng-template>
-
-        <ng-template pTemplate="footer">
-          <div>Всего ваших групп: {{availableStudyGroups ? availableStudyGroups.length : 0}}</div>
-        </ng-template>
-      </p-dataView>
-    </ng-template>
-  </p-tabPanel>
-
-  <p-tabPanel header="Все ДЗ на проверку" leftIcon="pi pi-list-check">
-    <ng-template pTemplate="content">
-      <div>Таблица домашних заданий по всем студентам доступных групп и курсов</div>
-    </ng-template>
-  </p-tabPanel>
-
-  <p-tabPanel header="Расписание" leftIcon="pi pi-calendar-clock">
-    <ng-template pTemplate="content">
-      какое-то расписание воршопов
-    </ng-template>
-  </p-tabPanel>
-
-  <p-tabPanel *ngFor="let group of openedGroups" [header]="group.title" closable="true">
-    <ng-template pTemplate="content">
-      <app-study-group-card [studyGroup]="group.value"></app-study-group-card>
-    </ng-template>
-  </p-tabPanel>
-</p-tabView>
+<p-splitter>
+  <ng-template pTemplate>
+    <div class="col flex align-items-center justify-content-center">
+      <app-course-panel [mode]="CoursePanelMode.TUTOR"></app-course-panel>
+    </div>
+  </ng-template>
+  <ng-template pTemplate>
+    <div class="col flex align-items-center justify-content-center">
+      Panel 2
+    </div>
+  </ng-template>
+</p-splitter>

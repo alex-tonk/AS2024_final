@@ -51,10 +51,4 @@ bot:
 js-evaluator:
   timeout-seconds: 86400
 
-
-default-user:
-  email: animegamer666@gmail.com
-  password: ag6x3
-  firstname: Админ
-  lastname: Админов
-  surname: Админович
+api-url: http://localhost:10240/check
