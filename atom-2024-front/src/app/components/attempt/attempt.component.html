@@ -23,6 +23,12 @@
         <div class="splitter"></div>
 
         <p-button pTooltip="Печать" icon="pi pi-print" (click)="menu.toggle($event)" severity="success"></p-button>
+
+        <div class="splitter"></div>
+        <p-button label="Проверить задание" icon="pi pi-filter"
+                  styleClass="button-primary" [disabled]="!selectedAttempt"
+                  (click)="checkAttempt()">
+        </p-button>
       </div>
 
       <div class="table-toolbar-right">
@@ -97,3 +103,17 @@
         (onShow)="ExportTable.showMenu(table, columns, attempts)"
         appendTo="body">
 </p-menu>
+
+<p-dialog *ngIf="checkingDialogVisible"
+          [style]="{width: '95%', height: '95%'}"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          [closable]="true"
+          [header]="'Проверка задания: ' + checkingAttempt.task?.title"
+          [(visible)]="checkingDialogVisible"
+          (onHide)="getAttemptsFromApi()">
+  <app-image-with-feedback-viewer [isTutorMode]="true"
+                                  [attemptId]="checkingAttemptId">
+  </app-image-with-feedback-viewer>
+</p-dialog>

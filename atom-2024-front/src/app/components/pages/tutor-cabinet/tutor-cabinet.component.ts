@@ -6,7 +6,6 @@ import {CardModule} from 'primeng/card';
 import {RouterLink} from '@angular/router';
 import {StudyGroupCardComponent} from './study-group-card/study-group-card.component';
 import {NgForOf} from '@angular/common';
-import {setTimeout} from 'core-js';
 import {DataViewModule} from 'primeng/dataview';
 import {InputTextModule} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
@@ -15,7 +14,8 @@ import {
   PresentationLessonsComponent
 } from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
 import {SplitterModule} from 'primeng/splitter';
-import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
+import {CoursePanelComponent} from '../../forms/course-panel/course-panel.component';
+import {AttemptComponent} from '../../attempt/attempt.component';
 
 @Component({
   selector: 'app-tutor-cabinet',
@@ -34,67 +34,19 @@ import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/co
     InputTextModule,
     FormsModule,
     SplitterModule,
-    CoursePanelComponent
+    CoursePanelComponent,
+    AttemptComponent
   ],
   templateUrl: './tutor-cabinet.component.html',
   styleUrl: './tutor-cabinet.component.css'
 })
 export class TutorCabinetComponent implements OnInit {
-  protected readonly CoursePanelMode = CoursePanelMode;
-
-  loading = false;
-
   activeIndex = 0;
-
-  systemTabsCount = 3;
-  availableStudyGroups: any[] = [];
-
-  openedGroups: { value: any, title: string }[] = [];
-
-  filterValue: string;
-
-  get filteredGroups() {
-    if (this.filterValue) {
-      return this.availableStudyGroups.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
-    } else {
-      return this.availableStudyGroups;
-    }
-  }
+  loading = false;
 
   constructor() {
   }
 
   async ngOnInit() {
-    await this.init();
-  }
-
-  async init() {
-    this.loading = true;
-    try {
-      this.availableStudyGroups = [];
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  splitCourses(courseNames: string): string[] {
-    return courseNames?.split(',');
-  }
-
-  openGroup(group: any) {
-    const idx = this.openedGroups.findIndex(g => g.value.id === group.id);
-    if (idx > -1) {
-      this.activeIndex = idx + this.systemTabsCount;
-    } else {
-      this.openedGroups.push({value: group, title: group.name!});
-      setTimeout(() => {
-        this.activeIndex = this.openedGroups.length + this.systemTabsCount - 1;
-      });
-    }
-  }
-
-  closeGroup(index: number) {
-    this.activeIndex = 0;
-    this.openedGroups.splice(index - this.systemTabsCount, 1);
   }
 }

@@ -10,6 +10,9 @@ import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SplitterModule} from 'primeng/splitter';
 import {AngularDraggableModule, IPosition} from 'angular2-draggable';
+import {AttemptDto} from '../../../gen/atom2024backend-dto';
+import {lastValueFrom} from 'rxjs';
+import {AttemptService} from '../../../gen/atom2024backend-controllers';
 
 export enum FeedbackType {
   COMMENT = 'COMMENT', WARN = 'WARN', ERROR = 'ERROR'
@@ -39,6 +42,10 @@ export enum FeedbackType {
 })
 export class ImageWithFeedbackViewerComponent implements OnInit {
   @Input() isTutorMode = true;
+  @Input() attemptId: number;
+  attempt: AttemptDto;
+  loading = false;
+
   @ViewChild('imgWrapper') imgWrapper: ElementRef;
   creatingFeedbackType: FeedbackType;
 
@@ -100,10 +107,22 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   protected readonly FeedbackType = FeedbackType;
 
-  constructor() {
+  constructor(
+    private attemptService: AttemptService
+  ) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.init();
+  }
+
+  async init() {
+    this.loading = true;
+    try {
+      // this.attempt = await lastValueFrom(this.attemptService);
+    } finally {
+      this.loading = false;
+    }
   }
 
   addFeedback(type: FeedbackType) {
