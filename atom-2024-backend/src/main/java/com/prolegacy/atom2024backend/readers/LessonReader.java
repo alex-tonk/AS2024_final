@@ -31,6 +31,7 @@ public class LessonReader {
     private static final QTrait trait = QTrait.trait;
     private static final QSupplement lessonSupplement = new QSupplement("lessonSupplement");
     private static final QSupplement supplement = QSupplement.supplement;
+    private static final QFile file = QFile.file;
     private static final QAttempt lastAttempt = new QAttempt("lastAttempt");
 
     @Autowired
@@ -127,10 +128,11 @@ public class LessonReader {
                 .from(lesson)
                 .innerJoin(lesson.supplements, lessonSupplement)
                 .innerJoin(supplement).on(lessonSupplement.id.eq(supplement.id))
+                .leftJoin(file).on(file.id.eq(supplement.fileId))
                 .where(QueryUtils.generateInExpression(lesson.id, lessons.stream().map(LessonDto::getId).toList()));;
         Map<LessonId, List<SupplementDto>> supplementsByLesson = supplementsQuery.transform(
                 GroupBy.groupBy(lesson.id)
-                        .as(GroupBy.list(DtoProjections.constructDto(supplementsQuery, SupplementDto.class, supplement)))
+                        .as(GroupBy.list(DtoProjections.constructDto(supplementsQuery, SupplementDto.class, supplement, file.fileName.as("fileName"))))
         );
         lessons.forEach(
                 lesson -> lesson.setSupplements(supplementsByLesson.getOrDefault(lesson.getId(), new ArrayList<>()))

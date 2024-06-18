@@ -68,8 +68,9 @@ public class AttemptReader {
                 .from(task)
                 .innerJoin(task.supplements, taskSupplement)
                 .innerJoin(supplement).on(taskSupplement.id.eq(supplement.id))
+                .leftJoin(file).on(file.id.eq(supplement.fileId))
                 .where(task.id.eq(lastAttempt.getTask().getId()))
-                .selectDto(SupplementDto.class, supplement)
+                .selectDto(SupplementDto.class, supplement, file.fileName.as("fileName"))
                 .fetch();
         lastAttempt.getTask().setSupplements(supplements);
     }

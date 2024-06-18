@@ -46,7 +46,7 @@
               <label>Приложения:</label>
               <div style="display: flex; flex-flow: column; gap: 0.5rem;">
                 <div class="uploaded-file" *ngFor="let s of lesson.supplements">
-                  <span>{{s.title}}</span>
+                  <span>{{s.title || s.fileName}}</span>
                   <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem" (click)="downloadLessonFile(s)"></i>
                 </div>
               </div>

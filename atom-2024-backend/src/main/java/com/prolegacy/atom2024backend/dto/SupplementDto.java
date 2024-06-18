@@ -13,4 +13,5 @@ public class SupplementDto {
     private SupplementId supplementId;
     private String title;
     private FileId fileId;
+    private String fileName;
 }

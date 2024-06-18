@@ -58,7 +58,7 @@ export class LectureViewComponent implements OnInit {
     this.loading = true;
     try {
       let blob = await lastValueFrom(this.fileService.getLessonFile(s.fileId));
-      FileSaver.saveAs(blob, s.title);
+      FileSaver.saveAs(blob, s.title || s.fileName);
     } finally {
       this.loading = false;
     }

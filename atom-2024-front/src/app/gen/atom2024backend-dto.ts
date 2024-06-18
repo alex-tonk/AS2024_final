@@ -56,6 +56,7 @@ export class LessonDto {
 
 export class SupplementDto {
   fileId?: number;
+  fileName?: string;
   supplementId?: number;
   title?: string;
 }
