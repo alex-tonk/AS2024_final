@@ -2,34 +2,11 @@
   width: 100%;
   text-align: right;
   padding: 20px;
+  display: inline-flex;
+  gap: 5px;
+  justify-content: flex-end;
 }
 
 p-dataview {
   width: 100%;
-}
-
-/* DATE */
-.schedule-wrapper {
-  flex: auto;
-  width: 100%;
-  overflow: auto;
-  padding: 5px;
-}
-
-.calendar-cell {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendar-cell.busy {
-  background: var(--green-alfa-color)
-}
-
-.selected-date-wrapper {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
 }

@@ -22,6 +22,7 @@ import {TopicDto} from '../../../gen/atom2024backend-dto';
 import {TopicService} from '../../../gen/atom2024backend-controllers';
 import {TagModule} from 'primeng/tag';
 import {UserService} from '../../../services/user.service';
+import {DropdownModule} from 'primeng/dropdown';
 
 @Component({
   selector: 'app-student-cabinet',
@@ -47,7 +48,8 @@ import {UserService} from '../../../services/user.service';
     TooltipModule,
     NgIf,
     ProgressBarModule,
-    TagModule
+    TagModule,
+    DropdownModule
   ],
   templateUrl: './student-cabinet.component.html',
   styleUrl: './student-cabinet.component.css'
@@ -57,15 +59,31 @@ export class StudentCabinetComponent implements OnInit {
   activeIndex = 0;
 
   systemTabsCount = 1;
-  // TODO Курсы для ученика!!
   topics: TopicDto[] = [];
   openedTopics: { value: TopicDto, title: string }[] = [];
 
   filterValue: string;
-  selectedDate?: Date;
+  filterOptions = [
+    {value: 'all', label: 'По всему содержимому'},
+    {value: 'lessons', label: 'По содержанию уроков'},
+    {value: 'tasks', label: 'По содержанию заданий'}
+  ];
+  filterOption = 'all';
 
   get filteredCourses() {
     if (this.filterValue) {
+      if (this.filterOption === 'lessons') {
+        // TODO Воткнуть .map
+        return this.topics
+          .map(t => t)
+          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      }
+      if (this.filterOption === 'tasks') {
+        // TODO Воткнуть .map
+        return this.topics
+          .map(t => t)
+          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      }
       return this.topics.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
     } else {
       return this.topics;
