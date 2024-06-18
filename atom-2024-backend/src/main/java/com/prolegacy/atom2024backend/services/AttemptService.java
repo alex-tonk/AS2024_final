@@ -9,7 +9,10 @@ import com.prolegacy.atom2024backend.dto.AttemptDto;
 import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.dto.FeatureDto;
 import com.prolegacy.atom2024backend.entities.*;
-import com.prolegacy.atom2024backend.entities.ids.*;
+import com.prolegacy.atom2024backend.entities.ids.AttemptId;
+import com.prolegacy.atom2024backend.entities.ids.LessonId;
+import com.prolegacy.atom2024backend.entities.ids.TaskId;
+import com.prolegacy.atom2024backend.entities.ids.TopicId;
 import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.enums.Mark;
 import com.prolegacy.atom2024backend.exceptions.AttemptNotFoundException;
@@ -85,7 +88,7 @@ public class AttemptService {
         );
         Boolean newAttemptAllowed = lastAttempt
                 .map(a -> AttemptStatus.DONE.equals(a.getStatus())
-                                && (a.getIsNewTryAllowed() || Mark.FAILED.equals(a.getTutorMark()))
+                        && (a.getIsNewTryAllowed() || Mark.FAILED.equals(a.getTutorMark()))
                 ).orElse(true);
         if (!newAttemptAllowed) {
             throw new BusinessLogicException("Вы не можете повторно пройти данное задание");

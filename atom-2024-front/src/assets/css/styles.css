@@ -508,6 +508,7 @@ p-listbox > div {
 .min400-min340 .p-splitter-horizontal > :nth-child(1) {
   min-width: 400px;
 }
+
 .min400-min340 .p-splitter-horizontal > :nth-child(3) {
   min-width: 340px;
 }
@@ -524,6 +525,7 @@ p-listbox > div {
 .min600-min340 .p-splitter-horizontal > :nth-child(1) {
   min-width: 600px;
 }
+
 .min600-min340 .p-splitter-horizontal > :nth-child(3) {
   min-width: 340px;
 }
@@ -547,4 +549,8 @@ p-splitter.full-width {
 img {
   -webkit-user-drag: none;
   user-select: none;
+}
+
+mark.current-mark {
+  background-color: orange;
 }

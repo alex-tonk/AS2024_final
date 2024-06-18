@@ -14,6 +14,10 @@
     <div
       style="padding: 8px; display: inline-flex; align-items: center;">
       <span style="padding-right: 1rem;">Исходный вид</span>
+      <p-inputSwitch [(ngModel)]="original"/>
+      <p-button (click)="scrollToNextResult()"></p-button>
+      <p-button (click)="scrollToPrevResult()"></p-button>
+      <input placeholder="Search..." #search type="text">
       <p-inputSwitch [(ngModel)]="original" tooltipPosition="left" pTooltip="По умолчанию показывается улучшенный вид"/>
     </div>
   </div>
@@ -21,8 +25,9 @@
     <p-stepper [(activeStep)]="stepperIndex">
       <p-stepperPanel header="Учебный материал">
         <ng-template pTemplate="content">
-          <div class="full-size">
-            <markdown [data]="!original ? beautifiedContent : content"></markdown>
+          <div>
+            <markdown [markjsHighlight]="searchText$ | async"
+                      [markjsConfig]="searchConfig" [data]="!original ? beautifiedContent : content"></markdown>
           </div>
         </ng-template>
       </p-stepperPanel>

@@ -9,6 +9,7 @@ services:
       spring.jpa.properties.hibernate.default_schema: public
       spring.datasource.username: postgres
       spring.datasource.password: postgres
+      TZ: "Asia/Yekaterinburg"
       api-url: ${API_URL}
     ports:
       - 8085:8085
@@ -22,6 +23,7 @@ services:
       target: front
     environment:
       baseUrl: http://localhost:8085
+      TZ: "Asia/Yekaterinburg"
     ports:
       - 4963:80
     depends_on:
@@ -35,3 +37,4 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+      TZ: "Asia/Yekaterinburg"

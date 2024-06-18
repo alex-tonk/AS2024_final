@@ -15,7 +15,7 @@ WORKDIR /dist/src/app
 RUN npm cache clean --force
 COPY atom-2024-front/ .
 COPY --from=rest_build /workspace/atom-2024-front/src/app/gen src/app/gen
-RUN npm install
+RUN npm install --force --legacy-peer-deps
 RUN npm run build --prod
 
 FROM eclipse-temurin:17-jdk-alpine as rest

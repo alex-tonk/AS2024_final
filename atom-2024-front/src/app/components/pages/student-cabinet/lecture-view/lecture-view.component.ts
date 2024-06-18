@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogModule} from 'primeng/dialog';
 import {LessonDto, SupplementDto} from '../../../../gen/atom2024backend-dto';
 import {MarkdownComponent, provideMarkdown} from 'ngx-markdown';
@@ -6,10 +6,13 @@ import {ConfigService} from '../../../../services/config.service';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {FormsModule} from '@angular/forms';
 import {StepperModule} from 'primeng/stepper';
-import {NgForOf, NgIf} from '@angular/common';
-import {lastValueFrom} from 'rxjs';
+import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {debounceTime, distinctUntilChanged, fromEvent, lastValueFrom, Observable, of} from 'rxjs';
 import {FileService} from '../../../../services/file.service';
 import FileSaver from 'file-saver';
+import {NgxMarkjsModule} from 'ngx-markjs';
+import {map} from 'rxjs/operators';
+import {Button} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
 
 @Component({
@@ -23,13 +26,17 @@ import {TooltipModule} from 'primeng/tooltip';
     StepperModule,
     NgIf,
     NgForOf,
-    TooltipModule
+    TooltipModule,
+    NgForOf,
+    NgxMarkjsModule,
+    AsyncPipe,
+    Button
   ],
   templateUrl: './lecture-view.component.html',
   styleUrl: './lecture-view.component.css',
   providers: [provideMarkdown()]
 })
-export class LectureViewComponent implements OnInit {
+export class LectureViewComponent implements OnInit, AfterViewInit {
   @Input()
   lesson: LessonDto;
 
@@ -43,6 +50,13 @@ export class LectureViewComponent implements OnInit {
   beautifiedContent: string;
   stepperIndex = 0;
 
+  @ViewChild('search', {static: false}) searchElemRef: ElementRef | undefined;
+  searchText$: Observable<string | null> = of(null);
+  searchConfig = {separateWordSearch: false};
+
+  searchResults: HTMLCollectionOf<HTMLElement>;
+  currentResult = 0;
+
   constructor(private configService: ConfigService,
               private fileService: FileService) {
   }
@@ -50,6 +64,21 @@ export class LectureViewComponent implements OnInit {
   ngOnInit() {
     this.content = (this.lesson?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
     this.beautifiedContent = this.content.replaceAll('<br>', '\n');
+  }
+
+  ngAfterViewInit() {
+    this.searchText$ = fromEvent<Event>(this.searchElemRef?.nativeElement, 'keyup').pipe(
+      map((e: Event) => {
+        setTimeout(() => {
+          this.searchResults = document.getElementsByTagName('mark');
+          this.currentResult = -1;
+          this.scrollToPrevResult();
+        }, 350);
+        return (e.target as HTMLInputElement).value;
+      }),
+      debounceTime(300),
+      distinctUntilChanged()
+    );
   }
 
   async downloadLessonFile(s: SupplementDto) {
@@ -64,5 +93,20 @@ export class LectureViewComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  scrollToPrevResult() {
+    this.searchResults.item(this.currentResult)?.classList.remove('current-mark');
+    this.currentResult = (this.currentResult + 1) % this.searchResults.length;
+    this.searchResults.item(this.currentResult)?.classList.add('current-mark');
+    this.searchResults.item(this.currentResult)?.scrollIntoView({behavior: 'smooth'});
+  }
+
+  scrollToNextResult() {
+    this.searchResults.item(this.currentResult)?.classList.remove('current-mark');
+    this.currentResult = this.currentResult - 1;
+    if (this.currentResult < 0) this.currentResult += this.searchResults.length;
+    this.searchResults.item(this.currentResult)?.classList.add('current-mark');
+    this.searchResults.item(this.currentResult)?.scrollIntoView({behavior: 'smooth'});
   }
 }
