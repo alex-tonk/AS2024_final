@@ -4,13 +4,10 @@ package com.prolegacy.atom2024backend.init;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
-import com.prolegacy.atom2024backend.dto.TaskDto;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.FileId;
-import com.prolegacy.atom2024backend.readers.TaskReader;
 import com.prolegacy.atom2024backend.repositories.*;
 import com.prolegacy.atom2024backend.services.FileUploadService;
 import lombok.extern.log4j.Log4j2;
@@ -55,8 +52,9 @@ public class InitialDataLoader implements ApplicationRunner {
 
     @Autowired
     private FeatureRepository featureRepository;
+
     @Autowired
-    private TaskReader taskReader;
+    private SupplementRepository supplementRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -104,11 +102,6 @@ public class InitialDataLoader implements ApplicationRunner {
         }
 
         loadFeatures();
-
-
-
-        List<TaskDto> tasks = taskReader.getTasks();
-        System.out.println(tasks);
     }
 
     private void loadTraits(Map<String, Trait> traitsByCode) {
@@ -257,12 +250,16 @@ public class InitialDataLoader implements ApplicationRunner {
                         }
                         return s;
                     }).orElseGet(ArrayList::new);
+            List<Supplement> supps = new ArrayList<>();
             for (Pair<String, String> s : supplements) {
                 try {
                     File supplementFile = new File(dataFolderName + File.separator + lessonSubfolderName + File.separator + code + File.separator + s.getValue());
                     FileId fileId = fileUploadService.createFromFile(supplementFile).getId();
                     content = Optional.ofNullable(content)
-                            .map(c -> c.replaceAll("!\\[%s\\]\\(%s\\)".formatted(s.getKey(), s.getValue()), "[%s](<baseUrl>/lessons/files/%s)".formatted(s.getKey(), fileId))).orElse(content);
+                            .map(c -> c.replaceAll(s.getValue(), "<baseUrl>/lessons/files/%s".formatted(fileId))).orElse(content);
+                    Supplement supplement = new Supplement(s.getKey(), fileId);
+                    supplementRepository.save(supplement);
+                    supps.add(supplement);
                 } catch (Exception e) {
                     log.warn("Ошибка загрузки вложения в уроке [код урока = %s, имя файла = %s]".formatted(code, s.getValue()));
                 }
@@ -303,6 +300,8 @@ public class InitialDataLoader implements ApplicationRunner {
                             .toList()
             );
 
+            result.getSupplements().addAll(supps);
+
             this.lessonRepository.save(result);
             lessonsByCode.put(result.getCode(), result);
             return result;
@@ -339,12 +338,18 @@ public class InitialDataLoader implements ApplicationRunner {
                         }
                         return s;
                     }).orElseGet(ArrayList::new);
+
+            List<Supplement> supps = new ArrayList<>();
+
             for (Pair<String, String> s : supplements) {
                 try {
                     File supplementFile = new File(dataFolderName + File.separator + lessonSubfolderName + File.separator + code + File.separator + s.getValue());
                     FileId fileId = fileUploadService.createFromFile(supplementFile).getId();
                     content = Optional.ofNullable(content)
-                            .map(c -> c.replaceAll("!\\[%s\\]\\(%s\\)".formatted(s.getKey(), s.getValue()), "[%s](<baseUrl>/tasks/files/%s)".formatted(s.getKey(), fileId))).orElse(content);
+                            .map(c -> c.replaceAll(s.getValue(), "<baseUrl>/tasks/files/%s".formatted(fileId))).orElse(content);
+                    Supplement supplement = new Supplement(s.getKey(), fileId);
+                    supplementRepository.save(supplement);
+                    supps.add(supplement);
                 } catch (Exception e) {
                     log.warn("Ошибка загрузки вложения в уроке [код урока = %s, имя файла = %s]".formatted(code, s.getValue()));
                 }
@@ -375,6 +380,7 @@ public class InitialDataLoader implements ApplicationRunner {
                     difficulty,
                     time
             );
+            result.getSupplements().addAll(supps);
 
             taskRepository.save(result);
             tasksByCode.put(result.getCode(), result);

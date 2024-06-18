@@ -55,4 +55,14 @@ public class AttemptCheckResult {
         this.isAutomatic = dto.getIsAutomatic();
         this.features = features;
     }
+
+    public AttemptCheckResult(Attempt attempt, com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto, List<Feature> features) {
+        this.attempt = attempt;
+        this.x1 = dto.getArea().getX1();
+        this.y1 = dto.getArea().getY1();
+        this.x2 = dto.getArea().getX2();
+        this.y2 = dto.getArea().getY2();
+        this.isAutomatic = true;
+        this.features = features;
+    }
 }

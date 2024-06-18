@@ -1,0 +1,104 @@
+.full-size {
+  width: 100%;
+  height: 100%;
+}
+
+.clickable-icon:hover {
+  cursor: pointer;
+}
+
+.uploaded-file {
+  background-color: rgb(249, 250, 251);
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.download-uploaded-file-icon {
+  color: var(--primary-color);
+}
+
+:host .form-row {
+  gap: 0.5em;
+}
+
+:host .form-row label {
+  width: 300px;
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-nav {
+  width: 40%;
+  min-width: fit-content;
+  padding-bottom: 0.75em;
+}
+
+:host ::ng-deep p-stepper > div[role=tablist] {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:host ::ng-deep p-steppercontent > div[role=tabpanel] {
+  height: 100% !important;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  overflow-y: scroll;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-panels {
+  flex: 1;
+  min-height: 0;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding: 0 !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  padding: 1em !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding: 0.5em !important;
+}
+
+.begin-attempt-container {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 1em;
+}
+
+.begin-attempt-label-container-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.begin-attempt-label-container {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+
+.begin-attempt-label {
+  font-weight: bold;
+  font-size: x-large;
+  text-align: center;
+  padding-bottom: 1em;
+}
+
+.begin-attempt-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

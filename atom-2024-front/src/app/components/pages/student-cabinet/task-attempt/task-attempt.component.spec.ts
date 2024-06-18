@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TopicPanelComponent } from './topic-panel.component';
+import { TaskAttemptComponent } from './task-attempt.component';
 
-describe('CoursePanelComponent', () => {
-  let component: TopicPanelComponent;
-  let fixture: ComponentFixture<TopicPanelComponent>;
+describe('TaskAttemptComponent', () => {
+  let component: TaskAttemptComponent;
+  let fixture: ComponentFixture<TaskAttemptComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopicPanelComponent]
+      imports: [TaskAttemptComponent]
     })
     .compileComponents();
-
-    fixture = TestBed.createComponent(TopicPanelComponent);
+    
+    fixture = TestBed.createComponent(TaskAttemptComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

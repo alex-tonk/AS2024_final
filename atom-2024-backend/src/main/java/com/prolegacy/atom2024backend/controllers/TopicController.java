@@ -32,4 +32,9 @@ public class TopicController {
     public List<LessonDto> getTopicLessons(@PathVariable TopicId topicId) {
         return lessonReader.getLessonsForTopic(topicId);
     }
+
+    @GetMapping("{topicId}/lessons/attempts")
+    public List<LessonDto> getTopicLessonsWithLastAttempts(@PathVariable TopicId topicId) {
+        return lessonReader.getLessonsForTopic(topicId, true);
+    }
 }

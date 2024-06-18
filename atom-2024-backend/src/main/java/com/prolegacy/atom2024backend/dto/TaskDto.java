@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,9 +19,7 @@ public class TaskDto {
     private BigDecimal difficulty;
     private Integer time;
 
-    private BigDecimal NAS;
-    private BigDecimal NNA;
-    private BigDecimal NTL;
-    private BigDecimal NAT;
     private BigDecimal difficultyScore;
+    private AttemptDto lastAttempt;
+    private List<SupplementDto> supplements;
 }

@@ -1,18 +1,24 @@
 package com.prolegacy.atom2024backend.readers;
 
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
-import com.prolegacy.atom2024backend.dto.AttemptCheckResultDto;
-import com.prolegacy.atom2024backend.dto.AttemptDto;
-import com.prolegacy.atom2024backend.dto.FeatureDto;
+import com.prolegacy.atom2024backend.common.util.QueryUtils;
+import com.prolegacy.atom2024backend.dto.*;
 import com.prolegacy.atom2024backend.entities.*;
+import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TaskId;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;
+import com.querydsl.core.group.GroupBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
@@ -21,6 +27,9 @@ public class AttemptReader {
     private static final QAttemptCheckResult attemptCheckResult = QAttemptCheckResult.attemptCheckResult;
     private static final QFeature feature = QFeature.feature;
     private static final QFile file = QFile.file;
+    private static final QTask task = QTask.task;
+    private static final QSupplement taskSupplement = new QSupplement("taskSupplement");
+    private static final QSupplement supplement = QSupplement.supplement;
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -47,7 +56,41 @@ public class AttemptReader {
                         .fetch()
         );
 
+        setTaskSupplements(lastAttempt);
+
         return lastAttempt;
+    }
+
+    private void setTaskSupplements(AttemptDto lastAttempt) {
+        List<SupplementDto> supplements = queryFactory
+                .from(task)
+                .innerJoin(task.supplements, taskSupplement)
+                .innerJoin(supplement).on(taskSupplement.id.eq(supplement.id))
+                .where(task.id.eq(lastAttempt.getTask().getId()))
+                .selectDto(SupplementDto.class, supplement)
+                .fetch();
+        lastAttempt.getTask().setSupplements(supplements);
+    }
+
+    public AttemptDto getAttempt(AttemptId attemptId) {
+        AttemptDto attempt = baseQuery()
+                .where(AttemptReader.attempt.id.eq(attemptId))
+                .fetchFirst();
+
+        if (attempt == null) return null;
+
+        setAutoCheckResults(attempt);
+
+        setTutorCheckResults(attempt);
+
+        attempt.setFiles(
+                queryFactory.from(file)
+                        .innerJoin(AttemptReader.attempt).on(AttemptReader.attempt.id.eq(attempt.getId()).and(AttemptReader.attempt.files.any().id.eq(file.id)))
+                        .selectDto(File.class)
+                        .fetch()
+        );
+
+        return attempt;
     }
 
     private void setTutorCheckResults(AttemptDto lastAttempt) {

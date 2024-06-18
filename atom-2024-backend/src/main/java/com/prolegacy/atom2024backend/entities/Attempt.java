@@ -38,6 +38,7 @@ public class Attempt {
     private Mark autoMark;
     @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL)
     private List<AttemptCheckResult> autoCheckResults;
+    private Boolean autoCheckFailed = false;
 
     @Enumerated(EnumType.STRING)
     private Mark tutorMark;
@@ -78,6 +79,20 @@ public class Attempt {
         this.endDate = endDate;
         this.files = files;
         this.status = AttemptStatus.VALIDATION;
+    }
+
+    public void setAutoMart(Mark mark, List<AttemptCheckResult> checkResults) {
+        autoMark = mark;
+        autoCheckResults = checkResults;
+    }
+
+    public void setAutoCheckFailed() {
+        autoCheckFailed = true;
+    }
+
+    public void failByTime() {
+        status = AttemptStatus.DONE;
+        isNewTryAllowed = true;
     }
 
     public void setTutorMark(Mark mark, List<AttemptCheckResult> checkResults, String comment) {

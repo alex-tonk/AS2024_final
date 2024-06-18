@@ -19,4 +19,5 @@ public class LessonDto {
 
     private List<TraitDto> traits;
     private List<TaskDto> tasks;
+    private List<SupplementDto> supplements;
 }

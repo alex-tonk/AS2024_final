@@ -33,9 +33,9 @@ public class TaskReader {
 
     private JPAQuery<TaskDto> baseQuery() {
         NumberExpression<BigDecimal> NAS = Expressions.asNumber(BigDecimal.valueOf(5)).subtract(markToValue(attempt.tutorMark).avg().castToNum(BigDecimal.class)).divide(BigDecimal.valueOf(3));
-        NumberExpression<BigDecimal> NNA = NumberExpression.max(attempt.count().castToNum(BigDecimal.class).subtract(BigDecimal.ONE).divide(
-                Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE)
-        ), Expressions.asNumber(BigDecimal.ZERO));
+        NumberExpression<BigDecimal> subtract = attempt.count().castToNum(BigDecimal.class).subtract(BigDecimal.ONE);
+        NumberExpression<BigDecimal> NNA = Expressions.cases().when(subtract.gt(BigDecimal.ZERO)).then(subtract).otherwise(Expressions.asNumber(BigDecimal.ZERO))
+                .divide(Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE));
         NumberExpression<BigDecimal> NTL = Expressions.asNumber(BigDecimal.ONE).subtract(task.time.castToNum(BigDecimal.class).divide(queryFactory.from(task).select(task.time.max())));
         NumberExpression<BigDecimal> NAT = Expressions.numberTemplate(BigDecimal.class, "function('getDifferenceSeconds', {0}, {1})", attempt.endDate, attempt.startDate).castToNum(Integer.class).coalesce(0).avg().divide(BigDecimal.valueOf(60)).divide(task.time).castToNum(BigDecimal.class);
 
@@ -44,14 +44,7 @@ public class TaskReader {
         return queryFactory.from(task)
                 .leftJoin(attempt).on(attempt.task.id.eq(task.id).and(attempt.status.eq(AttemptStatus.DONE)))
                 .groupBy(task)
-                .selectDto(
-                        TaskDto.class,
-                        NAS.as("NAS"),
-                        NNA.as("NNA"),
-                        NTL.as("NTL"),
-                        NAT.as("NAT"),
-                        DS.as("difficultyScore")
-                );
+                .selectDto(TaskDto.class, DS.as("difficultyScore"));
     }
 
     private static NumberExpression<BigDecimal> markToValue(EnumPath<Mark> mark) {

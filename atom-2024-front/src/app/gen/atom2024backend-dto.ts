@@ -1,19 +1,67 @@
+import {UserDto} from '../models/UserDto';
+import {File} from './atom2024backend-entities';
+import {AttemptStatus, Mark} from './atom2024backend-enums';
+
+export class AttemptCheckResultDto {
+  features?: FeatureDto[];
+  id?: number;
+  isAutomatic?: boolean;
+  x1?: number;
+  x2?: number;
+  y1?: number;
+  y2?: number;
+}
+
+export class AttemptDto {
+  autoCheckResults?: AttemptCheckResultDto[];
+  autoMark?: Mark;
+  endDate?: Date;
+  files?: File[];
+  id?: number;
+  isLastAttempt?: boolean;
+  isNewTryAllowed?: boolean;
+  lesson?: LessonDto;
+  startDate?: Date;
+  status?: AttemptStatus;
+  task?: TaskDto;
+  topic?: TopicDto;
+  tutorCheckResults?: AttemptCheckResultDto[];
+  tutorComment?: string;
+  tutorMark?: Mark;
+  user?: UserDto;
+}
+
+export class FeatureDto {
+  code?: string;
+  id?: number;
+  name?: string;
+}
 
 export class LessonDto {
   author?: string;
   code?: string;
   content?: string;
   id?: number;
+  supplements?: SupplementDto[];
   tasks?: TaskDto[];
   title?: string;
   traits?: TraitDto[];
+}
+
+export class SupplementDto {
+  fileId?: number;
+  supplementId?: number;
+  title?: string;
 }
 
 export class TaskDto {
   code?: string;
   content?: string;
   difficulty?: number;
+  difficultyScore?: number;
   id?: number;
+  lastAttempt?: AttemptDto;
+  supplements?: SupplementDto[];
   time?: number;
   title?: string;
 }

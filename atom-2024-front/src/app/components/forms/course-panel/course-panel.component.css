@@ -7,11 +7,13 @@
 
 .header {
   padding: 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .module-list-wrapper {
   flex: auto;
   overflow: auto;
+  padding: 0.5rem;
 }
 
 .module-wrapper {
@@ -99,5 +101,9 @@
 
 >>> .p-dialog-mask {
   z-index: 1;
+}
+
+:host ::ng-deep .p-accordion .p-accordion-content{
+  padding: 0;
 }
 

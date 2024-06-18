@@ -11,6 +11,7 @@ import com.prolegacy.atom2024backend.common.query.lazy.PageResponse;
 import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
+import com.prolegacy.atom2024backend.common.util.QueryUtils;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -103,7 +104,8 @@ public class UserReader {
         JPAQuery<?> rolesQuery = queryFactory
                 .from(user)
                 .innerJoin(user.roles, userRole)
-                .innerJoin(role).on(userRole.id.eq(role.id));
+                .innerJoin(role).on(userRole.id.eq(role.id))
+                .where(QueryUtils.generateInExpression(user.id, userDtoList.stream().map(UserDto::getId).toList()));
         Map<UserId, List<RoleDto>> rolesByUser = rolesQuery.transform(
                 GroupBy.groupBy(user.id)
                         .as(GroupBy.list(DtoProjections.constructDto(rolesQuery, RoleDto.class, role)))

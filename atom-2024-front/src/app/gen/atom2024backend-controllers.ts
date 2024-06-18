@@ -2,12 +2,33 @@ import {RoleDto} from '../models/RoleDto';
 import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {LessonDto, TopicDto} from './atom2024backend-dto';
+import {AttemptDto, LessonDto, TopicDto} from './atom2024backend-dto';
 import {ChatDto, MessageDto} from './dto-chat';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+
+@Injectable({
+providedIn:'root'
+})
+export class AttemptService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+ public getLastAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {
+    return this.httpService.get<AttemptDto>('attempts/topics/' + topicId + '/lessons/' + lessonId + '/tasks/' + taskId + '', {responseType: 'json'});
+  }
+
+ public startNewAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {
+    return this.httpService.post<AttemptDto>('attempts/topics/' + topicId + '/lessons/' + lessonId + '/tasks/' + taskId + '', null , {responseType: 'json'});
+  }
+
+}
 
 @Injectable({
 providedIn:'root'
@@ -55,6 +76,19 @@ export class ChatService {
 @Injectable({
 providedIn:'root'
 })
+export class LessonService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+}
+
+@Injectable({
+providedIn:'root'
+})
 export class TopicService {
   httpService: HttpClient;
 
@@ -65,6 +99,10 @@ export class TopicService {
 
  public getTopicLessons(topicId: number): Observable<LessonDto[]>  {
     return this.httpService.get<LessonDto[]>('topics/' + topicId + '/lessons', {responseType: 'json'});
+  }
+
+ public getTopicLessonsWithLastAttempts(topicId: number): Observable<LessonDto[]>  {
+    return this.httpService.get<LessonDto[]>('topics/' + topicId + '/lessons/attempts', {responseType: 'json'});
   }
 
  public getTopics(): Observable<TopicDto[]>  {
