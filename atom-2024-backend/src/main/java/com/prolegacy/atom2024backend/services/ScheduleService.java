@@ -34,6 +34,7 @@ public class ScheduleService {
                 attemptService.setAutoCheckFailed(uncheckedAttempt);
             }
         }
+        attemptRepository.saveAll(uncheckedAttempts);
     }
 
     @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.MINUTES)
@@ -46,5 +47,6 @@ public class ScheduleService {
 
             attemptService.autoFailAttempt(inProgressAttempt);
         }
+        attemptRepository.saveAll(inProgressAttempts);
     }
 }

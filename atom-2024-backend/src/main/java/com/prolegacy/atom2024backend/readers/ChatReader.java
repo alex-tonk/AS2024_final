@@ -83,7 +83,7 @@ public class ChatReader {
         return queryFactory.from(chat)
                 .leftJoin(lastMessage).on(lastMessage.chat.id.eq(chat.id)
                         .and(lastMessage.id.eq(
-                                JPAExpressions.select(message.id.max())
+                                queryFactory.select(message.id.max())
                                         .from(message)
                                         .where(message.chat.id.eq(chat.id))
                         ))

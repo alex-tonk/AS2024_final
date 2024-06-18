@@ -4,10 +4,7 @@ import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptIgnore;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.dto.AttemptDto;
-import com.prolegacy.atom2024backend.entities.ids.FileId;
-import com.prolegacy.atom2024backend.entities.ids.LessonId;
-import com.prolegacy.atom2024backend.entities.ids.TaskId;
-import com.prolegacy.atom2024backend.entities.ids.TopicId;
+import com.prolegacy.atom2024backend.entities.ids.*;
 import com.prolegacy.atom2024backend.readers.AttemptReader;
 import com.prolegacy.atom2024backend.services.AttemptService;
 import com.prolegacy.atom2024backend.services.FileUploadService;
@@ -48,6 +45,20 @@ public class AttemptController {
                                      @PathVariable LessonId lessonId,
                                      @PathVariable TaskId taskId) {
         return attemptReader.getLastAttempt(topicId, lessonId, taskId, userProvider.get().getId());
+    }
+
+    @PreAuthorize("hasRole('student')")
+    @PutMapping("{attemptId}")
+    public AttemptDto finishAttempt(@PathVariable AttemptId attemptId,
+                                        @RequestBody AttemptDto attemptDto) {
+        return attemptService.finishAttempt(attemptId, attemptDto);
+    }
+
+    @PreAuthorize("hasRole('tutor')")
+    @PatchMapping("{attemptId}")
+    public AttemptDto setTutorMark(@PathVariable AttemptId attemptId,
+                                        @RequestBody AttemptDto attemptDto) {
+        return attemptService.setTutorMark(attemptId, attemptDto);
     }
 
     @PreAuthorize("hasRole('student')")

@@ -20,8 +20,18 @@ export class AttemptService {
     this.httpService = httpService;
   }
 
+ public finishAttempt(attemptId: number, attemptDto: AttemptDto): Observable<AttemptDto>  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.put<AttemptDto>('attempts/' + attemptId + '', JSON.stringify(attemptDto) , {headers, responseType: 'json'});
+  }
+
  public getLastAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {
     return this.httpService.get<AttemptDto>('attempts/topics/' + topicId + '/lessons/' + lessonId + '/tasks/' + taskId + '', {responseType: 'json'});
+  }
+
+ public setTutorMark(attemptId: number, attemptDto: AttemptDto): Observable<AttemptDto>  {
+    const headers = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpService.patch<AttemptDto>('attempts/' + attemptId + '', JSON.stringify(attemptDto) , {headers, responseType: 'json'});
   }
 
  public startNewAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {

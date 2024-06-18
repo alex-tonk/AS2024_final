@@ -79,7 +79,9 @@ export class TopicDto {
   code?: string;
   description?: string;
   id?: number;
-  lessonsCount?: number;
+  lessons?: LessonDto[];
+  taskCount?: number;
+  taskPassedCount?: number;
   title?: string;
   traits?: TraitDto[];
 }

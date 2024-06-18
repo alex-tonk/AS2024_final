@@ -1,7 +1,6 @@
 package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.common.auth.entities.User;
-import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
@@ -10,11 +9,10 @@ import com.prolegacy.atom2024backend.dto.AttemptDto;
 import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.dto.FeatureDto;
 import com.prolegacy.atom2024backend.entities.*;
-import com.prolegacy.atom2024backend.entities.ids.LessonId;
-import com.prolegacy.atom2024backend.entities.ids.TaskId;
-import com.prolegacy.atom2024backend.entities.ids.TopicId;
+import com.prolegacy.atom2024backend.entities.ids.*;
 import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.enums.Mark;
+import com.prolegacy.atom2024backend.exceptions.AttemptNotFoundException;
 import com.prolegacy.atom2024backend.exceptions.TopicNotFoundException;
 import com.prolegacy.atom2024backend.readers.AttemptReader;
 import com.prolegacy.atom2024backend.repositories.AttemptRepository;
@@ -40,6 +38,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -99,61 +98,47 @@ public class AttemptService {
     }
 
     @Retryable
-    public void finishAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, List<AttemptFileDto> files) {
-        User user = userProvider.get();
-        Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
-        Lesson lesson = topic.getLessons().stream()
-                .filter(l -> l.getId().equals(lessonId))
-                .findFirst().orElseThrow(() -> new BusinessLogicException("Данного урока нет в теме %s".formatted(topic.getTitle())));
-        Task task = lesson.getTasks().stream()
-                .filter(t -> t.getId().equals(taskId))
-                .findFirst().orElseThrow(() -> new BusinessLogicException("Данного задания нет в теме %s в уроке %s".formatted(topic.getTitle(), lesson.getTitle())));
+    public AttemptDto finishAttempt(AttemptId attemptId, AttemptDto dto) {
+        List<AttemptFileDto> files = dto.getFiles();
 
-        Attempt lastAttempt = attemptRepository.getByTopicAndLessonAndTaskAndUserAndIsLastAttemptTrue(
-                topic, lesson, task, user
-        ).orElseThrow(() -> new BusinessLogicException("Задание не было взято в работу"));
+        Attempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(AttemptNotFoundException::new);
 
-        if (!lastAttempt.getStatus().equals(AttemptStatus.IN_PROGRESS))
+        if (!Objects.equals(attempt.getUser().getId(), userProvider.get().getId())) {
+            throw new BusinessLogicException("Нельзя выполнять задание за другого пользователя");
+        }
+
+        if (!attempt.getStatus().equals(AttemptStatus.IN_PROGRESS))
             throw new BusinessLogicException("Закончить можно только задания, находящиеся в работе");
 
-        lastAttempt.finish(Instant.now(), files);
-        // TODO: начать пинать машину
+        attempt.finish(Instant.now(), files);
+        return attemptReader.getAttempt(attempt.getId());
     }
 
     @Retryable
-    public void setTutorMark(
-            TopicId topicId,
-            LessonId lessonId,
-            TaskId taskId,
-            UserId userId,
-            Mark mark,
-            List<AttemptCheckResultDto> checkResults,
-            String comment
+    public AttemptDto setTutorMark(
+            AttemptId attemptId,
+            AttemptDto dto
     ) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessLogicException("Проверяемого обучаешегося не существует"));
-        Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
-        Lesson lesson = topic.getLessons().stream()
-                .filter(l -> l.getId().equals(lessonId))
-                .findFirst().orElseThrow(() -> new BusinessLogicException("Данного урока нет в теме %s".formatted(topic.getTitle())));
-        Task task = lesson.getTasks().stream()
-                .filter(t -> t.getId().equals(taskId))
-                .findFirst().orElseThrow(() -> new BusinessLogicException("Данного задания нет в теме %s в уроке %s".formatted(topic.getTitle(), lesson.getTitle())));
+        Mark mark = dto.getTutorMark();
+        List<AttemptCheckResultDto> checkResults = Optional.ofNullable(dto.getTutorCheckResults())
+                .orElseGet(ArrayList::new);
+        String comment = dto.getTutorComment();
 
-        Attempt lastAttempt = attemptRepository.getByTopicAndLessonAndTaskAndUserAndIsLastAttemptTrue(
-                topic, lesson, task, user
-        ).orElseThrow(() -> new BusinessLogicException("Задание не было взято в работу"));
+        Attempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(AttemptNotFoundException::new);
 
-        if (AttemptStatus.IN_PROGRESS.equals(lastAttempt.getStatus()))
+        if (AttemptStatus.IN_PROGRESS.equals(attempt.getStatus()))
             throw new BusinessLogicException("Задание не было отправлено на проверку");
 
-        lastAttempt.setTutorMark(
+        attempt.setTutorMark(
                 mark,
                 checkResults.stream()
-                        .map(checkResult -> new AttemptCheckResult(lastAttempt, checkResult, featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList())))
+                        .map(checkResult -> new AttemptCheckResult(attempt, checkResult, featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList())))
                         .toList(),
                 comment
         );
+        return attemptReader.getAttempt(attempt.getId());
     }
 
     @Retryable
@@ -183,7 +168,7 @@ public class AttemptService {
                     ));
                 }
             });
-            uncheckedAttempt.setAutoMart(
+            uncheckedAttempt.setAutoMark(
                     attemptCheckResults.isEmpty() ? Mark.EXCELLENT
                             : attemptCheckResults.size() == 1 ? Mark.GOOD
                             : attemptCheckResults.size() == 2 ? Mark.MEDIOCRE
