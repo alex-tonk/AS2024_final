@@ -40,4 +40,14 @@ export class FileService {
   public getSurveyQuestionFile(fileId: number): Observable<Blob> {
     return this.httpService.get(`surveys/files/${fileId}`, {responseType: 'blob'});
   }
+
+  public getLessonFile(fileId: number): Observable<Blob> {
+    return this.httpService.get(`lessons/files/${fileId}`, {responseType: 'blob'});
+  }
+
+  public uploadAttemptFile(file: File): Observable<number> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return this.httpService.post<number>('attempts/files', formData, {responseType: 'json'});
+  }
 }

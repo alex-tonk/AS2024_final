@@ -3,6 +3,7 @@ package com.prolegacy.atom2024backend.readers;
 import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
+import com.prolegacy.atom2024backend.common.util.QueryUtils;
 import com.prolegacy.atom2024backend.dto.TopicDto;
 import com.prolegacy.atom2024backend.dto.TraitDto;
 import com.prolegacy.atom2024backend.entities.QLesson;
@@ -42,7 +43,8 @@ public class TopicReader {
         JPAQuery<?> traitsQuery = queryFactory
                 .from(topic)
                 .innerJoin(topic.traits, topicTrait)
-                .innerJoin(trait).on(topicTrait.id.eq(trait.id));
+                .innerJoin(trait).on(topicTrait.id.eq(trait.id))
+                .where(QueryUtils.generateInExpression(topic.id, topics.stream().map(TopicDto::getId).toList()));
         Map<TopicId, List<TraitDto>> traitsByTopic = traitsQuery.transform(
                 GroupBy.groupBy(topic.id)
                         .as(GroupBy.list(DtoProjections.constructDto(traitsQuery, TraitDto.class, trait)))

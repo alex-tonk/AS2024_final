@@ -26,18 +26,22 @@ public class TaskReader {
     @Autowired
     private JPAQueryFactory queryFactory;
 
-
-    public List<TaskDto> getTasks() {
-        return baseQuery().fetch();
+    public List<TaskDto> getTasksWithStats() {
+        return statisticsQuery().fetch();
     }
 
-    private JPAQuery<TaskDto> baseQuery() {
+    private JPAQuery<TaskDto> statisticsQuery() {
         NumberExpression<BigDecimal> NAS = Expressions.asNumber(BigDecimal.valueOf(5)).subtract(markToValue(attempt.tutorMark).avg().castToNum(BigDecimal.class)).divide(BigDecimal.valueOf(3));
-        NumberExpression<BigDecimal> NNA = NumberExpression.max(attempt.count().castToNum(BigDecimal.class).subtract(BigDecimal.ONE).divide(
-                Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE)
-        ), Expressions.asNumber(BigDecimal.ZERO));
+
+        NumberExpression<BigDecimal> numOfAttempts = attempt.count().castToNum(BigDecimal.class);
+        NumberExpression<BigDecimal> numOfAttemptsMinusOne = numOfAttempts.subtract(BigDecimal.ONE);
+        NumberExpression<BigDecimal> NNA = Expressions.cases().when(numOfAttemptsMinusOne.gt(BigDecimal.ZERO)).then(numOfAttemptsMinusOne).otherwise(Expressions.asNumber(BigDecimal.ZERO))
+                .divide(Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE));
+
         NumberExpression<BigDecimal> NTL = Expressions.asNumber(BigDecimal.ONE).subtract(task.time.castToNum(BigDecimal.class).divide(queryFactory.from(task).select(task.time.max())));
-        NumberExpression<BigDecimal> NAT = Expressions.numberTemplate(BigDecimal.class, "function('getDifferenceSeconds', {0}, {1})", attempt.endDate, attempt.startDate).castToNum(Integer.class).coalesce(0).avg().divide(BigDecimal.valueOf(60)).divide(task.time).castToNum(BigDecimal.class);
+
+        NumberExpression<BigDecimal> averageTime = Expressions.numberTemplate(BigDecimal.class, "function('getDifferenceSeconds', {0}, {1})", attempt.endDate, attempt.startDate).castToNum(BigDecimal.class).coalesce(BigDecimal.ZERO).avg().castToNum(BigDecimal.class).divide(BigDecimal.valueOf(60));
+        NumberExpression<BigDecimal> NAT = averageTime.divide(task.time).castToNum(BigDecimal.class);
 
         NumberExpression<BigDecimal> DS = Expressions.asNumber(BigDecimal.ONE).add(NAS.add(NNA).add(NTL).add(NAT));
 
@@ -46,10 +50,8 @@ public class TaskReader {
                 .groupBy(task)
                 .selectDto(
                         TaskDto.class,
-                        NAS.as("NAS"),
-                        NNA.as("NNA"),
-                        NTL.as("NTL"),
-                        NAT.as("NAT"),
+                        numOfAttempts.as("numOfAttempts"),
+                        averageTime.as("averageTime"),
                         DS.as("difficultyScore")
                 );
     }

@@ -41,6 +41,14 @@ public class Lesson {
     )
     private List<Task> tasks = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "lesson_supplement",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "supplement_id")
+    )
+    private List<Supplement> supplements = new ArrayList<>();
+
     @Column(columnDefinition = "text")
     private String author;
 

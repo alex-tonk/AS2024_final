@@ -1,0 +1,134 @@
+<p-dialog #dialog
+          [style]="{width: '95%', height: '95%'}"
+          [baseZIndex]="99"
+          [autoZIndex]="false"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          [closable]="true"
+          header="Выполнение задания"
+          [(visible)]="visible"
+          (onHide)="taskAttemptClose.emit()">
+  <div *ngIf="taskAttempt == null"
+       class="full-size begin-attempt-container">
+    <div class="begin-attempt-label-container-wrapper">
+      <div class="begin-attempt-label-container">
+        <div class="begin-attempt-label">{{ task.title }}</div>
+        <div style="text-align: center" *ngIf="task.time != null"> Ограничение по времени: {{ getTimeLimitString() }}
+        </div>
+        <div style="text-align: center" *ngIf="task.time == null"> Ограничение по времени отсутствует</div>
+      </div>
+    </div>
+    <div class="begin-attempt-button-wrapper">
+      <p-button styleClass="button-primary"
+                [label]="'Начать выполнение задания'"
+                (click)="startTaskAttempt()">
+      </p-button>
+    </div>
+  </div>
+  <div [class.content-disabled]="loading" class="full-size" *ngIf="taskAttempt != null">
+    <div *ngIf="stepperIndex == 0"
+         style="width: fit-content; position: absolute; right: 24px; transform: translate(-8px, 0px); display: flex; align-items: center; gap: 1em;">
+      <div
+        style="padding: 8px; display: inline-flex; align-items: center;">
+        <span style="padding-right: 1rem;">Исходный вид</span>
+        <p-inputSwitch [(ngModel)]="original"/>
+      </div>
+    </div>
+    <p-stepper [(activeStep)]="stepperIndex">
+      <p-stepperPanel header="Задание">
+        <ng-template pTemplate="content">
+          <div class="full-size">
+            <markdown [data]="!original ? beautifiedContent : content"></markdown>
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+      <p-stepperPanel header="Информация">
+        <ng-template pTemplate="content">
+          <div class="full-size">
+            <div class="form-row">
+              <label>Наименование задания:</label>
+              <div>{{ taskAttempt.task!.title }}</div>
+            </div>
+            <div class="form-row">
+              <label>Код задания:</label>
+              <div>{{ taskAttempt.task!.code }}</div>
+            </div>
+
+            <div class="form-row">
+              <label>Ограничение по времени:</label>
+              <div>{{ taskAttempt.task!.time }} мин.</div>
+            </div>
+
+            <div class="form-row" style="align-items: flex-start"
+                 *ngIf="(taskAttempt.task!.supplements ?? []).length > 0">
+              <label>Приложения:</label>
+              <div style="display: flex; flex-flow: column; gap: 0.5rem;">
+                <div class="uploaded-file" *ngFor="let s of taskAttempt.task!.supplements">
+                  <span>{{ s.title }}</span>
+                  <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem"
+                     (click)="downloadTaskFile(s)"></i>
+                </div>
+              </div>
+              <div></div>
+            </div>
+
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+      <p-stepperPanel header="Выполнение">
+        <ng-template pTemplate="content">
+          <p-panel [toggleable]="true" [collapsed]="true" *ngFor="let file of taskAttempt.files; let i = index">
+            <ng-template pTemplate="header">
+              {{ file.fileName }}
+            </ng-template>
+            <ng-template pTemplate="icons">
+              <!--            <button class="p-panel-header-icon p-link mr-2" (click)="men$event">-->
+              <!--              <span class="pi pi-cog"></span>-->
+              <!--            </button>-->
+            </ng-template>
+            <textarea
+              pInputTextarea
+              [style]="{width: '100%'}"
+              [name]="'fileComment' + 1"
+              placeholder="Введите комментарий"
+              [rows]="1"
+              [autoResize]="true"
+              [(ngModel)]="file.comment">
+            </textarea>
+          </p-panel>
+          <p-fileUpload #fileUpload
+                        mode="basic"
+                        [auto]="true"
+                        [customUpload]="true"
+                        [accept]="'image/*'"
+                        chooseLabel="Добавить файл"
+                        chooseIcon="pi pi-paperclip"
+                        (uploadHandler)="addAttemptFile($event, fileUpload)">
+          </p-fileUpload>
+        </ng-template>
+      </p-stepperPanel>
+    </p-stepper>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button #previousStepButton *ngIf="stepperIndex > 0"
+              label="Назад"
+              (click)="previousStep()"
+    />
+    <p-button *ngIf="stepperIndex < (stepsCount - 1)"
+              label="Далее"
+              (click)="nextStep()"
+    />
+    <p-button *ngIf="stepperIndex == stepsCount - 1"
+              label="Отправить на проверку"
+              severity="success"
+              [disabled]="!((taskAttempt!.files ?? []).length > 0 && (taskAttempt!.files ?? [])[0].id != null)"
+              (click)="sendToCheck()"
+    />
+    <p-button label="Закрыть"
+              styleClass="button-clear bordered"
+              (click)="taskAttemptClose.emit()"
+    />
+  </ng-template>
+</p-dialog>

@@ -41,5 +41,5 @@ public class AttemptDto {
     private Boolean isNewTryAllowed;
     private Boolean isLastAttempt;
 
-    private List<File> files;
+    private List<AttemptFileDto> files;
 }

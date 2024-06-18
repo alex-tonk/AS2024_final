@@ -1,0 +1,75 @@
+<div class="content" [class.content-disabled]="loading">
+  <div class="table-toolbar header">
+    <div class="table-toolbar-left">
+      <b>{{ header }}</b>
+    </div>
+
+    <div class="table-toolbar-right">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Быстрый поиск" [(ngModel)]="filterValue"/>
+        </span>
+    </div>
+  </div>
+
+  <div class="module-list-wrapper">
+    <p-accordion [multiple]="true">
+      <p-accordionTab *ngFor="let lesson of filteredLessons">
+        <ng-template pTemplate="header">
+          <div style="flex: none">
+            {{ lesson.title }}
+          </div>
+        </ng-template>
+
+        <div class="module-wrapper">
+          <p-dataView [value]="tasksByLesson[lesson.id!]">
+            <ng-template pTemplate="list" let-tasks>
+              <div class="survey-list-container">
+                <p-card *ngFor="let task of tasks" [class]="'survey-card'">
+                  <div class="h-flex" style="gap: 1rem">
+                    <div class="h-flex" style="flex: 1">
+                      <i [class]="task.type == 'task' ? 'pi pi-question-circle' : 'pi pi-book'"
+                         style="font-size: 2rem; padding-right: 1rem"></i>
+                      <div class="survey-label" (click)="openLectureOrTask(task)">
+                        {{ task.title }}
+                      </div>
+                    </div>
+
+                    <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
+                    </div>
+                    <div class="h-flex" style="justify-content: flex-end" *ngIf="task.type == 'task'">
+                      <div *ngIf="task.task.lastAttempt == null" class="survey-status">
+                        Не пройдено
+                      </div>
+                      <div *ngIf="task.task.lastAttempt?.status == AttemptStatus.IN_PROGRESS"
+                           class="survey-status">
+                        В процессе
+                      </div>
+                      <div class="v-flex"
+                           *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate != null">
+                        <!--                        <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>-->
+                        <!--                        <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"-->
+                        <!--                                       [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>-->
+                      </div>
+                    </div>
+                  </div>
+                </p-card>
+              </div>
+            </ng-template>
+          </p-dataView>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>
+
+<app-lecture-view *ngIf="lectureViewVisible"
+                  [lesson]="lessonForLectureView!"
+                  (lectureViewEnd)="onLectureViewEnd()">
+</app-lecture-view>
+
+<app-task-attempt *ngIf="taskAttemptVisible"
+[formData]="taskAttemptFormData!"
+(taskAttemptClose)="onTaskAttemptClose()">
+
+</app-task-attempt>

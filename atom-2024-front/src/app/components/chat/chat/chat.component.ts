@@ -234,7 +234,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async downloadAttachment(attachment: AttachmentDto) {
-    let blob = await lastValueFrom(this.fileService.getChatAttachment(this.selectedChat?.id!, attachment.message?.id!, attachment.fileId!));
+    let blob = await lastValueFrom(this.fileService.getChatAttachment(this.selectedChat?.id!, attachment.message?.id!, attachment.id!));
     FileSaver.saveAs(blob, attachment.fileName);
   }
 
