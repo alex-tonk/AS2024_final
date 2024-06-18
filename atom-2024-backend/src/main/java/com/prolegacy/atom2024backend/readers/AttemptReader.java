@@ -100,7 +100,7 @@ public class AttemptReader {
     private void setTutorCheckResults(AttemptDto lastAttempt) {
         lastAttempt.setTutorCheckResults(
                 queryFactory.from(attemptCheckResult)
-                        .innerJoin(attempt).on(attempt.id.eq(lastAttempt.getId()).and(attempt.autoCheckResults.any().id.eq(attemptCheckResult.id)))
+                        .innerJoin(attempt).on(attempt.id.eq(lastAttempt.getId()).and(attempt.tutorCheckResults.any().id.eq(attemptCheckResult.id)))
                         .selectDto(AttemptCheckResultDto.class)
                         .fetch()
         );

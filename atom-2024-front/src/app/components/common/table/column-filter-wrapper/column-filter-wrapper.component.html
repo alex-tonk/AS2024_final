@@ -13,7 +13,7 @@
         </p-inputNumber>
       }
       @case ("boolean") {
-        <p-selectButton #selectButton [ngModel]="value" [options]="booleanValues"
+        <p-selectButton #selectButton [ngModel]="value" [options]="booleanValues" [styleClass]="'filter-select-button'"
                         (onChange)="filter(selectButton.value)"></p-selectButton>
       }
       @default {

@@ -16,6 +16,7 @@ import {MenuModule} from 'primeng/menu';
 import {AttemptService} from '../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {TagModule} from 'primeng/tag';
+import {TagStyleService} from '../../services/tag-style-service';
 import {DialogModule} from 'primeng/dialog';
 import {
   ImageWithFeedbackViewerComponent
@@ -87,11 +88,13 @@ export class AttemptComponent implements OnInit {
     },
     {
       header: 'Сложность задания',
-      field: 'difficultyLocale'
+      field: 'task.difficultyLocale',
+      type: 'difficulty'
     },
     {
       header: 'Статус обработки ИИ',
       field: 'autoStatus',
+      type: 'autoStatus'
     },
     {
       header: 'Дата начала выполнения',
@@ -131,7 +134,8 @@ export class AttemptComponent implements OnInit {
   protected readonly getField = getField;
   protected readonly ExportTable = ExportTable;
 
-  constructor(private attemptService: AttemptService) {
+  constructor(private attemptService: AttemptService,
+              private tagStyleService: TagStyleService) {
   }
 
   async getAttemptsFromApi() {
@@ -144,34 +148,20 @@ export class AttemptComponent implements OnInit {
       }
   }
 
-  getStatusTagStyle(statusLocale: string) {
-    const style = {padding: '0.6rem', fontSize: '15px', fontWeight: '600', color: 'black'};
-    switch (statusLocale) {
-      case 'Взято в работу':
-        return {...style, backgroundColor: 'var(--border-color)', color: 'black'};
-      case 'Отправлено на проверку':
-        return {...style, backgroundColor: '#009fe3'};
-      case 'Проверено':
-        return {...style, backgroundColor: 'var(--green-color)'};
-      default:
-        return style;
-    }
+  getStatusStyle(statusLocale: string) {
+    return {...this.tagStyleService.getStatusStyle(statusLocale), width: '100%'};
+  }
+
+  getAutoStatusStyle(autoStatus: string) {
+    return {...this.tagStyleService.getAutoStatusStyle(autoStatus), width: '100%'};
   }
 
   getMarkStyle(markLocale: string) {
-    const style = {padding: '0.6rem', fontSize: '15px', fontWeight: '600', color: 'black'};
-    switch (markLocale) {
-      case 'Отлично':
-        return {...style, backgroundColor: 'var(--green-color)'};
-      case 'Хорошо':
-        return {...style, backgroundColor: '#ede636'};
-      case 'Удовлетворительно':
-        return {...style, backgroundColor: 'orange'};
-      case 'Неудовлетворительно':
-        return {...style, backgroundColor: 'var(--red-color)'};
-      default:
-        return style;
-    }
+   return {...this.tagStyleService.getMarkStyle(markLocale), width: '100%'};
+  }
+
+  getDifficultyStyle(difficultyLocale: string) {
+    return {...this.tagStyleService.getDifficultyStyle(difficultyLocale), width: '100%'};
   }
 
   async ngOnInit() {
