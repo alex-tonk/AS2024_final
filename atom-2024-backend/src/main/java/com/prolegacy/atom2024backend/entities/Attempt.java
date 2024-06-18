@@ -84,8 +84,8 @@ public class Attempt {
         }
         this.files.addAll(
                 files.stream()
-                .map(dto -> new AttemptFile(this, dto))
-                .toList()
+                        .map(dto -> new AttemptFile(this, dto))
+                        .toList()
         );
         this.status = AttemptStatus.VALIDATION;
     }

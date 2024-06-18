@@ -5,11 +5,15 @@ import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
 import com.prolegacy.atom2024backend.common.util.QueryUtils;
-import com.prolegacy.atom2024backend.dto.*;
+import com.prolegacy.atom2024backend.dto.LessonDto;
+import com.prolegacy.atom2024backend.dto.SupplementDto;
+import com.prolegacy.atom2024backend.dto.TaskDto;
+import com.prolegacy.atom2024backend.dto.TraitDto;
 import com.prolegacy.atom2024backend.entities.*;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.jpa.JPAExpressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +59,15 @@ public class LessonReader {
             setTasks(lessons);
         }
         setSupplements(lessons);
+        return lessons;
+    }
+
+    public List<LessonDto> getRecommendations(LessonId lessonId) {
+        QLesson lesson2 = new QLesson("lesson2");
+        List<LessonDto> lessons = baseQuery()
+                .where(lesson.traits.any().in(JPAExpressions.select(lesson2.traits).from(lesson2).where(lesson2.id.eq(lessonId)).fetchFirst()))
+                .fetch();
+        setTraits(lessons);
         return lessons;
     }
 
@@ -129,7 +142,7 @@ public class LessonReader {
                 .innerJoin(lesson.supplements, lessonSupplement)
                 .innerJoin(supplement).on(lessonSupplement.id.eq(supplement.id))
                 .leftJoin(file).on(file.id.eq(supplement.fileId))
-                .where(QueryUtils.generateInExpression(lesson.id, lessons.stream().map(LessonDto::getId).toList()));;
+                .where(QueryUtils.generateInExpression(lesson.id, lessons.stream().map(LessonDto::getId).toList()));
         Map<LessonId, List<SupplementDto>> supplementsByLesson = supplementsQuery.transform(
                 GroupBy.groupBy(lesson.id)
                         .as(GroupBy.list(DtoProjections.constructDto(supplementsQuery, SupplementDto.class, supplement, file.fileName.as("fileName"))))
