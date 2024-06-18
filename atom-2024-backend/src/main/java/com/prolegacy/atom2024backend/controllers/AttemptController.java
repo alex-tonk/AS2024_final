@@ -49,6 +49,12 @@ public class AttemptController {
         return attemptReader.getLastAttempt(topicId, lessonId, taskId, userProvider.get().getId());
     }
 
+    @PreAuthorize("hasAnyRole('student', 'tutor')")
+    @GetMapping("{attemptId}")
+    public AttemptDto getAttempt(@PathVariable AttemptId attemptId) {
+        return attemptReader.getAttempt(attemptId);
+    }
+
     @PreAuthorize("hasRole('student')")
     @PutMapping("{attemptId}")
     public AttemptDto finishAttempt(@PathVariable AttemptId attemptId,

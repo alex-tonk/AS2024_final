@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.readers;
 
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
 import com.prolegacy.atom2024backend.dto.*;
@@ -133,6 +134,10 @@ public class AttemptReader {
 
     private JPAQuery<AttemptDto> baseQuery() {
         return queryFactory.from(attempt)
-                .selectDto(AttemptDto.class);
+                .selectDto(
+                        AttemptDto.class,
+                        UserReader.getFullName(attempt.user).as("user.fullName"),
+                        UserReader.getShortName(attempt.user).as("user.shortName")
+                );
     }
 }
