@@ -23,7 +23,7 @@ public class ScheduleService {
         this.attemptRepository = attemptRepository;
     }
 
-    @Scheduled(fixedRate = 1000L)
+    @Scheduled(fixedRate = 10L, timeUnit = TimeUnit.SECONDS)
     public void apiPinger() {
         List<Attempt> uncheckedAttempts = attemptRepository.getAllByAutoMarkIsNullAndAutoCheckFailedIsFalseAndStatusEquals(AttemptStatus.VALIDATION);
         for (Attempt uncheckedAttempt : uncheckedAttempts) {

@@ -10,7 +10,6 @@ import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.common.util.InitializationOrder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
@@ -24,19 +23,6 @@ import java.util.List;
 @Configuration
 @Order(InitializationOrder.ROLE_GENERATOR + 100)
 public class InitialUserGenerator implements ApplicationRunner {
-    @Value("${auth.admin-role:#{null}}")
-    private String adminRoleName;
-    @Value("${default-user.email}")
-    private String email;
-    @Value("${default-user.password}")
-    private String password;
-    @Value("${default-user.firstname}")
-    private String firstname;
-    @Value("${default-user.lastname}")
-    private String lastname;
-    @Value("${default-user.surname}")
-    private String surname;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -55,30 +41,42 @@ public class InitialUserGenerator implements ApplicationRunner {
             return;
         }
 
-        Role role = roleRepository.findByName("ROLE_" + adminRoleName)
+        Role role = roleRepository.findByName(com.prolegacy.atom2024backend.enums.Role.ADMIN.getRoleName())
                 .orElseThrow(() -> new BusinessLogicException("Отсутствует роль администратора"));
 
         // TODO: убрать нахер
-        Role studentRole = roleRepository.findByName("ROLE_student")
-                        .orElseThrow(() -> new BusinessLogicException("Отсутствует роль обучающегося"));
+        Role studentRole = roleRepository.findByName(com.prolegacy.atom2024backend.enums.Role.STUDENT.getRoleName())
+                .orElseThrow(() -> new BusinessLogicException("Отсутствует роль обучающегося"));
+        Role tutorRole = roleRepository.findByName(com.prolegacy.atom2024backend.enums.Role.TUTOR.getRoleName())
+                .orElseThrow(() -> new BusinessLogicException("Отсутствует роль наставника"));
 
         userService.createUser(UserDto.builder()
-                .email(this.email)
-                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256(this.password)))
-                .firstname(this.firstname)
-                .lastname(this.lastname)
-                .surname(this.surname)
+                .email("admin@admin.com")
+                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("password")))
+                .firstname("Админ")
+                .lastname("Админов")
+                .surname("Админович")
                 .roles(new HashSet<>(List.of(new RoleDto(role.getId(), null, null))))
                 .build()
         );
 
         userService.createUser(UserDto.builder()
-                .email("user@user.com")
-                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("user")))
-                .firstname(this.firstname)
-                .lastname(this.lastname)
-                .surname(this.surname)
+                .email("student@student.com")
+                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("password")))
+                .firstname("О")
+                .lastname("Обучающийся")
+                .surname("О")
                 .roles(new HashSet<>(List.of(new RoleDto(studentRole.getId(), null, null))))
+                .build()
+        );
+
+        userService.createUser(UserDto.builder()
+                .email("tutor@tutor.com")
+                .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("password")))
+                .firstname("Н")
+                .lastname("Наставник")
+                .surname("Н")
+                .roles(new HashSet<>(List.of(new RoleDto(tutorRole.getId(), null, null))))
                 .build()
         );
     }

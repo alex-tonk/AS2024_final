@@ -23,6 +23,7 @@ import com.prolegacy.atom2024backend.repositories.FeatureRepository;
 import com.prolegacy.atom2024backend.repositories.FileRepository;
 import com.prolegacy.atom2024backend.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -66,6 +67,9 @@ public class AttemptService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Value("${api-url}")
+    private String apiUrl;
 
     @Retryable
     public AttemptDto startNewAttempt(TopicId topicId, LessonId lessonId, TaskId taskId) {
@@ -165,7 +169,7 @@ public class AttemptService {
             body.add("file", new FileSystemResource(Path.of(file.getUuid().toString())));
             ResponseEntity<com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto[]> response = restTemplate
                     .postForEntity(
-                            "http://localhost:10240/check",
+                            apiUrl,
                             new HttpEntity<>(body, httpHeaders) {
                             },
                             com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto[].class

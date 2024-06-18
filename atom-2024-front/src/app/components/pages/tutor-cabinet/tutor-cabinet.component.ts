@@ -14,6 +14,8 @@ import {OnlineLessonsComponent} from '../student-cabinet/samples/online-lessons/
 import {
   PresentationLessonsComponent
 } from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
+import {SplitterModule} from 'primeng/splitter';
+import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
 
 @Component({
   selector: 'app-tutor-cabinet',
@@ -30,18 +32,23 @@ import {
     NgForOf,
     DataViewModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    SplitterModule,
+    CoursePanelComponent
   ],
   templateUrl: './tutor-cabinet.component.html',
   styleUrl: './tutor-cabinet.component.css'
 })
 export class TutorCabinetComponent implements OnInit {
+  protected readonly CoursePanelMode = CoursePanelMode;
+
   loading = false;
+
   activeIndex = 0;
 
   systemTabsCount = 3;
-
   availableStudyGroups: any[] = [];
+
   openedGroups: { value: any, title: string }[] = [];
 
   filterValue: string;
