@@ -4,7 +4,7 @@ import {PaginatorModule} from 'primeng/paginator';
 import {ChipsModule} from 'primeng/chips';
 import {ButtonModule} from 'primeng/button';
 import {MultiSelectModule} from 'primeng/multiselect';
-import {UserAdminService} from '../../../gen/atom2024backend-controllers';
+import {ChatService, UserAdminService} from '../../../gen/atom2024backend-controllers';
 import {lastValueFrom} from 'rxjs';
 import {UserDto} from '../../../models/UserDto';
 import {ChatDto} from '../../../gen/dto-chat';
@@ -44,13 +44,13 @@ export class ChatRegistrationDialogComponent implements OnInit {
   ];
 
   constructor(
-    private userAdminService: UserAdminService,
+    private chatService: ChatService,
     private userService: UserService) {
   }
 
   async ngOnInit() {
     this.chat.type = ChatType.DIALOGUE;
-    this.allUsers = await lastValueFrom(this.userAdminService.getUsers());
+    this.allUsers = await lastValueFrom(this.chatService.getUsers());
     this.allUsers = this.allUsers.filter(u => u.id != this.userService.user?.id);
   }
 
