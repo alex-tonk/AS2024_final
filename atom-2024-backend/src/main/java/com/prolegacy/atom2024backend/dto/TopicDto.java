@@ -17,6 +17,8 @@ public class TopicDto {
     private String title;
     private String description;
 
-    private Long lessonsCount;
+    private Long taskCount;
+    private Long taskPassedCount;
     private List<TraitDto> traits;
+    private List<LessonDto> lessons;
 }

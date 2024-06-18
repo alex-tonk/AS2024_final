@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional(readOnly = true)
@@ -65,13 +66,13 @@ public class LessonReader {
     public List<LessonDto> getRecommendations(LessonId lessonId) {
         QLesson lesson2 = new QLesson("lesson2");
         List<LessonDto> lessons = baseQuery()
-                .where(lesson.traits.any().in(JPAExpressions.select(lesson2.traits).from(lesson2).where(lesson2.id.eq(lessonId)).fetchFirst()))
+                .where(lesson.traits.any().in(queryFactory.select(lesson2.traits).from(lesson2).where(lesson2.id.eq(lessonId)).fetchFirst()))
                 .fetch();
         setTraits(lessons);
         return lessons;
     }
 
-    private void setTraits(List<LessonDto> lessons) {
+    public void setTraits(List<LessonDto> lessons) {
         if (lessons.isEmpty()) {
             return;
         }
@@ -89,7 +90,7 @@ public class LessonReader {
         );
     }
 
-    private void setTasks(List<LessonDto> lessons) {
+    public void setTasks(List<LessonDto> lessons) {
         if (lessons.isEmpty()) {
             return;
         }
@@ -133,7 +134,7 @@ public class LessonReader {
         );
     }
 
-    private void setSupplements(List<LessonDto> lessons) {
+    public void setSupplements(List<LessonDto> lessons) {
         if (lessons.isEmpty()) {
             return;
         }

@@ -79,7 +79,7 @@ public class Attempt {
 
     public void finish(Instant endDate, List<AttemptFileDto> files) {
         this.endDate = endDate;
-        if (files.isEmpty()) {
+        if (files == null || files.isEmpty()) {
             throw new BusinessLogicException("Для отправки задания на проверку должен быть прикреплён хотя бы один файл");
         }
         this.files.addAll(
@@ -90,7 +90,7 @@ public class Attempt {
         this.status = AttemptStatus.VALIDATION;
     }
 
-    public void setAutoMart(Mark mark, List<AttemptCheckResult> checkResults) {
+    public void setAutoMark(Mark mark, List<AttemptCheckResult> checkResults) {
         autoMark = mark;
         autoCheckResults = checkResults;
     }
@@ -106,8 +106,12 @@ public class Attempt {
     }
 
     public void setTutorMark(Mark mark, List<AttemptCheckResult> checkResults, String comment) {
+        if (mark == null) {
+            throw new BusinessLogicException("Оценка не может быть пустой");
+        }
         tutorMark = mark;
-        tutorCheckResults = checkResults;
+        tutorCheckResults = Optional.ofNullable(checkResults)
+                .orElseGet(ArrayList::new);
         tutorComment = comment;
         isNewTryAllowed = mark.equals(Mark.FAILED);
         status = AttemptStatus.DONE;
