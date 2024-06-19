@@ -33,6 +33,10 @@
                       <div class="survey-label" (click)="openLectureOrTask(task)">
                         {{ task.title }}
                       </div>
+                      <i
+                        *ngIf="task.task?.lastAttempt?.isNewTryAllowed && task.task?.lastAttempt?.status === AttemptStatus.DONE"
+                        pTooltip="Доступна возможность повторного прохождения"
+                        class="pi pi-replay" style="margin-left: 10px"></i>
                     </div>
 
                     <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
@@ -43,7 +47,10 @@
                           времени: {{ remainingTimeByAttemptId[task.task.lastAttempt.id.toString()] }}
                         </div>
                         <ng-template #time>
-                          <div *ngIf="task.task.time && (task.task?.lastAttempt?.status  == null || task.task?.lastAttempt?.status == AttemptStatus.IN_PROGRESS)"> Время выполнения: {{ task.task.time }} мин.</div>
+                          <div
+                            *ngIf="task.task.time && (task.task?.lastAttempt?.status  == null || task.task?.lastAttempt?.status == AttemptStatus.IN_PROGRESS)">
+                            Время выполнения: {{ task.task.time }} мин.
+                          </div>
                         </ng-template>
                         <div *ngIf="task.task?.difficultyLocale">
                           <p-tag severity="secondary" pTooltip="Сложность" tooltipPosition="left"
