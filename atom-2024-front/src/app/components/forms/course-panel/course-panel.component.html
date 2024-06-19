@@ -34,6 +34,13 @@
                         {{ task.title }}
                       </div>
                       <i
+                        *ngIf="task.task?.lastAttempt?.status === AttemptStatus.DONE"
+                        pTooltip="Просмотр результата"
+                        class="pi pi-search"
+                        (click)="viewAttempt(task.task!.lastAttempt!.id!)"
+                        style="margin-left: 10px; color: var(--primary-color); cursor: pointer">
+                      </i>
+                      <i
                         *ngIf="task.task?.lastAttempt?.isNewTryAllowed && task.task?.lastAttempt?.status === AttemptStatus.DONE"
                         pTooltip="Доступна возможность повторного прохождения"
                         class="pi pi-replay" style="margin-left: 10px">
@@ -134,4 +141,33 @@
           [resizable]="false" [closable]="true" (onHide)="onStudentsAttemptsClose()">
   <app-attempt [mode]="AttemptListMode.TUTOR" [tutorFilterData]="tutorFilterData">
   </app-attempt>
+</p-dialog>
+
+<p-dialog *ngIf="checkingDialogVisible"
+          [style]="{width: '95%', height: '95%'}"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          [closable]="true"
+          [header]="'Просмотр задания: ' + checkingAttempt!.task!.title"
+          [(visible)]="checkingDialogVisible"
+          (onHide)="onAttemptViewClose()"
+          appendTo="body">
+  <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex">
+    <p-tabPanel #tabPanel *ngFor="let file of checkingAttemptFiles; index as index" [header]="'Файл: ' + file.fileName">
+      <app-image-with-feedback-viewer [isTutorMode]="false"
+                                      [file]="file"
+                                      [features]="features"
+                                      [attempt]="checkingAttempt!"
+                                      [currentIndex]="index"
+                                      [activeIndex]="activeIndex">
+      </app-image-with-feedback-viewer>
+    </p-tabPanel>
+  </p-tabView>
+
+  <p-footer [class.content-disabled]="loading">
+      <p-button label="Закрыть" styleClass="button-clear bordered"
+                (click)="checkingDialogVisible = false">
+      </p-button>
+  </p-footer>
 </p-dialog>

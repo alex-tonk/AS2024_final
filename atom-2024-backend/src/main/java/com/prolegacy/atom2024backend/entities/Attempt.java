@@ -108,7 +108,7 @@ public class Attempt {
         isNewTryAllowed = true;
     }
 
-    public void setTutorMark(Mark mark, List<AttemptCheckResult> checkResults, String comment) {
+    public void setTutorMark(Mark mark, List<AttemptCheckResult> checkResults, String comment, Boolean isNewTryAllowed) {
         if (mark == null) {
             throw new BusinessLogicException("Оценка не может быть пустой");
         }
@@ -116,7 +116,7 @@ public class Attempt {
         tutorCheckResults = Optional.ofNullable(checkResults)
                 .orElseGet(ArrayList::new);
         tutorComment = comment;
-        isNewTryAllowed = mark.equals(Mark.FAILED);
+        this.isNewTryAllowed = mark.equals(Mark.FAILED) || Optional.ofNullable(isNewTryAllowed).orElse(false);
         status = AttemptStatus.DONE;
     }
 

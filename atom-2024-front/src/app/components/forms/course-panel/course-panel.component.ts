@@ -10,10 +10,10 @@ import {FormsModule} from '@angular/forms';
 import {PanelModule} from 'primeng/panel';
 import {DataViewModule} from 'primeng/dataview';
 import {CardModule} from 'primeng/card';
-import {AttemptDto, LessonDto, TaskDto, TopicDto} from '../../../gen/atom2024backend-dto';
+import {AttemptDto, AttemptFileDto, FeatureDto, LessonDto, TaskDto, TopicDto} from '../../../gen/atom2024backend-dto';
 import {UserDto} from '../../../models/UserDto';
 import {lastValueFrom} from 'rxjs';
-import {TopicService} from '../../../gen/atom2024backend-controllers';
+import {AttemptService, FeatureService, TopicService} from '../../../gen/atom2024backend-controllers';
 import {LectureViewComponent} from '../../pages/student-cabinet/lecture-view/lecture-view.component';
 import {TaskAttemptComponent} from '../../pages/student-cabinet/task-attempt/task-attempt.component';
 import {AttemptStatus} from '../../../gen/atom2024backend-enums';
@@ -25,6 +25,11 @@ import {TagStyleService} from '../../../services/tag-style-service';
 import {DialogModule} from 'primeng/dialog';
 import {DropdownModule} from 'primeng/dropdown';
 import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
+import {MessageService} from 'primeng/api';
+import {
+  ImageWithFeedbackViewerComponent
+} from '../../common/image-with-feedback-viewer/image-with-feedback-viewer.component';
+import {TabViewModule} from 'primeng/tabview';
 
 
 export enum CoursePanelMode {
@@ -53,7 +58,9 @@ export enum CoursePanelMode {
     TagModule,
     DialogModule,
     DropdownModule,
-    AttemptComponent
+    AttemptComponent,
+    ImageWithFeedbackViewerComponent,
+    TabViewModule
   ],
   templateUrl: './course-panel.component.html',
   styleUrl: './course-panel.component.css'
@@ -100,12 +107,16 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   constructor(
     private topicService: TopicService,
     private userService: UserService,
-    protected tagStyleService: TagStyleService
+    protected tagStyleService: TagStyleService,
+    private messageService: MessageService,
+    private featureService: FeatureService,
+    private attemptService: AttemptService
   ) {
   }
 
   async ngOnInit() {
     await this.reload();
+    this.features = await lastValueFrom(this.featureService.getFeatures());
     this.backgroundRefreshInterval = setInterval(
       async () => {
         let lessons;
@@ -177,8 +188,12 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
         this.tutorFilterData = {topicId: this.topic!.id!, lessonId: task.lesson.id!, taskId: task.task!.id!}
         this.studentAttemptsVisible = true;
       } else {
-        this.taskAttemptFormData = {topic: this.topic, lesson: task.lesson, task: task.task!};
-        this.taskAttemptVisible = true;
+        if (task.task?.lastAttempt == null || task.task?.lastAttempt?.status === AttemptStatus.IN_PROGRESS || !!task.task?.lastAttempt?.isNewTryAllowed ) {
+          this.taskAttemptFormData = {topic: this.topic, lesson: task.lesson, task: task.task!};
+          this.taskAttemptVisible = true;
+        } else {
+          this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Повторное выполнение задания не разрешено'});
+        }
       }
     }
   }
@@ -258,5 +273,29 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   onStudentsAttemptsClose() {
     this.studentAttemptsVisible = false;
     this.tutorFilterData = null;
+  }
+
+  features: FeatureDto[] = [];
+  activeIndex = 0;
+  checkingDialogVisible = false;
+  checkingAttempt?: AttemptDto;
+  checkingAttemptFiles: AttemptFileDto[] = [];
+
+  async viewAttempt(attemptId: number) {
+    this.loading = true;
+    try {
+      this.checkingAttempt = await lastValueFrom(this.attemptService.getAttempt(attemptId));
+      this.checkingAttemptFiles = this.checkingAttempt.files ?? [];
+      this.checkingDialogVisible = true;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  onAttemptViewClose() {
+    this.activeIndex = 0
+    this.checkingDialogVisible = false;
+    this.checkingAttempt = undefined;
+    this.checkingAttemptFiles = [];
   }
 }

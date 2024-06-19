@@ -141,7 +141,8 @@ public class AttemptService {
                                 featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList()))
                         )
                         .toList(),
-                comment
+                comment,
+                dto.getIsNewTryAllowed()
         );
         notificationRepository.save(new Notification(attempt, NotificationType.DONE));
         return attemptReader.getAttempt(attempt.getId());

@@ -265,6 +265,7 @@
 
   <p-footer [class.content-disabled]="loading">
     <p-button [label]="loading ? 'Подождите...' : 'Завершить проверку'"
+              [disabled]="!!resultForm?.invalid"
               (click)="finalCompleteAttemptByTutor()"></p-button>
     <p-button label="Отмена" styleClass="button-clear bordered"
               (click)="finalCheckingDialogVisible = false">
