@@ -75,6 +75,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   @Input() features: FeatureDto[];
 
   @Output() onNewErrorAdded = new EventEmitter<any>();
+  @Output() onErrorDeleted = new EventEmitter<any>();
 
   loading = false;
   baseUrl: string;
@@ -144,7 +145,10 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   delete(feedback: any) {
     const idx = this.results.findIndex(f => f === feedback);
-    this.results.splice(idx, 1);
+    const deleted = this.results.splice(idx, 1);
+    if (deleted[0] != null) {
+      this.onErrorDeleted.emit(deleted[0]);
+    }
   }
 
   restore(feedback: any) {

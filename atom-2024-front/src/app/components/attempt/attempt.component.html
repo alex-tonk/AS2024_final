@@ -207,7 +207,9 @@
                                       [currentIndex]="index"
                                       [activeIndex]="activeIndex"
                                       [resultsAIBackup]="resultsAIBackup"
-                                      (onNewErrorAdded)="onTutorErrorAdded($event)">
+                                      (onNewErrorAdded)="onTutorErrorAdded($event)"
+                                      (onErrorDeleted)="onTutorErrorDeleted($event)"
+      >
       </app-image-with-feedback-viewer>
     </p-tabPanel>
   </p-tabView>

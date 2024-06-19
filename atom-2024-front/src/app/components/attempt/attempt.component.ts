@@ -312,6 +312,11 @@ export class AttemptComponent implements OnInit {
     this.checkingAttempt.tutorCheckResults!.push(newError);
   }
 
+  onTutorErrorDeleted(deletedError: any) {
+    const idx = (this.checkingAttempt.tutorCheckResults ?? [])!.findIndex(f => f === deletedError);
+    (this.checkingAttempt.tutorCheckResults ?? [])!.splice(idx, 1);
+  }
+
   protected readonly AttemptListMode = AttemptListMode;
   protected readonly AttemptStatus = AttemptStatus;
 
