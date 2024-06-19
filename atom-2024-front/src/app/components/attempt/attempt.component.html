@@ -34,23 +34,34 @@
           <p-button [label]="selectedAttempt?.autoMark ? 'Уточнить оценку' : 'Проверить задание'"
                     [pTooltip]="selectedAttempt?.autoMark ? 'Уточнить оценку выставленную ИИ' : ''"
                     [icon]="selectedAttempt?.autoMark ? 'pi pi-check-square' : 'pi pi-check'"
-                    styleClass="p-button-success" [disabled]="!selectedAttempt"
+                    severity="success" [disabled]="!selectedAttempt || selectedAttempt?.status !== AttemptStatus.VALIDATION"
                     (click)="checkAttempt()">
           </p-button>
-        </ng-container>
 
         <div class="splitter"></div>
         <p-button label="Посмотреть результат"
                   styleClass="button-primary"
                   icon="pi pi-search"
                   (click)="showResults()"
-                  [disabled]="!selectedAttempt">
+                  [disabled]="!selectedAttempt || selectedAttempt?.status !== AttemptStatus.DONE">
         </p-button>
+        </ng-container>
 
-        <ng-container *ngIf="mode == AttemptListMode.STUDENT && selectedAttempt?.status == AttemptStatus.IN_PROGRESS">
+        <ng-container *ngIf="mode == AttemptListMode.STUDENT">
           <div class="splitter"></div>
-          <p-button label="Продолжить выполнение" styleClass="button-primary"
+          <p-button label="Продолжить выполнение"
+                    [disabled]="!selectedAttempt || selectedAttempt?.status !== AttemptStatus.IN_PROGRESS"
+                    styleClass="button-primary"
                     (click)="continueAttempt()">
+          </p-button>
+
+          <div class="splitter"></div>
+
+          <p-button label="Посмотреть результат"
+                    styleClass="button-primary"
+                    icon="pi pi-search"
+                    (click)="showResults()"
+                    [disabled]="!selectedAttempt || selectedAttempt?.status !== AttemptStatus.DONE">
           </p-button>
         </ng-container>
       </div>
@@ -228,6 +239,7 @@
           header="Завершение проверки"
           [(visible)]="finalCheckingDialogVisible"
           [resizable]="false"
+          appendTo="body"
           [modal]="true" [style]="{maxWidth: '800px'}">
   <form #resultForm="ngForm">
     <div class="form-row">

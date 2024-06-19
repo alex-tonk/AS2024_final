@@ -22,6 +22,9 @@ import {UserService} from '../../../services/user.service';
 import {setInterval} from 'core-js';
 import {TagModule} from 'primeng/tag';
 import {TagStyleService} from '../../../services/tag-style-service';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
 
 
 export enum CoursePanelMode {
@@ -47,7 +50,10 @@ export enum CoursePanelMode {
     LectureViewComponent,
     TaskAttemptComponent,
     KnobModule,
-    TagModule
+    TagModule,
+    DialogModule,
+    DropdownModule,
+    AttemptComponent
   ],
   templateUrl: './course-panel.component.html',
   styleUrl: './course-panel.component.css'
@@ -167,8 +173,13 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
       this.lectureViewVisible = true;
       this.saveOpenHistory(task.lesson.id!)
     } else if (task.type === 'task') {
-      this.taskAttemptFormData = {topic: this.topic, lesson: task.lesson, task: task.task!};
-      this.taskAttemptVisible = true;
+      if (this.mode == CoursePanelMode.TUTOR) {
+        this.tutorFilterData = {topicId: this.topic!.id!, lessonId: task.lesson.id!, taskId: task.task!.id!}
+        this.studentAttemptsVisible = true;
+      } else {
+        this.taskAttemptFormData = {topic: this.topic, lesson: task.lesson, task: task.task!};
+        this.taskAttemptVisible = true;
+      }
     }
   }
 
@@ -240,4 +251,12 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   }
 
   protected readonly CoursePanelMode = CoursePanelMode;
+  protected readonly AttemptListMode = AttemptListMode;
+  studentAttemptsVisible = false;
+  tutorFilterData: { topicId: number | null; lessonId: number | null; taskId: number | null } | null;
+
+  onStudentsAttemptsClose() {
+    this.studentAttemptsVisible = false;
+    this.tutorFilterData = null;
+  }
 }

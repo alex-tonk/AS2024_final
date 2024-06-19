@@ -79,16 +79,14 @@ export class StudentCabinetComponent implements OnInit, OnDestroy {
   get filteredCourses() {
     if (this.filterValue) {
       if (this.filterOption === 'lessons') {
-        // TODO Воткнуть .map
         return this.topics
           .map(t => t)
-          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+          .filter(g => JSON.stringify(g.lessons).toLowerCase().includes(this.filterValue.toLowerCase()));
       }
       if (this.filterOption === 'tasks') {
-        // TODO Воткнуть .map
         return this.topics
           .map(t => t)
-          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+          .filter(g => JSON.stringify(g.lessons?.flatMap(l => l.tasks)).toLowerCase().includes(this.filterValue.toLowerCase()));
       }
       return this.topics.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
     } else {

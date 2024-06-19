@@ -126,3 +126,12 @@
                   [formData]="taskAttemptFormData!"
                   (taskAttemptClose)="onTaskAttemptClose($event)">
 </app-task-attempt>
+
+<p-dialog header="Задания обучающихся"
+          [style]="{width: '95%', height: '95%'}"
+          *ngIf="studentAttemptsVisible"
+          [(visible)]="studentAttemptsVisible" [modal]="true"
+          [resizable]="false" [closable]="true" (onHide)="onStudentsAttemptsClose()">
+  <app-attempt [mode]="AttemptListMode.TUTOR" [tutorFilterData]="tutorFilterData">
+  </app-attempt>
+</p-dialog>

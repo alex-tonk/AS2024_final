@@ -30,7 +30,7 @@ export class AttemptService {
     return this.httpService.get<AttemptDto>('attempts/' + attemptId + '', {responseType: 'json'});
   }
 
- public getAttempts(userId: number | null, status: AttemptStatus | null): Observable<AttemptDto[]>  {
+ public getAttempts(userId: number | null, status: AttemptStatus | null, topicId: number | null, lessonId: number | null, taskId: number | null): Observable<AttemptDto[]>  {
     const queryParamsList: { name: string, value: string }[] = [];
     if (userId !== undefined && userId !== null) {
       queryParamsList.push({name: 'userId', value: userId.toString()});
@@ -38,6 +38,18 @@ export class AttemptService {
 
     if (status !== undefined && status !== null) {
       queryParamsList.push({name: 'status', value: status.toString()});
+    }
+
+    if (topicId !== undefined && topicId !== null) {
+      queryParamsList.push({name: 'topicId', value: topicId.toString()});
+    }
+
+    if (lessonId !== undefined && lessonId !== null) {
+      queryParamsList.push({name: 'lessonId', value: lessonId.toString()});
+    }
+
+    if (taskId !== undefined && taskId !== null) {
+      queryParamsList.push({name: 'taskId', value: taskId.toString()});
     }
     let params = new HttpParams();
     for (const queryParam of queryParamsList) {

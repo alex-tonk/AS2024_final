@@ -79,6 +79,9 @@ export class AttemptComponent implements OnInit {
   @Input()
   status: AttemptStatus | null;
 
+  @Input()
+  tutorFilterData: { topicId: number | null, lessonId: number | null, taskId: number | null } | null;
+
   attempts: AttemptDto[] = [];
   features: FeatureDto[] = [];
   loading = false;
@@ -190,7 +193,19 @@ export class AttemptComponent implements OnInit {
     this.loading = true;
     this.selectedAttempt = undefined;
     try {
-      this.attempts = await lastValueFrom(this.attemptService.getAttempts(this.userId, this.status));
+      const topicId = this.tutorFilterData?.topicId ?? null;
+      const lessonId = this.tutorFilterData?.lessonId ?? null;
+      const taskId = this.tutorFilterData?.taskId ?? null;
+
+      this.attempts = await lastValueFrom(
+        this.attemptService.getAttempts(
+          this.userId,
+          this.status,
+          topicId,
+          lessonId,
+          taskId
+        )
+      );
     } finally {
       this.loading = false;
     }
@@ -258,7 +273,7 @@ export class AttemptComponent implements OnInit {
       }
       if (this.checkingAttempt.autoCheckResults && this.checkingAttempt.autoCheckResults.length > 0) {
         this.resultsAIBackup = this.checkingAttempt.autoCheckResults.map(r => r)
-        this.resultsAIBackup.forEach(r => r.comment =  r.isAutomatic ? 'Дефект найденный ИИ' : r.comment);
+        this.resultsAIBackup.forEach(r => r.comment = r.isAutomatic ? 'Дефект найденный ИИ' : r.comment);
       }
 
       this.checkingAttempt.tutorCheckResults = this.checkingAttempt.autoCheckResults ?? [];

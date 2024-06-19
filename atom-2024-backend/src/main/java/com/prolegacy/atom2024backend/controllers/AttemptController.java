@@ -61,14 +61,14 @@ public class AttemptController {
     @PreAuthorize("hasRole('student')")
     @PutMapping("{attemptId}")
     public AttemptDto finishAttempt(@PathVariable AttemptId attemptId,
-                                        @RequestBody AttemptDto attemptDto) {
+                                    @RequestBody AttemptDto attemptDto) {
         return attemptService.finishAttempt(attemptId, attemptDto);
     }
 
     @PreAuthorize("hasRole('tutor')")
     @PatchMapping("{attemptId}")
     public AttemptDto setTutorMark(@PathVariable AttemptId attemptId,
-                                        @RequestBody AttemptDto attemptDto) {
+                                   @RequestBody AttemptDto attemptDto) {
         return attemptService.setTutorMark(attemptId, attemptDto);
     }
 
@@ -81,7 +81,10 @@ public class AttemptController {
 
     @GetMapping
     public List<AttemptDto> getAttempts(@RequestParam Optional<UserId> userId,
-                                        @RequestParam Optional<AttemptStatus> status) {
-        return attemptReader.getAttempts(userId, status);
+                                        @RequestParam Optional<AttemptStatus> status,
+                                        @RequestParam Optional<TopicId> topicId,
+                                        @RequestParam Optional<LessonId> lessonId,
+                                        @RequestParam Optional<TaskId> taskId) {
+        return attemptReader.getAttempts(userId, status, topicId, lessonId, taskId);
     }
 }

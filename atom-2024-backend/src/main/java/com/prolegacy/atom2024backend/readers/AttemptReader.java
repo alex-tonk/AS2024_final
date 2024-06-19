@@ -33,13 +33,26 @@ public class AttemptReader {
     @Autowired
     private JPAQueryFactory queryFactory;
 
-    public List<AttemptDto> getAttempts(Optional<UserId> userId, Optional<AttemptStatus> status) {
+    public List<AttemptDto> getAttempts(Optional<UserId> userId,
+                                        Optional<AttemptStatus> status,
+                                        Optional<TopicId> topicId,
+                                        Optional<LessonId> lessonId,
+                                        Optional<TaskId> taskId) {
         JPAQuery<AttemptDto> query = baseQuery();
         if (userId.isPresent()) {
             query = query.where(attempt.user.id.eq(userId.get()));
         }
         if (status.isPresent()) {
             query = query.where(attempt.status.eq(status.get()));
+        }
+        if (topicId.isPresent()) {
+            query = query.where(attempt.topic.id.eq(topicId.get()));
+        }
+        if (lessonId.isPresent()) {
+            query = query.where(attempt.lesson.id.eq(lessonId.get()));
+        }
+        if (taskId.isPresent()) {
+            query = query.where(attempt.task.id.eq(taskId.get()));
         }
         return query.fetch();
     }

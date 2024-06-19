@@ -1,5 +1,5 @@
 <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeCourse($event.index)">
-  <p-tabPanel header="Все задания" leftIcon="pi pi-list-check">
+  <p-tabPanel header="Все задания" leftIcon="pi pi-list-check" [cache]="false">
     <ng-template pTemplate="content">
       <app-attempt [mode]="AttemptListMode.TUTOR"></app-attempt>
     </ng-template>
@@ -18,7 +18,7 @@
             </div>
             <p-dropdown [options]="filterOptions"
                         [(ngModel)]="filterOption"
-                        [style]="{width: '240px'}"
+                        [style]="{width: '260px'}"
                         appendTo="body">
             </p-dropdown>
           </div>
