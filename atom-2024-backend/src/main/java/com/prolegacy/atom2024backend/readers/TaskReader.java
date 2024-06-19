@@ -34,10 +34,11 @@ public class TaskReader {
     private JPAQuery<TaskDto> statisticsQuery() {
         NumberExpression<BigDecimal> NAS = Expressions.asNumber(BigDecimal.valueOf(5)).subtract(markToValue(attempt.tutorMark).avg().castToNum(BigDecimal.class)).divide(BigDecimal.valueOf(3));
 
-        NumberExpression<BigDecimal> numOfAttempts = attempt.count().castToNum(BigDecimal.class);
-        NumberExpression<BigDecimal> numOfAttemptsMinusOne = numOfAttempts.subtract(BigDecimal.ONE);
-        NumberExpression<BigDecimal> NNA = Expressions.cases().when(numOfAttemptsMinusOne.gt(BigDecimal.ZERO)).then(numOfAttemptsMinusOne).otherwise(Expressions.asNumber(BigDecimal.ZERO))
-                .divide(Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE));
+        NumberExpression<BigDecimal> numOfAttemptsMinusOne = attempt.count().castToNum(BigDecimal.class).subtract(BigDecimal.ONE);
+        NumberExpression<BigDecimal> maxNumOfAttemptsMinusOne = Expressions.numberTemplate(BigDecimal.class, "function('maxNumberOfAttempts')").subtract(BigDecimal.ONE).coalesce(BigDecimal.ONE);
+        NumberExpression<BigDecimal> numOfAttemptsMinusOneClamped = Expressions.cases().when(numOfAttemptsMinusOne.gt(BigDecimal.ZERO)).then(numOfAttemptsMinusOne).otherwise(Expressions.asNumber(BigDecimal.ZERO));
+        NumberExpression<BigDecimal> maxNumOfAttemptsMinusOneClamped = Expressions.cases().when(maxNumOfAttemptsMinusOne.gt(BigDecimal.ZERO)).then(maxNumOfAttemptsMinusOne).otherwise(BigDecimal.ONE);
+        NumberExpression<BigDecimal> NNA = numOfAttemptsMinusOneClamped.divide(maxNumOfAttemptsMinusOneClamped);
 
         NumberExpression<BigDecimal> NTL = Expressions.asNumber(BigDecimal.ONE).subtract(task.time.castToNum(BigDecimal.class).divide(queryFactory.from(task).select(task.time.max())));
 
@@ -51,7 +52,7 @@ public class TaskReader {
                 .groupBy(task)
                 .selectDto(
                         TaskDto.class,
-                        numOfAttempts.as("numOfAttempts"),
+                        attempt.count().castToNum(BigDecimal.class).as("numOfAttempts"),
                         averageTime.as("averageTime"),
                         DS.as("difficultyScore")
                 );
