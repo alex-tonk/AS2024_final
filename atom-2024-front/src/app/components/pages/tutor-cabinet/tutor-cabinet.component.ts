@@ -5,7 +5,7 @@ import {VideoLessonsComponent} from '../student-cabinet/samples/video-lessons/vi
 import {CardModule} from 'primeng/card';
 import {RouterLink} from '@angular/router';
 import {StudyGroupCardComponent} from './study-group-card/study-group-card.component';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {DataViewModule} from 'primeng/dataview';
 import {InputTextModule} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
@@ -16,40 +16,51 @@ import {
 import {SplitterModule} from 'primeng/splitter';
 import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
 import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
-import {DropdownModule} from "primeng/dropdown";
-import {ProgressBarModule} from "primeng/progressbar";
-import {TagModule} from "primeng/tag";
-import {TooltipModule} from "primeng/tooltip";
+import {DropdownModule} from 'primeng/dropdown';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {TagModule} from 'primeng/tag';
+import {TooltipModule} from 'primeng/tooltip';
 import {TopicDto} from '../../../gen/atom2024backend-dto';
 import {TopicService} from '../../../gen/atom2024backend-controllers';
 import {UserService} from '../../../services/user.service';
 import {lastValueFrom} from 'rxjs';
 import {setTimeout} from 'core-js';
+import {Button} from 'primeng/button';
+import {ChatType} from '../../../gen/entities-enums';
+import {DialogModule} from 'primeng/dialog';
+import {ListboxModule} from 'primeng/listbox';
+import {UserDto} from '../../../models/UserDto';
+import FileSaver from 'file-saver';
+import {ReportService} from '../../../services/report.service';
 
 @Component({
   selector: 'app-tutor-cabinet',
   standalone: true,
-    imports: [
-        OnlineLessonsComponent,
-        PresentationLessonsComponent,
-        PrimeTemplate,
-        TabViewModule,
-        VideoLessonsComponent,
-        CardModule,
-        RouterLink,
-        StudyGroupCardComponent,
-        NgForOf,
-        DataViewModule,
-        InputTextModule,
-        FormsModule,
-        SplitterModule,
-        CoursePanelComponent,
-        AttemptComponent,
-        DropdownModule,
-        ProgressBarModule,
-        TagModule,
-        TooltipModule
-    ],
+  imports: [
+    OnlineLessonsComponent,
+    PresentationLessonsComponent,
+    PrimeTemplate,
+    TabViewModule,
+    VideoLessonsComponent,
+    CardModule,
+    RouterLink,
+    StudyGroupCardComponent,
+    NgForOf,
+    DataViewModule,
+    InputTextModule,
+    FormsModule,
+    SplitterModule,
+    CoursePanelComponent,
+    AttemptComponent,
+    DropdownModule,
+    ProgressBarModule,
+    TagModule,
+    TooltipModule,
+    Button,
+    DialogModule,
+    ListboxModule,
+    NgIf
+  ],
   templateUrl: './tutor-cabinet.component.html',
   styleUrl: './tutor-cabinet.component.css'
 })
@@ -91,7 +102,8 @@ export class TutorCabinetComponent implements OnInit, OnDestroy {
   }
 
   constructor(private topicService: TopicService,
-    protected userService: UserService) {
+              protected userService: UserService,
+              private reportService: ReportService) {
   }
 
   async ngOnInit() {
@@ -100,7 +112,7 @@ export class TutorCabinetComponent implements OnInit, OnDestroy {
     this.topicRefreshInterval = setInterval(
       async () => {
         const topics = await lastValueFrom(this.topicService.getTopics());
-        let topicsById: {[key: number]: TopicDto} = {};
+        let topicsById: { [key: number]: TopicDto } = {};
         topics.reduce((prev, cur) => {
           prev[cur.id!] = cur;
           return prev;
@@ -144,6 +156,45 @@ export class TutorCabinetComponent implements OnInit, OnDestroy {
     this.openedTopics.splice(index - this.systemTabsCount, 1);
   }
 
-protected readonly AttemptListMode = AttemptListMode;
+  protected readonly AttemptListMode = AttemptListMode;
   protected readonly CoursePanelMode = CoursePanelMode;
+
+  protected readonly ChatType = ChatType;
+
+  printTopicId?: number;
+  printDiplomaDialogVisible = false;
+  availableForPrintUsers: UserDto[] = [];
+  printUser?: UserDto;
+
+  async confirmPrintDiplomaFull(event: MouseEvent, topicId: number) {
+    this.loading = true;
+    try {
+      console.log('wtf');
+      event.stopPropagation();
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.availableForPrintUsers = await lastValueFrom(this.topicService.getUsersWithFinishedTopic(topicId));
+      this.printDiplomaDialogVisible = true;
+      this.printTopicId = topicId;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async printDiplomaFull() {
+    this.loading = true;
+    try {
+      let blob = await lastValueFrom(this.reportService.printDiplomaSpecFull(this.printTopicId!, this.printUser!.id));
+      FileSaver.saveAs(blob, 'Диплом с приложением.pdf');
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  onDiplomaPrintFinished() {
+    this.printDiplomaDialogVisible = false;
+    this.printTopicId = undefined;
+    this.availableForPrintUsers = [];
+    this.printUser = undefined;
+  }
 }

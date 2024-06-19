@@ -33,15 +33,18 @@
                                    [style]="{ height: '6px' }"/>
                   </div>
                   <hr>
-                  <div
-                    style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 10px">
-                    <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
-                           [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
-                      <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
-                        <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
-                        <span>{{ trait.name }}</span>
-                      </div>
-                    </p-tag>
+                  <div style="display: flex; flex-direction: row; align-items: center;">
+                    <p-button [disabled]="(topic.taskPassedCount < topic.taskCount) || loading" pTooltip="Печать диплома" icon="pi pi-print" (click)="printDiplomaFull($event, topic.id)"
+                              severity="success" [style]="{width: '3rem'}"></p-button>
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 10px">
+                      <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
+                             [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
+                        <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
+                          <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
+                          <span>{{ trait.name }}</span>
+                        </div>
+                      </p-tag>
+                    </div>
                   </div>
                 </p-footer>
               </p-card>

@@ -112,7 +112,7 @@ group by u.id, u.firstname || coalesce(' ' || u.surname || ' ', ' ') || u.lastna
 				<text><![CDATA[со средним баллом]]></text>
 			</staticText>
 			<textField pattern="#,##0.00">
-				<reportElement style="Style1" x="30" y="492" width="521" height="75" uuid="f2faefd0-dd8a-4c1d-b5a1-da720930043c"/>
+				<reportElement style="Style1" x="30" y="492" width="521" height="58" uuid="f2faefd0-dd8a-4c1d-b5a1-da720930043c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="26" isBold="true" isItalic="true"/>
 				</textElement>

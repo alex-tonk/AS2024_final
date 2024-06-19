@@ -1,6 +1,9 @@
 package com.prolegacy.atom2024backend.readers;
 
+import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
+import com.prolegacy.atom2024backend.common.auth.entities.QUser;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
+import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.query.DtoProjections;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
@@ -36,6 +39,7 @@ public class TopicReader {
     private static final QAttempt lastAttempt = new QAttempt("lastAttempt");
     private static final QTrait topicTrait = new QTrait("topicTrait");
     private static final QTrait trait = QTrait.trait;
+    private static final QUser user = QUser.user;
 
     @Autowired
     private JPAQueryFactory queryFactory;
@@ -45,6 +49,22 @@ public class TopicReader {
 
     @Autowired
     private UserProvider userProvider;
+
+    public List<UserDto> getUsersWithFinishedTopic(TopicId topicId) {
+        return queryFactory.from(user)
+                .innerJoin(lastAttempt).on(
+                        lastAttempt.user.id.eq(user.id)
+                                .and(lastAttempt.isLastAttempt.isTrue())
+                                .and(lastAttempt.tutorMark.in(List.of(Mark.EXCELLENT, Mark.GOOD, Mark.MEDIOCRE)))
+                ).leftJoin(topic).on(topic.id.eq(lastAttempt.topic.id))
+                .leftJoin(lesson).on(topic.lessons.any().id.eq(lesson.id))
+                .leftJoin(task).on(lesson.tasks.any().id.eq(task.id))
+                .where(topic.id.eq(topicId))
+                .groupBy(user, topic)
+                .having(lastAttempt.id.countDistinct().eq(lesson.id.stringValue().concat("/").concat(task.id.stringValue()).countDistinct()))
+                .selectDto(UserDto.class, UserReader.getFullName(user).as("fullName"))
+                .fetch();
+    }
 
     public List<TopicDto> getTopics() {
         List<TopicDto> topics = baseQuery().fetch();

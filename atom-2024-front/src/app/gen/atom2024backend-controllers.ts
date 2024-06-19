@@ -234,6 +234,10 @@ export class TopicService {
     return this.httpService.get<TopicDto[]>('topics', {responseType: 'json'});
   }
 
+ public getUsersWithFinishedTopic(topicId: number): Observable<UserDto[]>  {
+    return this.httpService.get<UserDto[]>('topics/' + topicId + '/graduates', {responseType: 'json'});
+  }
+
 }
 
 @Injectable({

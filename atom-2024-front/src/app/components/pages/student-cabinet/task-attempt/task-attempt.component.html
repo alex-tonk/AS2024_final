@@ -125,7 +125,7 @@
                 </div>
                 <markdown [markjsHighlight]="searchText$ | async"
                           [markjsConfig]="searchConfig"
-                          [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
+                          [data]="lessonOriginal ? lessonContent : lessonBeautifiedContent">
                 </markdown>
               </ng-template>
             </p-tabPanel>

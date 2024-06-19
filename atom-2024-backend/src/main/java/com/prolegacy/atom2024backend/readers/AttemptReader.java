@@ -44,6 +44,15 @@ public class AttemptReader {
         return query.fetch();
     }
 
+    public List<AttemptDto> getLastAttemptsForTopic(UserId userId, TopicId topicId) {
+        return baseQuery()
+                .where(
+                        attempt.isLastAttempt.eq(true)
+                                .and(attempt.user.id.eq(userId))
+                                .and(attempt.topic.id.eq(topicId))
+                ).fetch();
+    }
+
     public AttemptDto getLastAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, UserId userId) {
         AttemptDto lastAttempt = baseQuery()
                 .where(attempt.topic.id.eq(topicId))
@@ -94,6 +103,8 @@ public class AttemptReader {
         setAutoCheckResults(attempt);
 
         setTutorCheckResults(attempt);
+
+        setTaskSupplements(attempt);
 
         attempt.setFiles(
                 queryFactory.from(attemptFile)

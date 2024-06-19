@@ -19,4 +19,14 @@ public class ReportController {
     public Resource printDiploma(@PathVariable TopicId topicId, @PathVariable UserId userId) {
         return reportService.createDiploma(userId, topicId);
     }
+
+    @GetMapping("diplomas/{topicId}/{userId}/specifications")
+    public Resource printDiplomaSpec(@PathVariable TopicId topicId, @PathVariable UserId userId) {
+        return reportService.createDiplomaSpec(userId, topicId);
+    }
+
+    @GetMapping("diplomas/{topicId}/{userId}/full")
+    public Resource printDiplomaFull(@PathVariable TopicId topicId, @PathVariable UserId userId) {
+        return reportService.createDiplomaFull(userId, topicId);
+    }
 }

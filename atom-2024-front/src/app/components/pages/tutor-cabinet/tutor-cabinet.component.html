@@ -26,19 +26,24 @@
             <div *ngFor="let topic of topics" style="padding: 0.5rem">
               <p-card (click)="openTopic(topic)" class="clickable-card">
                 <h3 class="no-margin header">{{ topic.title }}</h3>
-                <hr>
                 <div>{{ topic.description }}</div>
                 <p-footer>
-                  <hr>
-                  <div
-                    style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 10px">
-                    <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
-                           [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
-                      <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
-                        <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
-                        <span>{{ trait.name }}</span>
-                      </div>
-                    </p-tag>
+                <hr>
+                  <div style="display: flex; flex-direction: row; align-items: center;">
+                    <p-button pTooltip="Печать диплома" icon="pi pi-print"
+                              [disabled]="loading"
+                              (click)="confirmPrintDiplomaFull($event, topic.id)"
+                              severity="success" [style]="{width: '3rem'}"></p-button>
+                    <div
+                      style="flex: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 10px">
+                      <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
+                             [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
+                        <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
+                          <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
+                          <span>{{ trait.name }}</span>
+                        </div>
+                      </p-tag>
+                    </div>
                   </div>
                 </p-footer>
               </p-card>
@@ -60,3 +65,27 @@
     </ng-template>
   </p-tabPanel>
 </p-tabView>
+
+<p-dialog header="Печать диплома"
+          [(visible)]="printDiplomaDialogVisible" [modal]="true"
+          [resizable]="false" [closable]="true">
+  <div class="form-row">
+    <label class="required">Обучающийся</label>
+    <p-dropdown
+      [options]="availableForPrintUsers"
+      [(ngModel)]="printUser"
+      [disabled]="loading"
+      appendTo="body"
+      emptyMessage="Нет обучающихся, завершивших тему"
+      optionLabel="fullName"
+      placeholder="Выберите пользователя для печати диплома"/>
+  </div>
+  <p-footer>
+    <p-button label="Печать" severity="success" [disabled]="printUser?.id == null || loading"
+              (click)="printDiplomaFull()">
+    </p-button>
+    <p-button label="Отмена" severity="success"
+              (click)="onDiplomaPrintFinished()" styleClass="button-clear">
+    </p-button>
+  </p-footer>
+</p-dialog>

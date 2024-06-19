@@ -24,6 +24,9 @@ import {TagModule} from 'primeng/tag';
 import {UserService} from '../../../services/user.service';
 import {DropdownModule} from 'primeng/dropdown';
 import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
+import {MenuItem} from 'primeng/api';
+import {ReportService} from '../../../services/report.service';
+import FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-student-cabinet',
@@ -94,7 +97,8 @@ export class StudentCabinetComponent implements OnInit, OnDestroy {
   }
 
   constructor(private topicService: TopicService,
-              protected userService: UserService) {
+              protected userService: UserService,
+              private reportService: ReportService) {
   }
 
   async ngOnInit() {
@@ -149,4 +153,46 @@ export class StudentCabinetComponent implements OnInit, OnDestroy {
 
   protected readonly CoursePanelMode = CoursePanelMode;
   protected readonly AttemptListMode = AttemptListMode;
+
+  getPrintOptions(topicId: number): MenuItem[] {
+    return [
+      {
+        label: 'Скачать только диплом',
+        command: async () => {
+          this.loading = true;
+          try {
+            let blob = await lastValueFrom(this.reportService.printDiploma(topicId, this.userService.user!.id!));
+            FileSaver.saveAs(blob, 'Диплом');
+          }finally {
+            this.loading = false;
+          }
+        }
+      },
+      {
+        label: 'Скачать только приложение к диплому',
+        command: async () => {
+          this.loading = true;
+          try {
+            let blob = await lastValueFrom(this.reportService.printDiplomaSpec(topicId, this.userService.user!.id!));
+            FileSaver.saveAs(blob, 'Приложение к диплому');
+          }finally {
+            this.loading = false;
+          }
+        }
+      }
+    ];
+  }
+
+  async printDiplomaFull(event: Event, topicId: number) {
+    this.loading = true;
+    try {
+      event.stopPropagation();
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      let blob = await lastValueFrom(this.reportService.printDiplomaSpecFull(topicId, this.userService.user!.id!));
+      FileSaver.saveAs(blob, 'Диплом с приложением.pdf');
+    }finally {
+      this.loading = false;
+    }
+  }
 }

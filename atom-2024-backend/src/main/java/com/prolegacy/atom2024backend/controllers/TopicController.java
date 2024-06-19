@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
+import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.dto.LessonDto;
 import com.prolegacy.atom2024backend.dto.TopicDto;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;
@@ -37,4 +38,9 @@ public class TopicController {
     public List<LessonDto> getTopicLessonsWithLastAttempts(@PathVariable TopicId topicId) {
         return lessonReader.getLessonsForTopic(topicId, true);
     }
+
+    @GetMapping("{topicId}/graduates")
+    public List<UserDto> getUsersWithFinishedTopic(@PathVariable TopicId topicId) {
+        return topicReader.getUsersWithFinishedTopic(topicId);
+    };
 }

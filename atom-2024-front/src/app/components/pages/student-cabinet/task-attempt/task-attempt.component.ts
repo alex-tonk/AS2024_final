@@ -91,6 +91,7 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
   content: string;
   beautifiedContent: string;
   lessonOriginal = false;
+  lessonContent: string;
   lessonBeautifiedContent: string;
   stepperIndex = 0;
   stepsCount = 3;
@@ -116,6 +117,7 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
     this.loading = true;
     try {
       this.content = (this.task?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
+      this.lessonContent = (this.lesson?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
       this.beautifiedContent = this.content
         .replaceAll(/!\[/g, '<br>![')
         .replaceAll('<br><br>', '<br>')

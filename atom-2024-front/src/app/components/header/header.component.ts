@@ -13,7 +13,6 @@ import {NotificationDto} from '../../gen/atom2024backend-dto';
 import {lastValueFrom} from 'rxjs';
 import {NotificationType} from '../../gen/entities-enums';
 import {ReportService} from '../../services/report.service';
-import FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-header',
@@ -95,10 +94,5 @@ export class HeaderComponent {
       }
     }
     return '';
-  }
-
-  async printDiploma() {
-    let blob = await lastValueFrom(this.reportService.printDiploma(1, 2));
-    FileSaver.saveAs(blob, `Диплом говна.pdf`);
   }
 }
