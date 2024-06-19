@@ -36,7 +36,18 @@
                       <i
                         *ngIf="task.task?.lastAttempt?.isNewTryAllowed && task.task?.lastAttempt?.status === AttemptStatus.DONE"
                         pTooltip="Доступна возможность повторного прохождения"
-                        class="pi pi-replay" style="margin-left: 10px"></i>
+                        class="pi pi-replay" style="margin-left: 10px">
+                      </i>
+                      <div *ngIf="task.type == 'lecture'"
+                        style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-left: 10px">
+                        <p-tag *ngFor="let trait of (task.lesson?.traits ?? [])" severity="secondary" [rounded]="true"
+                               [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
+                          <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
+                            <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
+                            <span>{{ trait.name }}</span>
+                          </div>
+                        </p-tag>
+                      </div>
                     </div>
 
                     <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
