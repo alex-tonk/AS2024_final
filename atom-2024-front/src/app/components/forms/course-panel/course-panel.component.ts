@@ -88,12 +88,7 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   }
 
   get header(): string {
-    switch (this.mode) {
-      case CoursePanelMode.STUDENT:
-        return `Учебная тема: ${this.topic.title!}`
-      case CoursePanelMode.TUTOR:
-        return `${this.topic.title!} / ${this.student.fullName!}`
-    }
+    return `Учебная тема: ${this.topic.title!}`
   }
 
   constructor(
@@ -114,7 +109,11 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
           lessons = await lastValueFrom(this.topicService.getTopicLessons(this.topic.id!));
         }
         let attemptsByTaskId: { [key: string]: AttemptDto | undefined } = {};
-        attemptsByTaskId = lessons.flatMap(l => (l.tasks ?? []).map(t => ({lessonId: l.id!, taskId: t.id!, attempt: t.lastAttempt})))
+        attemptsByTaskId = lessons.flatMap(l => (l.tasks ?? []).map(t => ({
+          lessonId: l.id!,
+          taskId: t.id!,
+          attempt: t.lastAttempt
+        })))
           .reduce((prev, cur) => {
             if (cur != null) {
               prev[cur.lessonId + '/' + cur.taskId] = cur.attempt;
@@ -239,4 +238,6 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
     const seconds = diffSecs - minutes * 60;
     return `${minutes.toString().padStart(2, '0')}:${seconds.toFixed(0).padStart(2, '0')}`;
   }
+
+  protected readonly CoursePanelMode = CoursePanelMode;
 }

@@ -55,7 +55,7 @@
                           </p-tag>
                         </div>
 
-                        <div>
+                        <div *ngIf="mode == CoursePanelMode.STUDENT">
                           <p-tag severity="secondary" pTooltip="Статус" tooltipPosition="left"
                                  [rounded]="true"
                                  [style]="tagStyleService.getStatusStyle(task.task?.lastAttempt?.statusLocale ?? 'Не пройдено')">
@@ -77,7 +77,7 @@
                       </ng-container>
 
                       <ng-template #lectureInfo>
-                        <div>
+                        <div *ngIf="mode == CoursePanelMode.STUDENT" >
                           <p-tag severity="secondary" pTooltip="Статус" tooltipPosition="left"
                                  [rounded]="true"
                                  [style]="tagStyleService.getStatusStyle(isWasOpened(task.lesson.id) ? 'Прочитано' : 'Не прочитано')">
