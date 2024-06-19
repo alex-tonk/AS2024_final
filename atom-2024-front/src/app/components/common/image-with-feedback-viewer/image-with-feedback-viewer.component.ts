@@ -110,9 +110,13 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   async init() {
     try {
-      if (!this.resultsAIBackup ||
-        this.resultsAIBackup.filter(r => r.fileId === this.file.fileId).length === 0) {
-        this.noAutoErrors = true;
+      if (this.isTutorMode) {
+        if (!this.resultsAIBackup ||
+          this.resultsAIBackup.filter(r => r.fileId === this.file.fileId).length === 0) {
+          this.noAutoErrors = true;
+        } else {
+          this.results = this.attempt.tutorCheckResults!.filter(r => r.fileId === this.file.fileId);
+        }
       } else {
         this.results = this.attempt.tutorCheckResults!.filter(r => r.fileId === this.file.fileId);
       }

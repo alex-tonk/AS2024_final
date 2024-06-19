@@ -85,6 +85,8 @@ export class AttemptComponent implements OnInit {
   selectedAttempt?: AttemptDto;
   filter = false;
 
+  readOnlyTaskMode = true;
+
   checkingDialogVisible = false;
   finalCheckingDialogVisible = false;
   checkingAttempt: AttemptDto;
@@ -235,6 +237,7 @@ export class AttemptComponent implements OnInit {
   }
 
   async checkAttempt() {
+    this.readOnlyTaskMode = false;
     if (!this.selectedAttempt) {
       return;
     }
@@ -311,6 +314,34 @@ export class AttemptComponent implements OnInit {
     this.taskAttemptVisible = false;
     this.taskAttemptFormData = undefined;
     this.taskAttemptId = undefined;
+  }
+
+  async showResults() {
+    if (!this.selectedAttempt) {
+      return;
+    }
+    if (!this.selectedAttempt.tutorMark) {
+      this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Задание еще проверяется'});
+      return;
+    }
+    try {
+      this.loading = true;
+      this.readOnlyTaskMode = true;
+      this.checkingAttempt = await lastValueFrom(this.attemptService.getAttempt(this.selectedAttempt.id!));
+      if (!this.checkingAttempt) {
+        this.messageService.add({severity: 'error', summary: 'Внимание', detail: 'Работа не найдена в БД'});
+        return;
+      }
+      if (!this.checkingAttempt.tutorCheckResults || this.checkingAttempt.tutorCheckResults.length === 0) {
+        this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Работа не проверялась'});
+        return;
+      }
+
+      this.checkingAttemptFiles = this.checkingAttempt.files!;
+      this.checkingDialogVisible = true;
+    } finally {
+      this.loading = false;
+    }
   }
 }
 

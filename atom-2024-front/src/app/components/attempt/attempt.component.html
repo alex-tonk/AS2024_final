@@ -31,12 +31,20 @@
 
         <ng-container *ngIf="mode == AttemptListMode.TUTOR">
           <div class="splitter"></div>
-          <p-button [label]="selectedAttempt?.autoMark ? 'Уточнить оценку' : 'Проверить'"
+          <p-button [label]="selectedAttempt?.autoMark ? 'Уточнить оценку' : 'Проверить задание'"
+                    [pTooltip]="selectedAttempt?.autoMark ? 'Уточнить оценку выставленную ИИ' : ''"
                     [icon]="selectedAttempt?.autoMark ? 'pi pi-check-square' : 'pi pi-check'"
                     styleClass="button-primary" [disabled]="!selectedAttempt"
                     (click)="checkAttempt()">
           </p-button>
         </ng-container>
+
+        <p-button label="Посмотреть результат"
+                  styleClass="button-primary"
+                  icon="pi pi-search"
+                  (click)="showResults()"
+                  [disabled]="!selectedAttempt">
+        </p-button>
 
         <ng-container *ngIf="mode == AttemptListMode.STUDENT">
           <div class="splitter"></div>
@@ -175,30 +183,38 @@
           [resizable]="false"
           [draggable]="false"
           [closable]="true"
-          [header]="'Проверка задания: ' + checkingAttempt.task?.title"
+          [header]="(readOnlyTaskMode ? 'Просмотр задания: ' : 'Проверка задания: ') + checkingAttempt.task?.title"
           [(visible)]="checkingDialogVisible"
           appendTo="body"
           (onHide)="getAttemptsFromApi()">
   <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex">
     <p-tabPanel #tabPanel *ngFor="let file of checkingAttemptFiles; index as index" [header]="'Файл: ' + file.fileName">
-        <app-image-with-feedback-viewer [isTutorMode]="true"
-                                        [file]="file"
-                                        [features]="features"
-                                        [attempt]="checkingAttempt"
-                                        [currentIndex]="index"
-                                        [activeIndex]="activeIndex"
-                                        [resultsAIBackup]="resultsAIBackup"
-                                        (onNewErrorAdded)="onTutorErrorAdded($event)">
-        </app-image-with-feedback-viewer>
+      <app-image-with-feedback-viewer [isTutorMode]="!readOnlyTaskMode"
+                                      [file]="file"
+                                      [features]="features"
+                                      [attempt]="checkingAttempt"
+                                      [currentIndex]="index"
+                                      [activeIndex]="activeIndex"
+                                      [resultsAIBackup]="resultsAIBackup"
+                                      (onNewErrorAdded)="onTutorErrorAdded($event)">
+      </app-image-with-feedback-viewer>
     </p-tabPanel>
   </p-tabView>
 
   <p-footer [class.content-disabled]="loading">
-    <p-button [label]="loading ? 'Подождите...' : 'Выставить итоговую оценку'"
-              (click)="completeAttemptByTutor()"></p-button>
-    <p-button label="Отмена" styleClass="button-clear bordered"
-              (click)="checkingDialogVisible = false">
-    </p-button>
+    <ng-container *ngIf="!readOnlyTaskMode; else close">
+      <p-button [label]="loading ? 'Подождите...' : 'Выставить итоговую оценку'"
+                (click)="completeAttemptByTutor()"></p-button>
+      <p-button label="Отмена" styleClass="button-clear bordered"
+                (click)="checkingDialogVisible = false">
+      </p-button>
+    </ng-container>
+
+    <ng-template #close>
+      <p-button label="Закрыть" styleClass="button-clear bordered"
+                (click)="finalCheckingDialogVisible = false">
+      </p-button>
+    </ng-template>
   </p-footer>
 </p-dialog>
 

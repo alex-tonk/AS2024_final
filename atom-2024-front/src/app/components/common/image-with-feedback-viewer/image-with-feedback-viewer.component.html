@@ -39,7 +39,7 @@
 
           <p-overlayPanel #op [showCloseIcon]="true" [dismissable]="false">
             <div class="comment-wrapper">
-              <ng-container>
+              <ng-container *ngIf="isTutorMode; else showMode">
                 <div class="comment-editor-wrapper">
                   <div class="form-row">
                     <label>Дефекты</label>
@@ -47,7 +47,6 @@
                                    optionLabel="name"
                                    placeholder="Укажите дефекты"
                                    [maxSelectedLabels]="1"
-                                   [readonly]="!isTutorMode"
                                    selectedItemsLabel="Выбрано: {0}"
                                    [style]="{width: '100%', display: 'inline-flex'}"
                                    [options]="features"
@@ -69,6 +68,27 @@
                   </p-footer>
                 </div>
               </ng-container>
+
+              <ng-template #showMode>
+                <div class="comment-wrapper" style="max-width: 500px">
+                  <div style="width: 100%">
+                    <div class="form-row">
+                      <label>Дефекты:</label>
+                      <div>
+                        <div *ngIf="feedback.features.length == 0"> не указаны</div>
+                        <div *ngFor="let feature of feedback.features">
+                          ({{ feature.code }}) {{ feature.name }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <label>Комментарий наставника:</label>
+                      <div>{{ feedback.comment ? feedback.comment : 'комментарий отсутствует' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
             </div>
           </p-overlayPanel>
         </div>
@@ -90,7 +110,7 @@
         <div *ngFor="let feedback of results" class="feedback-in-list"
              (mouseleave)="hoveredFeedback = null"
              (mouseenter)="onHoverFeedbackInList(feedback)">
-          <div style="display: inline-flex; gap: 5px; padding: 5px">
+          <div *ngIf="isTutorMode" style="display: inline-flex; gap: 5px; padding: 5px">
             <i class="pi pi-trash" pTooltip="Удалить дефект" (click)="delete(feedback)"></i>
             <i *ngIf="feedback.isAutomatic" class="pi pi-history" (click)="restore(feedback)"
                pTooltip="Восстановить дефект до исходного состояния"></i>
@@ -105,7 +125,8 @@
         <div style="padding: 10px">Текущий масштаб {{ zoomValue }}%</div>
         <p-slider [(ngModel)]="zoomValue" [max]="200" [min]="100"/>
 
-        <div style="display: inline-flex; gap: 5px; padding: 20px; justify-content: center; width: 100%">
+        <div *ngIf="isTutorMode"
+             style="display: inline-flex; gap: 5px; padding: 20px; justify-content: center; width: 100%">
           <p-button label="Добавить дефект"
                     icon="pi pi-plus" severity="danger"
                     (click)="addFeedback()">
