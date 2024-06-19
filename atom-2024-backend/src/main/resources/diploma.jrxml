@@ -66,7 +66,7 @@ group by u.id, u.firstname || coalesce(' ' || u.surname || ' ', ' ') || u.lastna
 			<staticText>
 				<reportElement style="Style1" x="0" y="110" width="300" height="69" uuid="c82a7395-ba60-4df1-b481-c5720c6d6eaf"/>
 				<textElement textAlignment="Center">
-					<font fontName="Courier New" size="50" isBold="true" isItalic="false"/>
+					<font fontName="Times New Roman" size="50" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[ДИПЛОМ]]></text>
 			</staticText>
@@ -124,7 +124,7 @@ group by u.id, u.firstname || coalesce(' ' || u.surname || ' ', ' ') || u.lastna
 					<printWhenExpression><![CDATA[$F{excellent}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="Courier New" size="40" isBold="true" isItalic="false"/>
+					<font fontName="Times New Roman" size="40" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[с отличием]]></text>
 			</staticText>

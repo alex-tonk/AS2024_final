@@ -51,4 +51,4 @@ bot:
 js-evaluator:
   timeout-seconds: 86400
 
-api-url: http://localhost:10240/check
+api-url: <api-url>
