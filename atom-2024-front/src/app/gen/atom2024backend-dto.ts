@@ -1,7 +1,9 @@
 import {UserDto} from '../models/UserDto';
 import {AttemptStatus, Mark} from './atom2024backend-enums';
+import {NotificationType} from './entities-enums';
 
 export class AttemptCheckResultDto {
+  comment?: string;
   features?: FeatureDto[];
   fileId?: number;
   id?: number;
@@ -27,7 +29,6 @@ readonly   formattedStartDate?: string;
   isLastAttempt?: boolean;
   isNewTryAllowed?: boolean;
   lesson?: LessonDto;
-readonly   remainingTimeSec?: number;
   startDate?: Date;
   status?: AttemptStatus;
 readonly   statusLocale?: string;
@@ -62,6 +63,24 @@ export class LessonDto {
   tasks?: TaskDto[];
   title?: string;
   traits?: TraitDto[];
+}
+
+export class NotificationDto {
+  attempt?: AttemptDto;
+  id?: number;
+  type?: NotificationType;
+}
+
+export class StudentRankingDto {
+  completeTaskCount?: number;
+  completeTimeSeconds?: number;
+readonly   completeTimeSecondsLocale?: string;
+  fullName?: string;
+  mark?: number;
+  rank?: number;
+  totalCompleteTimeSeconds?: number;
+readonly   totalCompleteTimeSecondsLocale?: string;
+  totalMark?: number;
 }
 
 export class SupplementDto {

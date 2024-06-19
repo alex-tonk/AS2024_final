@@ -8,11 +8,17 @@ export class TagStyleService {
 
   getStatusStyle(statusLocale: string) {
     switch (statusLocale) {
+      case 'Не пройдено':
+        return {...this.defaultStyle, backgroundColor: 'var(--border-color)'};
+      case 'Не прочитано':
+        return {...this.defaultStyle, backgroundColor: 'var(--border-color)'};
       case 'Взято в работу':
         return {...this.defaultStyle, backgroundColor: 'var(--border-color)'};
       case 'Отправлено на проверку':
         return {...this.defaultStyle, backgroundColor: '#009fe3'};
       case 'Проверено':
+        return {...this.defaultStyle, backgroundColor: 'var(--green-color)'};
+      case 'Прочитано':
         return {...this.defaultStyle, backgroundColor: 'var(--green-color)'};
       default:
         return this.defaultStyle;

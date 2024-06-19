@@ -1,10 +1,12 @@
-.img-container .img-wrapper {
-  max-width: 100%;
-  max-height: 100%;
+.img-wrapper {
+  margin: auto;
+  position: relative;
+  width: 920px;
+  height: 600px;
 }
 
-.img-wrapper {
-  position: relative;
+.img-wrapper img {
+  width: 100%;
 }
 
 .tutor-panel {
@@ -26,6 +28,11 @@
   transform: none;
   min-width: 25px;
   min-height: 25px;
+  cursor: pointer;
+}
+
+.drawing {
+  cursor: crosshair;
 }
 
 .feedback .border {
@@ -38,7 +45,7 @@
 }
 
 .feedback .border.hovered {
-  border-width: 10px;
+  border-color: black !important;
 }
 
 .feedback .border.error, #tutorSelection.error {
@@ -102,42 +109,40 @@
   background: aliceblue;
 }
 
-.zoom-in {
-  cursor: zoom-in;
-}
-
-.zoom-out {
-  cursor: zoom-out;
-}
-
 /* RESIZER */
 .ng-resizable-diagonal {
-  border-bottom: 20px solid #000 !important;
-  border-left: 20px solid transparent !important;
+  border-bottom: 16px solid #000 !important;
+  border-left: 16px solid transparent !important;
+  margin-right: -16px;
+  margin-bottom: -16px;
+  z-index: 999999999;
 }
 
 .feedback.warn .ng-resizable-diagonal {
-  border-bottom: 20px solid var(--yellow-color) !important;
-  border-left: 20px solid transparent !important;
+  border-bottom: 16px solid var(--yellow-color) !important;
+  border-left: 16px solid transparent !important;
 }
 
 .feedback.error .ng-resizable-diagonal {
-  border-bottom: 20px solid var(--red-color) !important;
-  border-left: 20px solid transparent !important;
+  border-bottom: 16px solid var(--red-color) !important;
+  border-left: 16px solid transparent !important;
 }
 
 .feedback .ng-resizable-diagonal {
-  border-bottom: 20px solid var(--primary-color) !important;
-  border-left: 20px solid transparent !important;
+  border-bottom: 16px solid var(--primary-color) !important;
+  border-left: 16px solid transparent !important;
 }
 
 .move-handler {
   text-align: right;
-  margin: 10px;
   font-size: larger;
   color: var(--primary-color);
   cursor: move;
   width: fit-content;
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  z-index: 999999999;
 }
 
 .feedback .move-handler.error {
@@ -150,4 +155,14 @@
 
 .display-none {
   display: none;
+}
+
+.control-panel {
+  width: 280px;
+  flex: none;
+  height: 100%;
+  padding: 5px;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
 }

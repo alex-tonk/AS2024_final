@@ -1,0 +1,8 @@
+.chart-content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+:Host ::ng-deep p-chart > div {
+  height: 100%;
+}

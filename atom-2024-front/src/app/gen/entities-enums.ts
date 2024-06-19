@@ -6,3 +6,9 @@ DIALOGUE = 'DIALOGUE',
 FAVORITE = 'FAVORITE'
 }
 
+export enum NotificationType {
+VALIDATION = 'VALIDATION',
+DONE = 'DONE',
+TIMEOUT = 'TIMEOUT'
+}
+

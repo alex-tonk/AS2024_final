@@ -9,6 +9,7 @@ import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.enums.Mark;
 import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,7 +44,7 @@ public class TaskReader {
         NumberExpression<BigDecimal> averageTime = Expressions.numberTemplate(BigDecimal.class, "function('getDifferenceSeconds', {0}, {1})", attempt.endDate, attempt.startDate).castToNum(BigDecimal.class).coalesce(BigDecimal.ZERO).avg().castToNum(BigDecimal.class).divide(BigDecimal.valueOf(60));
         NumberExpression<BigDecimal> NAT = averageTime.divide(task.time).castToNum(BigDecimal.class);
 
-        NumberExpression<BigDecimal> DS = Expressions.asNumber(BigDecimal.ONE).add(NAS.add(NNA).add(NTL).add(NAT));
+        NumberExpression<BigDecimal> DS = MathExpressions.round(Expressions.asNumber(BigDecimal.ONE).add(NAS.add(NNA).add(NTL).add(NAT)), 2);
 
         return queryFactory.from(task)
                 .leftJoin(attempt).on(attempt.task.id.eq(task.id).and(attempt.status.eq(AttemptStatus.DONE)))

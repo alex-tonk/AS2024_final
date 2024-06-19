@@ -63,7 +63,10 @@ export class LectureViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = (this.lesson?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
-    this.beautifiedContent = this.content.replaceAll('<br>', '\n');
+    this.beautifiedContent = this.content
+      .replaceAll(/!\[/g, '<br>![')
+      .replaceAll('<br><br>', '<br>')
+      .replaceAll('<br>', '\n');
   }
 
   ngAfterViewInit() {

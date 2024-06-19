@@ -38,14 +38,16 @@ public class Attempt {
 
     @Enumerated(EnumType.STRING)
     private Mark autoMark;
-    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL)
-    private List<AttemptCheckResult> autoCheckResults;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "attempt_auto_check_result", joinColumns = @JoinColumn(name = "attempt_id"), inverseJoinColumns = @JoinColumn(name = "attempt_check_result_id"))
+    private List<AttemptCheckResult> autoCheckResults = new ArrayList<>();
     private Boolean autoCheckFailed = false;
 
     @Enumerated(EnumType.STRING)
     private Mark tutorMark;
-    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AttemptCheckResult> tutorCheckResults;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "attempt_tutor_check_result", joinColumns = @JoinColumn(name = "attempt_id"), inverseJoinColumns = @JoinColumn(name = "attempt_check_result_id"))
+    private List<AttemptCheckResult> tutorCheckResults = new ArrayList<>();
     @Column(columnDefinition = "text")
     private String tutorComment;
 

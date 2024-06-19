@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TabViewModule} from 'primeng/tabview';
 import {UserListComponent} from '../admin-panel/user-list/user-list.component';
 import {VideoPlayerComponent} from '../../common/video-player/video-player.component';
@@ -23,6 +23,7 @@ import {TopicService} from '../../../gen/atom2024backend-controllers';
 import {TagModule} from 'primeng/tag';
 import {UserService} from '../../../services/user.service';
 import {DropdownModule} from 'primeng/dropdown';
+import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
 
 @Component({
   selector: 'app-student-cabinet',
@@ -49,12 +50,13 @@ import {DropdownModule} from 'primeng/dropdown';
     NgIf,
     ProgressBarModule,
     TagModule,
-    DropdownModule
+    DropdownModule,
+    AttemptComponent
   ],
   templateUrl: './student-cabinet.component.html',
   styleUrl: './student-cabinet.component.css'
 })
-export class StudentCabinetComponent implements OnInit {
+export class StudentCabinetComponent implements OnInit, OnDestroy {
   loading = false;
   activeIndex = 0;
 
@@ -69,6 +71,7 @@ export class StudentCabinetComponent implements OnInit {
     {value: 'tasks', label: 'По содержанию заданий'}
   ];
   filterOption = 'all';
+  topicRefreshInterval: number;
 
   get filteredCourses() {
     if (this.filterValue) {
@@ -96,6 +99,26 @@ export class StudentCabinetComponent implements OnInit {
 
   async ngOnInit() {
     await this.init();
+
+    this.topicRefreshInterval = setInterval(
+      async () => {
+        const topics = await lastValueFrom(this.topicService.getTopics());
+        let topicsById: {[key: number]: TopicDto} = {};
+        topics.reduce((prev, cur) => {
+          prev[cur.id!] = cur;
+          return prev;
+        }, topicsById);
+        this.topics.forEach(t => {
+          const newTopic = topicsById[t.id!];
+          if (newTopic != null) {
+            t.taskPassedCount = newTopic.taskPassedCount;
+          }
+        })
+      }, 5000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.topicRefreshInterval);
   }
 
   async init() {
@@ -125,4 +148,5 @@ export class StudentCabinetComponent implements OnInit {
   }
 
   protected readonly CoursePanelMode = CoursePanelMode;
+  protected readonly AttemptListMode = AttemptListMode;
 }

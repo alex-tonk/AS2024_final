@@ -10,11 +10,13 @@ import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TaskId;
 import com.prolegacy.atom2024backend.entities.ids.TopicId;
+import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -31,8 +33,15 @@ public class AttemptReader {
     @Autowired
     private JPAQueryFactory queryFactory;
 
-    public List<AttemptDto> getAttempts() {
-        return baseQuery().fetch();
+    public List<AttemptDto> getAttempts(Optional<UserId> userId, Optional<AttemptStatus> status) {
+        JPAQuery<AttemptDto> query = baseQuery();
+        if (userId.isPresent()) {
+            query = query.where(attempt.user.id.eq(userId.get()));
+        }
+        if (status.isPresent()) {
+            query = query.where(attempt.status.eq(status.get()));
+        }
+        return query.fetch();
     }
 
     public AttemptDto getLastAttempt(TopicId topicId, LessonId lessonId, TaskId taskId, UserId userId) {
@@ -138,6 +147,6 @@ public class AttemptReader {
                         AttemptDto.class,
                         UserReader.getFullName(attempt.user).as("user.fullName"),
                         UserReader.getShortName(attempt.user).as("user.shortName")
-                );
+                ).orderBy(attempt.id.desc().nullsLast());
     }
 }

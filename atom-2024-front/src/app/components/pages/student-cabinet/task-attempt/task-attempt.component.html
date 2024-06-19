@@ -1,5 +1,5 @@
 <p-dialog #dialog
-          header="Выполнение задания [Осталось: {{this.remainingTime ?? '-- мин.'}}]"
+          header="Выполнение задания [Осталось: {{this.remainingTime}}]"
           [style]="{width: '95%', height: '95%'}"
           [baseZIndex]="99"
           [autoZIndex]="false"
@@ -19,8 +19,15 @@
         <div style="text-align: center" *ngIf="task.time == null">
           Ограничение по времени отсутствует
         </div>
-        <!--TODO-->
-        <div style="text-align: center">СЛОЖНОСТЬ ЗАДАНИЯ</div>
+        <div style="padding-top: 1rem; text-align: center;" *ngIf="task.difficultyLocale != null">
+          <p-tag severity="secondary" pTooltip="Сложность"
+                 [rounded]="true"
+                 [style]="tagStyleService.getDifficultyStyle(task.difficultyLocale)">
+            <div>
+              {{ task.difficultyLocale }}
+            </div>
+          </p-tag>
+        </div>
       </div>
     </div>
     <div class="begin-attempt-button-wrapper">
@@ -35,16 +42,18 @@
          style="width: fit-content; position: absolute; right: 24px; transform: translate(-8px, 0px); display: flex; align-items: center; gap: 1em;">
       <div
         style="padding: 8px; display: inline-flex; align-items: center;">
+        <ng-container [ngTemplateOutlet]="searchBar"></ng-container>
         <span style="padding-right: 1rem;">Исходный вид</span>
         <p-inputSwitch [(ngModel)]="original" tooltipPosition="left"
                        pTooltip="По умолчанию показывается улучшенный вид"/>
       </div>
     </div>
-    <p-stepper [(activeStep)]="stepperIndex">
+    <p-stepper [(activeStep)]="stepperIndex" (activeStepChange)="subscribeToSearchBarEvents()">
       <p-stepperPanel header="Задание">
         <ng-template pTemplate="content">
           <div class="full-size" style="overflow: auto">
-            <markdown [data]="!original ? beautifiedContent : content"></markdown>
+            <markdown [markjsHighlight]="searchText$ | async"
+                      [markjsConfig]="searchConfig" [data]="!original ? beautifiedContent : content"></markdown>
           </div>
         </ng-template>
       </p-stepperPanel>
@@ -56,12 +65,15 @@
               <ng-template pTemplate="content">
                 <div
                   style="padding: 8px; display: inline-flex; align-items: center; position: absolute; right: 30px; top: 130px">
+                  <ng-container [ngTemplateOutlet]="searchBar"></ng-container>
                   <span style="padding-right: 1rem;">Исходный вид</span>
                   <p-inputSwitch [(ngModel)]="lessonOriginal"
                                  tooltipPosition="left"
                                  pTooltip="По умолчанию показывается улучшенный вид"/>
                 </div>
-                <markdown [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
+                <markdown [markjsHighlight]="searchText$ | async"
+                          [markjsConfig]="searchConfig"
+                          [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
                 </markdown>
               </ng-template>
             </p-tabPanel>
@@ -166,3 +178,9 @@
     </ng-container>
   </ng-template>
 </p-dialog>
+
+<ng-template #searchBar>
+  <p-button (click)="scrollToNextResult()"></p-button>
+  <p-button (click)="scrollToPrevResult()"></p-button>
+  <input placeholder="Найти" #search type="text">
+</ng-template>

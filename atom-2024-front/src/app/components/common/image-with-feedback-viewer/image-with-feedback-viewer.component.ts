@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {TooltipModule} from 'primeng/tooltip';
 import {NgForOf, NgIf, NgStyle} from '@angular/common';
 import {ImageModule} from 'primeng/image';
@@ -10,15 +10,11 @@ import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SplitterModule} from 'primeng/splitter';
 import {AngularDraggableModule, IPosition} from 'angular2-draggable';
-import {AttemptCheckResultDto, AttemptDto} from '../../../gen/atom2024backend-dto';
-import {lastValueFrom} from 'rxjs';
-import {AttemptService} from '../../../gen/atom2024backend-controllers';
+import {AttemptCheckResultDto, AttemptDto, AttemptFileDto, FeatureDto} from '../../../gen/atom2024backend-dto';
 import {MessageService} from 'primeng/api';
 import {ConfigService} from '../../../services/config.service';
-
-export enum FeedbackType {
-  COMMENT = 'COMMENT', WARN = 'WARN', ERROR = 'ERROR'
-}
+import {SliderModule} from 'primeng/slider';
+import {MultiSelectModule} from 'primeng/multiselect';
 
 @Component({
   selector: 'app-image-with-feedback-viewer',
@@ -37,20 +33,28 @@ export enum FeedbackType {
     InputTextareaModule,
     SplitterModule,
     AngularDraggableModule,
-    NgStyle
+    NgStyle,
+    SliderModule,
+    MultiSelectModule
   ],
   templateUrl: './image-with-feedback-viewer.component.html',
   styleUrl: './image-with-feedback-viewer.component.css'
 })
 export class ImageWithFeedbackViewerComponent implements OnInit {
   @Input() isTutorMode = true;
-  @Input() attemptId: number;
-  attempt: AttemptDto;
+  @Input() attempt: AttemptDto;
+  @Input() file: AttemptFileDto;
+  @Input() features: FeatureDto[];
+
+  @Output() onNewErrorAdded = new EventEmitter<any>();
+
   loading = false;
   baseUrl: string;
 
+  zoomValue = 100;
+  noAutoErrors = false;
+
   @ViewChild('imgWrapper') imgWrapper: ElementRef;
-  creatingFeedbackType: FeedbackType;
 
   scaleCoefficient = 1;
   imgSource: HTMLImageElement;
@@ -62,7 +66,6 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   lastCoordinates = {x1: 0, y1: 0, x2: 0, y2: 0};
   hoveredFeedback: any;
 
-  fileIds = [102, 101];
   results: any [];
   resultsAIBackup: AttemptCheckResultDto[];
 
@@ -73,10 +76,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     this.calculateStyles();
   }
 
-  protected readonly FeedbackType = FeedbackType;
-
   constructor(
-    private attemptService: AttemptService,
     private messageService: MessageService,
     private configService: ConfigService,
   ) {
@@ -90,20 +90,14 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     this.imgSource = imgSource;
     await this.init();
     this.calculateStyles();
-    this.setInitialOffset();
   }
 
   async init() {
     this.loading = true;
     try {
-      this.attempt = await lastValueFrom(this.attemptService.getAttempt(this.attemptId));
-      if (!this.attempt) {
-        this.messageService.add({severity: 'error', summary: 'Внимание', detail: 'Работа не найдена в БД'});
-      } else {
-        this.prepareData();
-        if (this.attempt.autoCheckResults) {
-          this.resultsAIBackup = this.attempt.autoCheckResults?.map(r => r);
-        }
+      this.prepareData();
+      if (this.attempt.autoCheckResults) {
+        this.resultsAIBackup = this.attempt.autoCheckResults?.map(r => r);
       }
     } finally {
       this.loading = false;
@@ -112,43 +106,29 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   prepareData() {
     this.results = [];
-    if (this.attempt.autoStatus === 'В обработке') {
-      this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Система ИИ все еще проверяет работу'});
-    }
-    if (!this.attempt.autoCheckResults || this.attempt.autoCheckResults.length === 0) {
-      this.messageService.add({severity: 'info', summary: 'Внимание', detail: 'Система ИИ не нашла ошибок в работе'});
+    if (!this.attempt.autoCheckResults || this.attempt.autoCheckResults.filter(r => r.fileId === this.file.fileId).length === 0) {
+      this.noAutoErrors = true;
     } else {
-      this.attempt.autoCheckResults.forEach(r => {
-        this.results.push(
-          {
-            x1: r.x1!,
-            y1: r.y1!,
-            x2: r.x2!,
-            y2: r.y2!,
-            features: r.features ? r.features.map(f => f) : [],
-            type: FeedbackType.ERROR,
-            file: this.attempt.files!.find(f => f.id === r.fileId),
-            style: {},
-            isEditing: true,
-            tutorComment: '',
-            initialTop: 0,
-            initialLeft: 0
-          })
-      })
+      this.results = this.attempt.tutorCheckResults = this.attempt.autoCheckResults
+        .filter(r => r.fileId === this.file.fileId);
+      this.results.forEach(r => {
+        r.comment =  r.isAutomatic ? 'Дефект найденный ИИ' : r.comment;
+      });
     }
-
   }
 
-  addFeedback(type: FeedbackType) {
-    this.creatingFeedbackType = type;
+  delete(feedback: any) {
+    const idx = this.results.findIndex(f => f === feedback);
+    this.results.splice(idx, 1);
+  }
+
+  addFeedback() {
     this.isDrawingNow = true;
     this.tutorSelectionDiv = document.getElementById('tutorSelection')!;
-  }
-
-  setInitialOffset() {
-    this.results.forEach(f => {
-      f.initialTop = this.getScaledPx(f.x1);
-      f.initialLeft = this.getScaledPx(f.x1);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Внимание',
+      detail: 'Выделите необходимую область на картинке'
     });
   }
 
@@ -159,11 +139,8 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   calculateStyle(feedback: any) {
     feedback.style = {
-      left: this.getScaledPx(feedback.x1) + 'px',
-      top: this.getScaledPx(feedback.y1) + 'px',
       width: this.getScaledPx(feedback.x2 - feedback.x1) + 'px',
       height: this.getScaledPx(feedback.y2 - feedback.y1) + 'px',
-      transform: 'none'
     }
   }
 
@@ -206,16 +183,16 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
       x2: this.getUnscaledPx(this.lastCoordinates.x2),
       y2: this.getUnscaledPx(this.lastCoordinates.y2),
       features: [],
-      type: this.creatingFeedbackType,
-      style: {},
-      isEditing: true,
+      isAutomatic: false,
+      fileId: this.file.fileId,
       comment: '',
-      initialTop: 0,
-      initialLeft: 0
+      style: {}
     };
     this.calculateStyle(newFeedback);
 
     this.results.push(newFeedback);
+    this.onNewErrorAdded.emit(newFeedback);
+
     this.tutorSelectionDiv.hidden = true;
     this.isDrawingNow = false;
   }
@@ -223,8 +200,8 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   onDragEndPro(feedback: any, event: IPosition) {
     const width = feedback.x2 - feedback.x1;
     const height = feedback.y2 - feedback.y1;
-    feedback.x1 = Math.floor(this.getUnscaledPx(event.x + feedback.initialLeft));
-    feedback.y1 = Math.floor(this.getUnscaledPx(event.y + feedback.initialTop));
+    feedback.x1 = Math.floor(this.getUnscaledPx(event.x));
+    feedback.y1 = Math.floor(this.getUnscaledPx(event.y));
     feedback.x2 = Math.floor(feedback.x1 + width);
     feedback.y2 = Math.floor(feedback.y1 + height);
 

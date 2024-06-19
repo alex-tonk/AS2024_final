@@ -161,7 +161,6 @@ export class UserListLazyComponent {
       }
       this.total = result.total!;
       // заполняем пачку данных
-      // TODO: мб чистить когда-нибудь?
       Array.prototype.splice.apply(this.users, [event.first, event.rows, ...loadedUsers]);
       event.forceUpdate();
     } finally {

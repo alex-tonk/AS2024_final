@@ -2,13 +2,13 @@ package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.common.auth.entities.User;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
-import com.prolegacy.atom2024backend.common.auth.repositories.UserRepository;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
 import com.prolegacy.atom2024backend.dto.AttemptCheckResultDto;
 import com.prolegacy.atom2024backend.dto.AttemptDto;
 import com.prolegacy.atom2024backend.dto.AttemptFileDto;
 import com.prolegacy.atom2024backend.dto.FeatureDto;
 import com.prolegacy.atom2024backend.entities.*;
+import com.prolegacy.atom2024backend.entities.enums.NotificationType;
 import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.entities.ids.LessonId;
 import com.prolegacy.atom2024backend.entities.ids.TaskId;
@@ -18,10 +18,7 @@ import com.prolegacy.atom2024backend.enums.Mark;
 import com.prolegacy.atom2024backend.exceptions.AttemptNotFoundException;
 import com.prolegacy.atom2024backend.exceptions.TopicNotFoundException;
 import com.prolegacy.atom2024backend.readers.AttemptReader;
-import com.prolegacy.atom2024backend.repositories.AttemptRepository;
-import com.prolegacy.atom2024backend.repositories.FeatureRepository;
-import com.prolegacy.atom2024backend.repositories.FileRepository;
-import com.prolegacy.atom2024backend.repositories.TopicRepository;
+import com.prolegacy.atom2024backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -50,7 +47,7 @@ public class AttemptService {
     @Autowired
     private UserProvider userProvider;
     @Autowired
-    private UserRepository userRepository;
+    private NotificationRepository notificationRepository;
 
     @Autowired
     private FeatureRepository featureRepository;
@@ -113,6 +110,7 @@ public class AttemptService {
             throw new BusinessLogicException("Закончить можно только задания, находящиеся в работе");
 
         attempt.finish(Instant.now(), files);
+        notificationRepository.save(new Notification(attempt, NotificationType.VALIDATION));
         return attemptReader.getAttempt(attempt.getId());
     }
 
@@ -131,12 +129,13 @@ public class AttemptService {
 
         if (AttemptStatus.IN_PROGRESS.equals(attempt.getStatus()))
             throw new BusinessLogicException("Задание не было отправлено на проверку");
+        if (AttemptStatus.DONE.equals(attempt.getStatus()))
+            throw new BusinessLogicException("Данное задание уже было проверено");
 
         attempt.setTutorMark(
                 mark,
                 checkResults.stream()
                         .map(checkResult -> new AttemptCheckResult(
-                                attempt,
                                 checkResult.getFileId(),
                                 checkResult,
                                 featureRepository.findAllById(checkResult.getFeatures().stream().map(FeatureDto::getId).toList()))
@@ -144,6 +143,7 @@ public class AttemptService {
                         .toList(),
                 comment
         );
+        notificationRepository.save(new Notification(attempt, NotificationType.DONE));
         return attemptReader.getAttempt(attempt.getId());
     }
 
@@ -168,7 +168,6 @@ public class AttemptService {
             Optional.ofNullable(response.getBody()).ifPresent(attemptCheckResultDtos -> {
                 for (com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto : attemptCheckResultDtos) {
                     attemptCheckResults.add(new AttemptCheckResult(
-                            uncheckedAttempt,
                             file.getId(),
                             dto,
                             featureRepository.findAllByCodeIn(dto.getFeatures())
@@ -193,5 +192,6 @@ public class AttemptService {
     @Retryable
     public void autoFailAttempt(Attempt inProgressAttempt) {
         inProgressAttempt.failByTime();
+        notificationRepository.save(new Notification(inProgressAttempt, NotificationType.TIMEOUT));
     }
 }

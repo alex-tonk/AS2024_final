@@ -3,6 +3,7 @@ package com.prolegacy.atom2024backend.readers;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.QUser;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
+import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.common.auth.readers.UserReader;
 import com.prolegacy.atom2024backend.common.query.query.JPAQuery;
 import com.prolegacy.atom2024backend.common.query.query.JPAQueryFactory;
@@ -37,9 +38,13 @@ public class ChatReader {
     private static final QAttachment attachment = QAttachment.attachment;
     private static final QFile file = QFile.file;
     private static final QUser user = QUser.user;
+    private static final QUser member = new QUser("member");
 
     @Autowired
     private JPAQueryFactory queryFactory;
+
+    @Autowired
+    private UserProvider userProvider;
 
     public ChatDto getChat(ChatId chatId) {
         ChatDto chat = baseQuery().where(ChatReader.chat.id.eq(chatId)).fetchFirst();
@@ -122,11 +127,15 @@ public class ChatReader {
                 );
     }
 
-    private static StringExpression getChatNameExpression() {
+    private StringExpression getChatNameExpression() {
         return Expressions.cases()
                 .when(chat.type.eq(ChatType.FAVORITE)).then(Chat.FAVORITE)
-                // TODO: get other person's name
-                // .when(chat.type.eq(ChatType.DIALOGUE)).then()
+                .when(chat.type.eq(ChatType.DIALOGUE)).then(
+                        queryFactory.from(member)
+                                .where(chat.members.any().id.eq(member.id))
+                                .where(member.id.ne(userProvider.get().getId()))
+                                .select(UserReader.getFullName(member).max())
+                )
                 .otherwise(chat.name);
     }
 }

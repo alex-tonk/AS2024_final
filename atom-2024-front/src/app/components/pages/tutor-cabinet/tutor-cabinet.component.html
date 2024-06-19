@@ -1,24 +1,12 @@
 <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex">
   <p-tabPanel header="Все задания" leftIcon="pi pi-list-check">
     <ng-template pTemplate="content">
-      <app-attempt></app-attempt>
+      <app-attempt [mode]="AttemptListMode.TUTOR"></app-attempt>
     </ng-template>
   </p-tabPanel>
   <p-tabPanel header="Учебные материалы" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
-
-    </ng-template>
-  </p-tabPanel>
-
-  <p-tabPanel header="Статистика" leftIcon="pi pi-chart-bar">
-    <ng-template pTemplate="content">
-
-    </ng-template>
-  </p-tabPanel>
-
-  <p-tabPanel header="Рейтинг обучающихся" leftIcon="pi pi-star">
-    <ng-template pTemplate="content">
-
+<!--TODO-->
     </ng-template>
   </p-tabPanel>
 </p-tabView>

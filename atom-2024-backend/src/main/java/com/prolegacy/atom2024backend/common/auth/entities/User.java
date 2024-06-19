@@ -1,5 +1,6 @@
 package com.prolegacy.atom2024backend.common.auth.entities;
 
+import com.google.common.base.Strings;
 import com.prolegacy.atom2024backend.common.auth.dto.UserDto;
 import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.exceptions.BusinessLogicException;
@@ -76,10 +77,14 @@ public class User {
     }
 
     public void update(@NonNull UserDto userDto, String newEncodedPassword) {
-        this.firstname = Optional.ofNullable(userDto.getFirstname())
-                .orElseThrow(() -> new BusinessLogicException("Отсутствует имя"));
-        this.lastname = Optional.ofNullable(userDto.getLastname())
-                .orElseThrow(() -> new BusinessLogicException("Отсутствует фамилия"));
+        if (Strings.isNullOrEmpty(userDto.getFirstname())) {
+            throw new BusinessLogicException("Отсутствует имя");
+        }
+        this.firstname = userDto.getFirstname();
+        if (Strings.isNullOrEmpty(userDto.getLastname())) {
+            throw new BusinessLogicException("Отсутствует фамилия");
+        }
+        this.lastname = userDto.getLastname();
         this.surname = userDto.getSurname();
         this.phoneNumber = userDto.getPhoneNumber();
         Optional.ofNullable(newEncodedPassword).ifPresent(this::setPassword);
@@ -116,7 +121,7 @@ public class User {
             shortName = shortName != null ? firstname + " %s.".formatted(firstname.substring(0, 1))
                     : firstname;
         }
-        if (surname != null) {
+        if (!Strings.isNullOrEmpty(surname)) {
             shortName = shortName != null ? shortName + " %s.".formatted(surname.substring(0, 1))
                     : surname;
         }

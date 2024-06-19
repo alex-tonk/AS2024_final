@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
     this.loading = true;
     try {
       ExportTable.messageSerivce = this.messageService;
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 100));
     } finally {
       this.loading = false;
     }

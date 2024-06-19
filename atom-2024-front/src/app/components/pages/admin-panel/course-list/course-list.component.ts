@@ -129,7 +129,6 @@ export class CourseListComponent implements OnInit {
     }
     try {
       this.loading = true;
-      // TODO archive
       await this.getCoursesFromApi();
       this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Тема добавлена в архив'});
     } finally {
@@ -143,7 +142,6 @@ export class CourseListComponent implements OnInit {
     }
     try {
       this.loading = true;
-      // TODO unarchive
       await this.getCoursesFromApi();
       this.messageService.add({severity: 'success', summary: 'Выполнено', detail: 'Тема восстановлена из архива'});
     } finally {

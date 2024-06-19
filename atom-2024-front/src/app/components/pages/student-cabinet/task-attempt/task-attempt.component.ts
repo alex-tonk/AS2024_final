@@ -1,14 +1,14 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogModule} from 'primeng/dialog';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {MarkdownComponent, provideMarkdown} from 'ngx-markdown';
-import {NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
 import {MessageService, PrimeTemplate} from 'primeng/api';
 import {StepperModule} from 'primeng/stepper';
 import {AttemptDto, LessonDto, SupplementDto, TaskDto, TopicDto} from '../../../../gen/atom2024backend-dto';
 import {ConfigService} from '../../../../services/config.service';
 import {FileService} from '../../../../services/file.service';
-import {lastValueFrom} from 'rxjs';
+import {debounceTime, distinctUntilChanged, fromEvent, lastValueFrom, Observable, of} from 'rxjs';
 import FileSaver from 'file-saver';
 import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
@@ -22,6 +22,12 @@ import {UserListComponent} from '../../admin-panel/user-list/user-list.component
 import {TooltipModule} from 'primeng/tooltip';
 import {RouterLink} from '@angular/router';
 import {setInterval} from 'core-js';
+import {NgxMarkjsModule} from 'ngx-markjs';
+import {map} from 'rxjs/operators';
+import {MessageServiceKey} from '../../../../app.component';
+import {TagModule} from 'primeng/tag';
+import {getField} from '../../../../services/field-accessor';
+import {TagStyleService} from '../../../../services/tag-style-service';
 
 @Component({
   selector: 'app-task-attempt',
@@ -42,7 +48,11 @@ import {setInterval} from 'core-js';
     TabViewModule,
     UserListComponent,
     TooltipModule,
-    RouterLink
+    RouterLink,
+    AsyncPipe,
+    NgxMarkjsModule,
+    NgTemplateOutlet,
+    TagModule
   ],
   templateUrl: './task-attempt.component.html',
   styleUrl: './task-attempt.component.css',
@@ -51,6 +61,9 @@ import {setInterval} from 'core-js';
 export class TaskAttemptComponent implements OnInit, OnDestroy {
   @Input()
   formData: { topic: TopicDto, lesson: LessonDto, task: TaskDto };
+
+  @Input()
+  attemptId?: number;
 
   @Input()
   taskAttempt: AttemptDto;
@@ -83,19 +96,48 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
   remainingTimeInterval: number;
   remainingTime: string;
 
+  @ViewChild('search', {static: false}) searchElemRef: ElementRef | undefined;
+  searchText$: Observable<string | null> = of(null);
+  searchConfig = {separateWordSearch: false};
+
+  searchResults: HTMLCollectionOf<HTMLElement>;
+  currentResult = 0;
+
   constructor(private configService: ConfigService,
               private fileService: FileService,
               private messageService: MessageService,
-              private attemptService: AttemptService) {
+              private attemptService: AttemptService,
+              protected tagStyleService: TagStyleService) {
   }
 
   async ngOnInit() {
     this.loading = true;
     try {
       this.content = (this.task?.content ?? '').replaceAll('<baseUrl>', this.configService.baseUrl);
-      this.beautifiedContent = this.content.replaceAll('<br>', '\n');
-      this.lessonBeautifiedContent = this.lesson.content?.replaceAll('<br>', '\n')!;
-      const lastAttempt = await lastValueFrom(this.attemptService.getLastAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
+      this.beautifiedContent = this.content
+        .replaceAll(/!\[/g, '<br>![')
+        .replaceAll('<br><br>', '<br>')
+        .replaceAll('<br>', '\n');
+      this.lessonBeautifiedContent = this.lesson.content
+        ?.replaceAll(/!\[/g, '<br>![')
+        ?.replaceAll('<br><br>', '<br>')
+        ?.replaceAll('<br>', '\n')!;
+      let lastAttempt = await lastValueFrom(this.attemptService.getLastAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
+      if (this.attemptId != null) {
+        const attempt = await lastValueFrom(this.attemptService.getAttempt(this.attemptId));
+        if (attempt == null || attempt.status !== AttemptStatus.IN_PROGRESS) {
+          this.messageService.add({
+            key: MessageServiceKey.OK,
+            sticky: true,
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Попытка уже завершена'
+          });
+          this.taskAttemptClose.emit();
+          return;
+        }
+        lastAttempt = attempt;
+      }
       // TODO: viewAttempt after check
       if (lastAttempt != null && lastAttempt.status === AttemptStatus.IN_PROGRESS) {
         this.taskAttempt = lastAttempt;
@@ -104,9 +146,29 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
       this.remainingTimeInterval = setInterval(() => {
         this.remainingTime = this.taskAttempt?.status === AttemptStatus.IN_PROGRESS ? this.calcRemainingTime(this.taskAttempt) : `${this.task.time} мин.`;
       }, 1);
+      this.subscribeToSearchBarEvents();
     } finally {
       this.loading = false;
     }
+  }
+
+  subscribeToSearchBarEvents() {
+    setTimeout(() => {
+      if (!this.searchElemRef?.nativeElement) return;
+
+      this.searchText$ = fromEvent<Event>(this.searchElemRef?.nativeElement, 'keyup').pipe(
+        map((e: Event) => {
+          setTimeout(() => {
+            this.searchResults = document.getElementsByTagName('mark');
+            this.currentResult = -1;
+            this.scrollToPrevResult();
+          }, 350);
+          return (e.target as HTMLInputElement).value;
+        }),
+        debounceTime(300),
+        distinctUntilChanged()
+      );
+    });
   }
 
   ngOnDestroy() {
@@ -216,4 +278,21 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
     const seconds = diffSecs - minutes * 60;
     return `${minutes.toString()} мин. ${seconds.toFixed(0)} сек.`;
   }
+
+  scrollToPrevResult() {
+    this.searchResults.item(this.currentResult)?.classList.remove('current-mark');
+    this.currentResult = (this.currentResult + 1) % this.searchResults.length;
+    this.searchResults.item(this.currentResult)?.classList.add('current-mark');
+    this.searchResults.item(this.currentResult)?.scrollIntoView({behavior: 'smooth'});
+  }
+
+  scrollToNextResult() {
+    this.searchResults.item(this.currentResult)?.classList.remove('current-mark');
+    this.currentResult = this.currentResult - 1;
+    if (this.currentResult < 0) this.currentResult += this.searchResults.length;
+    this.searchResults.item(this.currentResult)?.classList.add('current-mark');
+    this.searchResults.item(this.currentResult)?.scrollIntoView({behavior: 'smooth'});
+  }
+
+  protected readonly getField = getField;
 }

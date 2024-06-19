@@ -2,7 +2,8 @@ import {RoleDto} from '../models/RoleDto';
 import {UserDto} from '../models/UserDto';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {AttemptDto, LessonDto, TopicDto} from './atom2024backend-dto';
+import {AttemptDto, FeatureDto, LessonDto, NotificationDto, StudentRankingDto, TaskDto, TopicDto} from './atom2024backend-dto';
+import {AttemptStatus} from './atom2024backend-enums';
 import {ChatDto, MessageDto} from './dto-chat';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {PageResponse} from './query-lazy';
@@ -29,8 +30,20 @@ export class AttemptService {
     return this.httpService.get<AttemptDto>('attempts/' + attemptId + '', {responseType: 'json'});
   }
 
- public getAttempts(): Observable<AttemptDto[]>  {
-    return this.httpService.get<AttemptDto[]>('attempts', {responseType: 'json'});
+ public getAttempts(userId: number | null, status: AttemptStatus | null): Observable<AttemptDto[]>  {
+    const queryParamsList: { name: string, value: string }[] = [];
+    if (userId !== undefined && userId !== null) {
+      queryParamsList.push({name: 'userId', value: userId.toString()});
+    }
+
+    if (status !== undefined && status !== null) {
+      queryParamsList.push({name: 'status', value: status.toString()});
+    }
+    let params = new HttpParams();
+    for (const queryParam of queryParamsList) {
+      params = params.append(queryParam.name, queryParam.value);
+    }
+    return this.httpService.get<AttemptDto[]>('attempts', {params, responseType: 'json'});
   }
 
  public getLastAttempt(topicId: number, lessonId: number, taskId: number): Observable<AttemptDto>  {
@@ -94,12 +107,79 @@ export class ChatService {
 @Injectable({
 providedIn:'root'
 })
+export class FeatureService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+ public getFeatures(): Observable<FeatureDto[]>  {
+    return this.httpService.get<FeatureDto[]>('features', {responseType: 'json'});
+  }
+
+}
+
+@Injectable({
+providedIn:'root'
+})
 export class LessonService {
   httpService: HttpClient;
 
 
  public constructor(httpService: HttpClient) {
     this.httpService = httpService;
+  }
+
+}
+
+@Injectable({
+providedIn:'root'
+})
+export class NotificationService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+ public getNewNotifications(lastReadNotificationId: number): Observable<NotificationDto[]>  {
+    const queryParamsList: { name: string, value: string }[] = [];
+    queryParamsList.push({name: 'lastReadNotificationId', value: lastReadNotificationId.toString()});
+      let params = new HttpParams();
+    for (const queryParam of queryParamsList) {
+      params = params.append(queryParam.name, queryParam.value);
+    }
+    return this.httpService.get<NotificationDto[]>('notifications', {params, responseType: 'json'});
+  }
+
+}
+
+@Injectable({
+providedIn:'root'
+})
+export class StatisticsService {
+  httpService: HttpClient;
+
+
+ public constructor(httpService: HttpClient) {
+    this.httpService = httpService;
+  }
+
+ public getStudentRankings(onSum: boolean, topicId: number | null): Observable<StudentRankingDto[]>  {
+    const queryParamsList: { name: string, value: string }[] = [];
+    queryParamsList.push({name: 'onSum', value: onSum.toString()});
+  
+    if (topicId !== undefined && topicId !== null) {
+      queryParamsList.push({name: 'topicId', value: topicId.toString()});
+    }
+    let params = new HttpParams();
+    for (const queryParam of queryParamsList) {
+      params = params.append(queryParam.name, queryParam.value);
+    }
+    return this.httpService.get<StudentRankingDto[]>('statistics/students', {params, responseType: 'json'});
   }
 
 }
@@ -123,6 +203,10 @@ export class TaskService {
       params = params.append(queryParam.name, queryParam.value);
     }
     return this.httpService.get<LessonDto[]>('tasks', {params, responseType: 'json'});
+  }
+
+ public getTasksWithStats(): Observable<TaskDto[]>  {
+    return this.httpService.get<TaskDto[]>('tasks/stats', {responseType: 'json'});
   }
 
 }

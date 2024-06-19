@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {SurveyAttemptAnswerDto, SurveyQuestionDto} from '../gen/survey-dto';
-import {SurveyQuestionType} from '../gen/survey-enums';
 import {
   CheckboxSurveyQuestionAnswerMeta,
   NumberSurveyQuestionAnswerMeta,
@@ -11,6 +9,8 @@ import {
   StringSurveyQuestionCorrectAnswerMeta
 } from '../models/SurveyQuestionMeta';
 import {ConfigService} from './config.service';
+import {SurveyAttemptAnswerDto, SurveyQuestionDto} from '../models/survey-dto';
+import { SurveyQuestionType } from '../models/survey-enums';
 
 @Injectable({
   providedIn: 'root'

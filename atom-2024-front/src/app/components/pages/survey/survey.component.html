@@ -1,0 +1,38 @@
+<div style="display: flex; flex-direction: column; height: 100%;">
+  <div class="survey-toolbar">
+    <p-button icon="pi pi-plus"
+              severity="success"
+              label="Создать тестирование"
+              (click)="createSurvey()">
+    </p-button>
+  </div>
+  <div style="flex: 1;">
+    <p-dataView [value]="surveys" [class.content-disabled]="loading">
+      <ng-template pTemplate="list" let-surveys>
+        <div class="survey-list-container">
+          <p-card *ngFor="let survey of surveys" [class]="'survey-card'">
+            <div class="h-flex" style="gap: 1rem">
+              <div class="h-flex" style="flex: 1">
+                <i class="pi pi-question-circle" style="font-size: 2rem; padding-right: 1rem"></i>
+                <div class="survey-label">
+                  {{survey.name}}
+                </div>
+              </div>
+
+              <div class="h-flex" style="flex: 1; justify-content: flex-end; gap: 8px;">
+
+              </div>
+              <div class="h-flex" style="justify-content: flex-end">
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </ng-template>
+    </p-dataView>
+  </div>
+</div>
+
+<app-survey-registration *ngIf="surveyRegistrationVisible"
+                         [surveyId]="surveyRegistrationId"
+                         (result)="onSurveyRegistrationResult($event)">
+</app-survey-registration>

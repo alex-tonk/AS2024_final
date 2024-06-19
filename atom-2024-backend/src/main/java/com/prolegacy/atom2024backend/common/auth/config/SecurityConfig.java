@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/authentication/restore-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/lessons/files/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tasks/files/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/surveys/files/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

@@ -20,6 +20,8 @@ import {AttemptStatus} from '../../../gen/atom2024backend-enums';
 import {KnobModule} from 'primeng/knob';
 import {UserService} from '../../../services/user.service';
 import {setInterval} from 'core-js';
+import {TagModule} from 'primeng/tag';
+import {TagStyleService} from '../../../services/tag-style-service';
 
 
 export enum CoursePanelMode {
@@ -44,7 +46,8 @@ export enum CoursePanelMode {
     CardModule,
     LectureViewComponent,
     TaskAttemptComponent,
-    KnobModule
+    KnobModule,
+    TagModule
   ],
   templateUrl: './course-panel.component.html',
   styleUrl: './course-panel.component.css'
@@ -72,6 +75,7 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
 
   taskAttemptVisible = false;
   taskTimersInterval: number;
+  backgroundRefreshInterval: number;
 
   remainingTimeByAttemptId: { [k: string]: string } = {};
 
@@ -94,19 +98,39 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
 
   constructor(
     private topicService: TopicService,
-    private userService: UserService
+    private userService: UserService,
+    protected tagStyleService: TagStyleService
   ) {
   }
 
   async ngOnInit() {
     await this.reload();
+    this.backgroundRefreshInterval = setInterval(
+      async () => {
+        let lessons;
+        if (this.mode === CoursePanelMode.STUDENT) {
+          lessons = await lastValueFrom(this.topicService.getTopicLessonsWithLastAttempts(this.topic.id!));
+        } else {
+          lessons = await lastValueFrom(this.topicService.getTopicLessons(this.topic.id!));
+        }
+        let attemptsByTaskId: { [key: string]: AttemptDto | undefined } = {};
+        attemptsByTaskId = lessons.flatMap(l => (l.tasks ?? []).map(t => ({lessonId: l.id!, taskId: t.id!, attempt: t.lastAttempt})))
+          .reduce((prev, cur) => {
+            if (cur != null) {
+              prev[cur.lessonId + '/' + cur.taskId] = cur.attempt;
+            }
+            return prev;
+          }, attemptsByTaskId);
+
+        this.lessons.flatMap(l => (l.tasks ?? []).map(t => ({lessonId: l.id!, task: t})))
+          .forEach(key => key.task.lastAttempt = attemptsByTaskId[key.lessonId + '/' + key.task.id!]);
+      }, 5000);
   }
 
   ngOnDestroy() {
     clearInterval(this.taskTimersInterval);
+    clearInterval(this.backgroundRefreshInterval);
   }
-
-  // TODO: почаше релоадить
 
   private async reload() {
     if (this.mode === CoursePanelMode.STUDENT) {
@@ -122,6 +146,10 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
         this.tasksByLesson[lesson.id!].push({title: task.title, lesson: lesson, task: task, type: 'task'});
       })
     });
+    this.restartTimeCalculation();
+  }
+
+  private restartTimeCalculation() {
     clearInterval(this.taskTimersInterval);
     this.remainingTimeByAttemptId = {};
     this.taskTimersInterval = setInterval(() => {
@@ -131,7 +159,7 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
             this.remainingTimeByAttemptId[attempt?.id?.toString() ?? ''] = this.calcRemainingTime(attempt!);
           });
       }
-    }, 1);
+    }, 1000);
   }
 
   openLectureOrTask(task: { title?: string, lesson: LessonDto, task?: TaskDto, type: 'task' | 'lecture' }) {
@@ -179,9 +207,6 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   async onTaskAttemptClose(needReload: boolean) {
     this.taskAttemptVisible = false;
     this.taskAttemptFormData = undefined;
-    if (needReload) {
-      await this.reload();
-    }
   }
 
   getDifficultLabel(val: number) {
@@ -208,7 +233,7 @@ export class CoursePanelComponent implements OnInit, OnDestroy {
   }
 
   private calcRemainingTime(attempt: AttemptDto) {
-    let diffSecs = attempt?.task?.time! * 60 - (new Date().getTime() - attempt?.startDate?.getTime()!) / 1000;
+    let diffSecs = Math.round(attempt?.task?.time! * 60 - (new Date().getTime() - attempt?.startDate?.getTime()!) / 1000);
     if (diffSecs < 0) diffSecs = 0;
     const minutes = Math.floor(diffSecs / 60);
     const seconds = diffSecs - minutes * 60;

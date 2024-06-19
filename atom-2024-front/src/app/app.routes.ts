@@ -14,6 +14,8 @@ import {
   ImageWithFeedbackViewerComponent
 } from './components/common/image-with-feedback-viewer/image-with-feedback-viewer.component';
 import {AttemptComponent} from './components/attempt/attempt.component';
+import {StatisticsComponent} from './components/pages/statistics/statistics.component';
+import {SurveyComponent} from './components/pages/survey/survey.component';
 
 export const routes: Routes = [
   {path: '', component: MainComponent},
@@ -31,5 +33,7 @@ export const routes: Routes = [
   {path: 'chat', component: ChatComponent},
   {path: 'images', component: ImageWithFeedbackViewerComponent},
   {path: 'attempts', component: AttemptComponent},
+  {path: 'statistics', component: StatisticsComponent},
+  {path: 'surveys', component: SurveyComponent},
   {path: '**', redirectTo: ''}
 ];

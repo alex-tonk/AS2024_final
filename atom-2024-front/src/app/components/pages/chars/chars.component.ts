@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ChartModule} from "primeng/chart";
-import {ButtonModule} from "primeng/button";
-import {TooltipModule} from "primeng/tooltip";
-import html2canvas from "html2canvas";
+import {ChartModule} from 'primeng/chart';
+import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
+import html2canvas from 'html2canvas';
+import {TaskService} from '../../../gen/atom2024backend-controllers';
+import {lastValueFrom} from 'rxjs';
+import {TabViewModule} from 'primeng/tabview';
 
 @Component({
   selector: 'app-chars',
@@ -10,7 +13,8 @@ import html2canvas from "html2canvas";
   imports: [
     ChartModule,
     ButtonModule,
-    TooltipModule
+    TooltipModule,
+    TabViewModule
   ],
   templateUrl: './chars.component.html',
   styleUrl: './chars.component.css'
@@ -20,18 +24,30 @@ export class CharsComponent implements OnInit {
 
   basicOptions: any;
 
-  ngOnInit() {
+  constructor(private taskService: TaskService) {
+  }
+
+  async ngOnInit() {
+    let taskDtos = await lastValueFrom(this.taskService.getTasksWithStats());
+
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     this.basicData = {
-      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      labels: taskDtos.map(t => t.code),
       datasets: [
         {
-          label: 'Sales',
-          data: [540, 325, 702, 620],
+          label: 'Сложность',
+          data: taskDtos.map(t => t.difficulty),
+          backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+          borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+          borderWidth: 1
+        },
+        {
+          label: 'Сложность (фактическая)',
+          data: taskDtos.map(t => t.difficultyScore),
           backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
           borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
           borderWidth: 1

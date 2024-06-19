@@ -15,7 +15,7 @@ import {
 } from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
 import {SplitterModule} from 'primeng/splitter';
 import {CoursePanelComponent} from '../../forms/course-panel/course-panel.component';
-import {AttemptComponent} from '../../attempt/attempt.component';
+import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
 
 @Component({
   selector: 'app-tutor-cabinet',
@@ -49,4 +49,6 @@ export class TutorCabinetComponent implements OnInit {
 
   async ngOnInit() {
   }
+
+    protected readonly AttemptListMode = AttemptListMode;
 }

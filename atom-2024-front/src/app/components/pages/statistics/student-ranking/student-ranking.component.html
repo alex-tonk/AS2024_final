@@ -1,0 +1,121 @@
+<p-table #table [value]="rankings" [scrollable]="true" scrollHeight="flex" sortMode="multiple"
+         [loading]="loading"
+         [selectionMode]="'single'"
+         [(selection)]="selectedRanking"
+         [globalFilterFields]="columnFields"
+         (onFilter)="selectedRanking=undefined"
+         [resizableColumns]="true"
+         [columns]="columns"
+         [reorderableColumns]="true"
+         [virtualScroll]="true"
+         [virtualScrollItemSize]="55"
+         styleClass="p-datatable-gridlines"
+         dataKey="id">
+  <!--TABLE TOOLBAR-->
+  <ng-template pTemplate="caption">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+
+        <p-button pTooltip="Обновить таблицу" icon="pi pi-sync" (click)="getRankingsFromApi()"
+                  styleClass="button-primary"></p-button>
+        <p-button pTooltip="Показать / Скрыть фильтры" icon="pi pi-filter" (click)="filter=!filter"
+                  styleClass="button-primary"></p-button>
+
+        <div class="splitter"></div>
+
+        <p-button pTooltip="Печать" icon="pi pi-print" (click)="menu.toggle($event)" severity="success"></p-button>
+
+        <div class="splitter"></div>
+
+        <div>
+          Рейтинг по&nbsp;
+          <p-dropdown
+            [options]="rankingOptions"
+            [(ngModel)]="onSum"
+          (onChange)="getRankingsFromApi()"/>
+        </div>
+      </div>
+
+      <div class="table-toolbar-right">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input #globalSearch pInputText type="text" placeholder="Быстрый поиск"
+                   (input)="table.filterGlobal(globalSearch.value, 'contains')"/>
+        </span>
+      </div>
+    </div>
+  </ng-template>
+
+  <!--TABLE COLUMNS-->
+  <ng-template pTemplate="header">
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" [pTooltip]="col.header" [showDelay]="1000"
+            pResizableColumn pReorderableColumn>
+          {{ col.header }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </ng-container>
+    </tr>
+    <!--TABLE FILTER-->
+    <tr *ngIf="filter">
+      <th *ngFor="let col of columns">
+        <app-column-filter-wrapper [column]="col"></app-column-filter-wrapper>
+      </th>
+    </tr>
+  </ng-template>
+
+  <!--TABLE DATA-->
+  <ng-template pTemplate="body" let-row>
+    <tr [pSelectableRow]="row">
+      <ng-container *ngFor="let col of columns">
+        @switch (col.type) {
+          @case ("boolean") {
+            <td style="text-align: center">
+              <p-checkbox [binary]="true" [readonly]="true" [style]="{pointerEvents: 'none'}"
+                          [(ngModel)]="row[col.fieldGetter ?? col.field]">
+              </p-checkbox>
+            </td>
+          }
+          @case ("date") {
+            <td style="text-align: center" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              {{ getField(row, col) }}
+            </td>
+          }
+          @case ("rank") {
+            <td style="text-align: left" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              <span>{{ getField(row, col) }}</span>
+              <i *ngIf="[1, 2, 3].includes(getField(row, col))" class="pi pi-crown"
+                 [style]="getCrownStyle(getField(row, col))"></i>
+            </td>
+          }
+          @default {
+            <td [class.cell-center]="col.field == 'id'" [pTooltip]="getField(row, col)" [showDelay]="1000">
+              {{ getField(row, col) }}
+            </td>
+          }
+        }
+      </ng-container>
+    </tr>
+  </ng-template>
+
+  <!--TABLE SUMMARY-->
+  <ng-template pTemplate="summary">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        Всего записей: {{ rankings.length }}
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="99">Ничего не найдено</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-menu #menu [model]="(ExportTable.exportMenu | async)!" [popup]="true"
+        (onShow)="ExportTable.showMenu(table, columns, rankings)"
+        appendTo="body">
+</p-menu>

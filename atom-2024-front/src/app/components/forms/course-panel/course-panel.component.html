@@ -43,31 +43,49 @@
                           времени: {{ remainingTimeByAttemptId[task.task.lastAttempt.id.toString()] }}
                         </div>
                         <ng-template #time>
-                          <div *ngIf="task.task.time"> Время выполнения: {{ task.task.time }} мин.</div>
+                          <div *ngIf="task.task.time && (task.task?.lastAttempt?.status  == null || task.task?.lastAttempt?.status == AttemptStatus.IN_PROGRESS)"> Время выполнения: {{ task.task.time }} мин.</div>
                         </ng-template>
-                        <p-knob [(ngModel)]="task.difficulty"
-                                [rangeColor]="getDifficultColor(task.difficulty)"
-                                [max]="5" [readonly]="true" [size]="50"
-                                [pTooltip]="getDifficultLabel(task.difficulty)"/>
-
-                        <div *ngIf="task.task.lastAttempt == null">
-                          Не пройдено
-                        </div>
-                        <div *ngIf="task.task.lastAttempt?.status == AttemptStatus.IN_PROGRESS">
-                          В процессе выполнения
+                        <div *ngIf="task.task?.difficultyLocale">
+                          <p-tag severity="secondary" pTooltip="Сложность" tooltipPosition="left"
+                                 [rounded]="true"
+                                 [style]="tagStyleService.getDifficultyStyle(task.task?.difficultyLocale)">
+                            <div>
+                              {{ task.task?.difficultyLocale }}
+                            </div>
+                          </p-tag>
                         </div>
 
-                        <!--TODO что тут должно происходить-->
-                        <div class="v-flex"
-                             *ngIf="task.lastSurveyAttempt != null && task.lastSurveyAttempt?.finishDate != null">
-                          <!--                        <div style="text-align: end; width: 100%;">{{getCorrectPercentage(survey)}}%</div>-->
-                          <!--                        <p-progressBar [color]="getCorrectPercentageColor(survey)" [showValue]="false"-->
-                          <!--                                       [value]="getCorrectPercentage(survey)" [style]="{width: '20rem', height: '1rem'}"/>-->
+                        <div>
+                          <p-tag severity="secondary" pTooltip="Статус" tooltipPosition="left"
+                                 [rounded]="true"
+                                 [style]="tagStyleService.getStatusStyle(task.task?.lastAttempt?.statusLocale ?? 'Не пройдено')">
+                            <div>
+                              {{ task.task?.lastAttempt?.statusLocale ?? 'Не пройдено' }}
+                            </div>
+                          </p-tag>
+                        </div>
+
+                        <div class="v-flex" *ngIf="task.task?.lastAttempt?.tutorMarkLocale">
+                          <p-tag severity="secondary" pTooltip="Оценка" tooltipPosition="left"
+                                 [rounded]="true"
+                                 [style]="tagStyleService.getMarkStyle(task.task?.lastAttempt?.tutorMarkLocale)">
+                            <div>
+                              {{ task.task?.lastAttempt?.tutorMarkLocale }}
+                            </div>
+                          </p-tag>
                         </div>
                       </ng-container>
 
                       <ng-template #lectureInfo>
-                        <div>{{ isWasOpened(task.lesson.id) ? 'Прочитано' : 'Не прочитано' }}</div>
+                        <div>
+                          <p-tag severity="secondary" pTooltip="Статус" tooltipPosition="left"
+                                 [rounded]="true"
+                                 [style]="tagStyleService.getStatusStyle(isWasOpened(task.lesson.id) ? 'Прочитано' : 'Не прочитано')">
+                            <div>
+                              {{ isWasOpened(task.lesson.id) ? 'Прочитано' : 'Не прочитано' }}
+                            </div>
+                          </p-tag>
+                        </div>
                       </ng-template>
                     </div>
                   </div>

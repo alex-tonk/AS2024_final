@@ -23,6 +23,7 @@ public class AttemptCheckResultDto {
     private BigDecimal y1;
     private BigDecimal x2;
     private BigDecimal y2;
+    private String comment;
 
     private List<FeatureDto> features;
 

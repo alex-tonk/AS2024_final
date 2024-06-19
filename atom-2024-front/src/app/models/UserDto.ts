@@ -13,6 +13,7 @@ export class UserDto {
   phoneNumber?: string;
   archived: boolean;
   fullName: string;
+  shortName: string;
   rolesAsString: string;
   tutorId?: number;
   studentId?: number;

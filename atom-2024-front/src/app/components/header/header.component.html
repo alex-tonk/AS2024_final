@@ -6,14 +6,19 @@
   <ng-container *ngIf="userService.user">
     <div class="group" style="width: 100%">
       <ng-container *ngIf="!isMobileMode">
-        <p-button label="Кабинет ученика" styleClass="button-clear"
+        <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет ученика" styleClass="button-clear"
                   routerLink="student-cabinet"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_tutor')" label="Кабинет наставника" styleClass="button-clear"
                   routerLink="tutor-cabinet"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
                   styleClass="button-clear" routerLink="admin-panel"></p-button>
-        <p-button label="КАРТИНКИ" styleClass="button-clear" routerLink="images"></p-button>
-        <p-button label="Чаты" styleClass="button-clear" routerLink="chat"></p-button>
+        <p-button label="Статистика" styleClass="button-clear" routerLink="statistics"></p-button>
+        <p-button label="Чаты" styleClass="button-clear" routerLink="chat">
+          <p-badge value="PRO" severity="warning" [style]="{marginRight: '5px'}"/>
+        </p-button>
+        <p-button label="Конструктор тестов" styleClass="button-clear" routerLink="surveys">
+          <p-badge value="PRO" severity="warning" [style]="{marginRight: '5px'}"/>
+        </p-button>
       </ng-container>
     </div>
 
@@ -27,7 +32,8 @@
       <ng-template #right>
         <div class="alert-wrapper" (click)="isAlertPanel = !isAlertPanel">
           <div>
-            <i class="pi pi-bell text-primary" [class.ring]="!!alertsCount" pTooltip="Уведомления" tooltipPosition="bottom"></i>
+            <i class="pi pi-bell text-primary" [class.ring]="alertsCount != '0'"
+               pTooltip="Уведомления" tooltipPosition="bottom"></i>
             <span class="badge-wrapper" pBadge [value]="alertsCount" [badgeDisabled]="!alertsCount"></span>
           </div>
         </div>
@@ -42,25 +48,36 @@
 
 <p-overlayPanel #op>
   <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
-    <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет ученика" styleClass="button-clear" routerLink="student-cabinet"
+    <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет ученика" styleClass="button-clear"
+              routerLink="student-cabinet"
               (click)="op.hide()"></p-button>
-    <p-button *ngIf="userService.hasRole('ROLE_tutor')" label="Кабинет наставника" styleClass="button-clear" routerLink="tutor-cabinet"
+    <p-button *ngIf="userService.hasRole('ROLE_tutor')" label="Кабинет наставника" styleClass="button-clear"
+              routerLink="tutor-cabinet"
               (click)="op.hide()"></p-button>
     <p-button *ngIf="userService.hasRole('ROLE_admin')" label="Панель управления"
               styleClass="button-clear" routerLink="admin-panel" (click)="op.hide()">
     </p-button>
-    <p-button icon="pi pi-user" label="Настройка аккаунта"
-              routerLink="user-panel" styleClass="button-clear" (click)="op.hide()">
+
+    <p-button label="Чаты" styleClass="button-clear" routerLink="chat">
+      <p-badge value="PRO" severity="warning" [style]="{marginRight: '5px'}"/>
+    </p-button>
+    <p-button label="Конструктор тестов" styleClass="button-clear" routerLink="surveys">
+      <p-badge value="PRO" severity="warning" [style]="{marginRight: '5px'}"/>
+    </p-button>
+
+    <p-button label="Статистика" styleClass="button-clear" routerLink="statistics" (click)="op.hide()"></p-button>
+    <p-button icon="pi pi-user" label="Настройка аккаунта" routerLink="user-panel" styleClass="button-clear"
+              (click)="op.hide()">
     </p-button>
     <p-button icon="pi pi-sign-out" label="Выйти" (click)="logout(); op.hide()" styleClass="button-filled"></p-button>
   </div>
 </p-overlayPanel>
 
-<p-sidebar [(visible)]="isAlertPanel" [position]="'right'">
+<p-sidebar [(visible)]="isAlertPanel" [position]="'right'" (onHide)="alerts = []">
   <ng-template pTemplate="header">
     <h3>Ваши уведомления</h3>
   </ng-template>
   <div *ngFor="let alert of alerts">
-    ✔ {{ alert }}
+    ✔ {{ alertMessage(alert) }}
   </div>
 </p-sidebar>

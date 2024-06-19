@@ -15,20 +15,32 @@
   <ng-template pTemplate="caption">
     <div class="table-toolbar">
       <div class="table-toolbar-left">
+        <ng-container *ngIf="mode == AttemptListMode.STUDENT">
+          <div> Мои задания</div>
+          <div class="splitter"></div>
+        </ng-container>
+
         <p-button pTooltip="Обновить таблицу" icon="pi pi-sync" (click)="getAttemptsFromApi()"
                   styleClass="button-primary"></p-button>
         <p-button pTooltip="Показать / Скрыть фильтры" icon="pi pi-filter" (click)="filter=!filter"
                   styleClass="button-primary"></p-button>
 
-        <div class="splitter"></div>
+        <ng-container *ngIf="mode == AttemptListMode.TUTOR">
+          <div class="splitter"></div>
+          <p-button [label]="selectedAttempt?.autoMark ? 'Уточнить оценку' : 'Проверить'"
+                    [icon]="selectedAttempt?.autoMark ? 'pi pi-check-square' : 'pi pi-check'"
+                    styleClass="button-primary" [disabled]="!selectedAttempt"
+                    (click)="checkAttempt()">
+          </p-button>
+        </ng-container>
 
-        <p-button pTooltip="Печать" icon="pi pi-print" (click)="menu.toggle($event)" severity="success"></p-button>
-
-        <div class="splitter"></div>
-        <p-button label="Проверить задание" icon="pi pi-filter"
-                  styleClass="button-primary" [disabled]="!selectedAttempt"
-                  (click)="checkAttempt()">
-        </p-button>
+        <ng-container *ngIf="mode == AttemptListMode.STUDENT">
+          <div class="splitter"></div>
+          <p-button *ngIf="selectedAttempt?.status == AttemptStatus.IN_PROGRESS"
+                    label="Выполнить" styleClass="button-primary"
+                    (click)="continueAttempt()">
+          </p-button>
+        </ng-container>
       </div>
 
       <div class="table-toolbar-right">
@@ -45,7 +57,8 @@
   <ng-template pTemplate="header">
     <tr>
       <ng-container *ngFor="let col of columns">
-        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" [pTooltip]="col.header" [showDelay]="1000" pResizableColumn pReorderableColumn>
+        <th [style]="{width: col.width+'%'}" [pSortableColumn]="col.field" [pTooltip]="col.header" [showDelay]="1000"
+            pResizableColumn pReorderableColumn>
           {{ col.header }}
           <p-sortIcon [field]="col.field"></p-sortIcon>
         </th>
@@ -160,8 +173,68 @@
           [closable]="true"
           [header]="'Проверка задания: ' + checkingAttempt.task?.title"
           [(visible)]="checkingDialogVisible"
+          appendTo="body"
           (onHide)="getAttemptsFromApi()">
-  <app-image-with-feedback-viewer [isTutorMode]="true"
-                                  [attemptId]="checkingAttemptId">
-  </app-image-with-feedback-viewer>
+  <p-tabView [scrollable]="true">
+    <p-tabPanel *ngFor="let file of checkingAttemptFiles" [header]="'Файл: ' + file.fileName">
+      <ng-template pTemplate="content">
+        <app-image-with-feedback-viewer [isTutorMode]="true"
+                                        [file]="file"
+                                        [features]="features"
+                                        [attempt]="checkingAttempt"
+                                        (onNewErrorAdded)="onTutorErrorAdded($event)">
+        </app-image-with-feedback-viewer>
+      </ng-template>
+    </p-tabPanel>
+  </p-tabView>
+
+  <p-footer [class.content-disabled]="loading">
+    <p-button [label]="loading ? 'Подождите...' : 'Выставить итоговую оценку'"
+              (click)="completeAttemptByTutor()"></p-button>
+    <p-button label="Отмена" styleClass="button-clear bordered"
+              (click)="checkingDialogVisible = false">
+    </p-button>
+  </p-footer>
+</p-dialog>
+
+<app-task-attempt *ngIf="taskAttemptVisible"
+                  [formData]="taskAttemptFormData!"
+                  [attemptId]="taskAttemptId"
+                  (taskAttemptClose)="onTaskAttemptClose()">
+</app-task-attempt>
+
+<p-dialog *ngIf="finalCheckingDialogVisible"
+          header="Завершение проверки"
+          [(visible)]="finalCheckingDialogVisible"
+          [resizable]="false"
+          [modal]="true" [style]="{maxWidth: '800px'}">
+  <form #resultForm="ngForm">
+    <div class="form-row">
+      <label class="required" style="width: 200px">Итоговая оценка:</label>
+      <p-dropdown name="tutorMark" [options]="tutorMarkOptions"
+                  [(ngModel)]="checkingAttempt.tutorMark"
+                  [style]="{width: '100%'}"
+                  appendTo="body" required>
+      </p-dropdown>
+    </div>
+    <div class="form-row">
+      <label style="width: 200px">Комментарий:</label>
+      <textarea pInputTextarea name="comment" placeholder="Введите итоговый комментарий, если хотите"
+                [(ngModel)]="checkingAttempt.tutorComment" [maxLength]="255" [autoResize]="true"
+                [rows]="1" style="width: 100%; max-height: 200px;">
+      </textarea>
+    </div>
+    <div class="form-row" style="gap: 5px">
+      Рекомендовать к повторному прохождению:
+      <p-checkbox name="isNewTryAllowed" [(ngModel)]="checkingAttempt.isNewTryAllowed" [binary]="true"></p-checkbox>
+    </div>
+  </form>
+
+  <p-footer [class.content-disabled]="loading">
+    <p-button [label]="loading ? 'Подождите...' : 'Завершить проверку'"
+              (click)="finalCompleteAttemptByTutor()"></p-button>
+    <p-button label="Отмена" styleClass="button-clear bordered"
+              (click)="finalCheckingDialogVisible = false">
+    </p-button>
+  </p-footer>
 </p-dialog>

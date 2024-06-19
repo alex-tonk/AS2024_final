@@ -26,7 +26,6 @@
                     <hr>
                     <div>{{ topic.description }}</div>
                     <p-footer>
-                      <!--TODO кол-во пройденного и прогресс-->
                       <div style="display: flex; flex-direction: column;">
                         <div style="width: 100%; text-align: end; font-size: smaller;">
                           Пройдено {{ topic.taskPassedCount }} из {{ topic.taskCount }}
@@ -59,9 +58,11 @@
         </ng-template>
 
         <ng-template pTemplate>
-          <div class="full-width-center" style="padding: 20px">
-            <!--TODO-->
-            <h4>Место для таблицы Жени</h4>
+          <div class="full-width-center" >
+            <app-attempt style="width: 100%; height: 100%"
+                         [mode]="AttemptListMode.STUDENT"
+                         [userId]="userService.user!.id">
+            </app-attempt>
           </div>
         </ng-template>
       </p-splitter>

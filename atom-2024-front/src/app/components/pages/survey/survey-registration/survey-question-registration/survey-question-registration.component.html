@@ -1,0 +1,190 @@
+<div style="padding: 0.5em;">
+  <form #form="ngForm">
+    <div class="form-row" style="align-items: flex-start">
+      <label class="required">Формулировка вопроса:</label>
+      <textarea
+        pInputTextarea
+        required
+        name="wording"
+        placeholder="Введите формулировку вопроса"
+        [rows]="1"
+        [autoResize]="true"
+        [(ngModel)]="question.wording">
+            </textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Иллюстрация:</label>
+      <p-fileUpload #fileUpload *ngIf="question?.fileId == null"
+                    mode="basic"
+                    [auto]="true"
+                    [customUpload]="true"
+                    [accept]="'image/*'"
+                    chooseLabel="Выберите файл"
+                    chooseIcon="pi pi-paperclip"
+                    (uploadHandler)="addSurveyQuestionFile($event, fileUpload)">
+      </p-fileUpload>
+      <div *ngIf="question?.fileId != null">
+        <div class="uploaded-file">
+          <span>{{question.fileName}}</span>
+          <i class="pi pi-download download-uploaded-file-icon clickable-icon" style="padding-left: 1.5rem" (click)="downloadSurveyQuestionFile()"></i>
+          <i class="pi pi-trash delete-uploaded-file-icon clickable-icon"  style="padding-left: 0.5rem" (click)="deleteSurveyQuestionFile()"></i>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="form-row" style="align-items: flex-start">
+      <label>Комментарий:</label>
+      <textarea
+        pInputTextarea
+        name="comment"
+        placeholder="Введите комментарий к вопросу"
+        [rows]="1"
+        [autoResize]="true"
+        [(ngModel)]="question.comment">
+            </textarea>
+    </div>
+
+    <div class="form-row">
+      <label class="required">Тип вопроса:</label>
+      <p-dropdown
+        appendTo="body"
+        name="type"
+        [showClear]="false"
+        [options]="surveyQuestionTypes"
+        [(ngModel)]="question.type"
+        (onChange)="onQuestionTypeChange($event)"/>
+    </div>
+
+    <div [ngSwitch]="question.type">
+
+      <div *ngSwitchCase="SurveyQuestionType.STRING" class="form-row">
+        <label class="required">Правильный(е) ответ(ы):</label>
+        <p-chips
+          [style]="{width: '100%'}"
+          required
+          name="stringCorrectAnswer"
+          placeholder="Введите один или несколько правильных ответов"
+          [(ngModel)]="question.correctAnswerMeta.correctAnswers"/>
+      </div>
+
+      <div *ngSwitchCase="SurveyQuestionType.NUMBER" class="form-row">
+        <label class="required">Правильный ответ:</label>
+        <p-inputNumber
+          [required]="true"
+          name="numberCorrectAnswer"
+          placeholder="Введите правильный ответ"
+          mode="decimal"
+          [maxlength]="16"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="10"
+          [(ngModel)]="question.correctAnswerMeta.answer"/>
+      </div>
+
+      <div *ngSwitchCase="SurveyQuestionType.RADIO_BUTTON" class="form-row" style="align-items: flex-start">
+        <label class="required">Варианты ответов:</label>
+        <div>
+          <div style="display: flex; flex-direction: column;">
+            <div *ngFor="let answer of question.meta.answers; let first = first; let last = last"
+                 class="p-input-icon-left p-input-icon-right">
+              <i class="pi pi-check-circle clickable-icon"
+                 [pTooltip]="isCorrectPredefinedAnswer(answer) ? 'Снять отметку верного ответа' : 'Отметить ответ как верный'"
+                 [class]="isCorrectPredefinedAnswer(answer) ? 'correct-answer' : 'incorrect-answer'"
+                 (click)="markAnswerAsCorrect(answer)"></i>
+              <input pInputText
+                     type="text"
+                     placeholder="Введите вариант ответа"
+                     [ngClass]="{'no-border-top no-rounded-border-top': !first, 'no-rounded-border-bottom': !last}"
+                     [style]="{width: '100%'}"
+                     [name]="'radioButtonAnswer' + answer.id"
+                     [(ngModel)]="answer.value"/>
+              <i class="pi pi-trash clickable-icon pi"
+                 style="color: var(--red-color)"
+                 pTooltip="Удалить вариант ответа"
+                 (click)="deletePredefinedAnswer(answer)"></i>
+            </div>
+            <div style="display: inline-flex; align-items: center; justify-content: flex-end; padding-top: 0.5em;">
+              <p-button icon="pi pi-plus"
+                        label="Добавить вариант ответа"
+                        severity="success"
+                        (click)="addPredefinedAnswer()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="SurveyQuestionType.CHECKBOX" class="form-row" style="align-items: flex-start">
+        <label class="required">Варианты ответов:</label>
+        <div>
+          <div style="display: flex; flex-direction: column;">
+            <div *ngFor="let answer of question.meta.answers; let first = first; let last = last"
+                 class="p-input-icon-left p-input-icon-right">
+              <i class="pi pi-check-circle clickable-icon"
+                 [pTooltip]="isCorrectPredefinedAnswer(answer) ? 'Снять отметку верного ответа' : 'Отметить ответ как верный'"
+                 [class]="isCorrectPredefinedAnswer(answer) ? 'correct-answer' : 'incorrect-answer'"
+                 (click)="markAnswerAsCorrect(answer)"></i>
+              <input pInputText
+                     type="text"
+                     placeholder="Введите вариант ответа"
+                     [ngClass]="{'no-border-top no-rounded-border-top': !first, 'no-rounded-border-bottom': !last}"
+                     [style]="{width: '100%'}"
+                     [name]="'radioButtonAnswer' + answer.id"
+                     [(ngModel)]="answer.value"/>
+              <i class="pi pi-trash clickable-icon pi"
+                 style="color: var(--red-color)"
+                 pTooltip="Удалить вариант ответа"
+                 (click)="deletePredefinedAnswer(answer)"></i>
+            </div>
+            <div style="display: inline-flex; align-items: center; justify-content: flex-end; padding-top: 0.5em;">
+              <p-button icon="pi pi-plus"
+                        label="Добавить вариант ответа"
+                        severity="success"
+                        (click)="addPredefinedAnswer()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="SurveyQuestionType.RANKING" class="form-row" style="align-items: flex-start">
+        <label class="required">Варианты ответов в правильном порядке:</label>
+        <div>
+          <div style="display: flex; flex-direction: column;">
+            <div *ngFor="let answer of question.meta.answers; let first = first; let last = last;"
+                 class="p-input-icon-left p-input-icon-right">
+              <i style="display: flex; flex-flow: row; gap: 0.5em;">
+                <i class="pi pi-chevron-circle-up clickable-icon"
+                   style="color: var(--primary-alfa-color)"
+                   (click)="movePredefinedAnswerInRanking(answer, 'up')"></i>
+                <i class="pi pi-chevron-circle-down clickable-icon"
+                   style="color: var(--primary-alfa-color)"
+                   (click)="movePredefinedAnswerInRanking(answer, 'down')"></i>
+              </i>
+              <input pInputText
+                     type="text"
+                     placeholder="Введите вариант ответа"
+                     [ngClass]="{'no-border-top no-rounded-border-top': !first, 'no-rounded-border-bottom': !last}"
+                     [style]="{width: '100%', paddingLeft: '3.5rem'}"
+                     [name]="'radioButtonAnswer' + answer.id"
+                     [(ngModel)]="answer.value"/>
+              <i class="pi pi-trash clickable-icon pi"
+                 style="color: var(--red-color)"
+                 pTooltip="Удалить вариант ответа"
+                 (click)="deletePredefinedAnswer(answer)"></i>
+            </div>
+            <div style="display: inline-flex; align-items: center; justify-content: flex-end; padding-top: 0.5em;">
+              <p-button icon="pi pi-plus"
+                        label="Добавить вариант ответа"
+                        severity="success"
+                        (click)="addPredefinedAnswer()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>

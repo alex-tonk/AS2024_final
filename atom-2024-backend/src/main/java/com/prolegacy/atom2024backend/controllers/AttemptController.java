@@ -2,9 +2,11 @@ package com.prolegacy.atom2024backend.controllers;
 
 import com.prolegacy.atom2024backend.common.annotation.TypescriptEndpoint;
 import com.prolegacy.atom2024backend.common.annotation.TypescriptIgnore;
+import com.prolegacy.atom2024backend.common.auth.entities.id.UserId;
 import com.prolegacy.atom2024backend.common.auth.providers.UserProvider;
 import com.prolegacy.atom2024backend.dto.AttemptDto;
 import com.prolegacy.atom2024backend.entities.ids.*;
+import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.readers.AttemptReader;
 import com.prolegacy.atom2024backend.services.AttemptService;
 import com.prolegacy.atom2024backend.services.FileUploadService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -77,7 +80,8 @@ public class AttemptController {
     }
 
     @GetMapping
-    public List<AttemptDto> getAttempts() {
-        return attemptReader.getAttempts();
+    public List<AttemptDto> getAttempts(@RequestParam Optional<UserId> userId,
+                                        @RequestParam Optional<AttemptStatus> status) {
+        return attemptReader.getAttempts(userId, status);
     }
 }

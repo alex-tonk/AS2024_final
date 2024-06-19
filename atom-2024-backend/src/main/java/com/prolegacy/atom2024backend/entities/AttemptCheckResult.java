@@ -20,10 +20,6 @@ public class AttemptCheckResult {
     @GeneratedValue(generator = "typed-sequence")
     private AttemptCheckResultId id;
 
-    @ManyToOne
-    @JoinColumn(name = "attempt_id")
-    private Attempt attempt;
-
     @Column(columnDefinition = "numeric(19, 6)")
     private BigDecimal x1;
     @Column(columnDefinition = "numeric(19, 6)")
@@ -33,8 +29,10 @@ public class AttemptCheckResult {
     @Column(columnDefinition = "numeric(19, 6)")
     private BigDecimal y2;
     private FileId fileId;
+    @Column(columnDefinition = "text")
+    private String comment;
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "attempt_check_results_features",
             joinColumns = @JoinColumn(name = "attempt_check_result_id"),
@@ -45,23 +43,21 @@ public class AttemptCheckResult {
     private Boolean isAutomatic;
 
     public AttemptCheckResult(
-            Attempt attempt,
             FileId fileId,
             AttemptCheckResultDto dto,
             List<Feature> features
     ) {
-        this.attempt = attempt;
         this.x1 = dto.getX1();
         this.y1 = dto.getY1();
         this.x2 = dto.getX2();
         this.y2 = dto.getY2();
         this.isAutomatic = dto.getIsAutomatic();
+        this.comment = dto.getComment();
         this.features = features;
         this.fileId = fileId;
     }
 
-    public AttemptCheckResult(Attempt attempt, FileId fileId, com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto, List<Feature> features) {
-        this.attempt = attempt;
+    public AttemptCheckResult(FileId fileId, com.prolegacy.atom2024backend.dto.integration.AttemptCheckResultDto dto, List<Feature> features) {
         this.x1 = dto.getArea().getX1();
         this.y1 = dto.getArea().getY1();
         this.x2 = dto.getArea().getX2();

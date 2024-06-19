@@ -36,7 +36,7 @@ public class InitialUserGenerator implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        var user = userRepository.findByEmail("animegamer666@gmail.com");
+        var user = userRepository.findByEmail("admin@admin.com");
         if (user.isPresent()) {
             return;
         }
@@ -63,9 +63,9 @@ public class InitialUserGenerator implements ApplicationRunner {
         userService.createUser(UserDto.builder()
                 .email("student@student.com")
                 .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("password")))
-                .firstname("О")
+                .firstname("О.")
                 .lastname("Обучающийся")
-                .surname("О")
+                .surname("О.")
                 .roles(new HashSet<>(List.of(new RoleDto(studentRole.getId(), null, null))))
                 .build()
         );
@@ -73,9 +73,9 @@ public class InitialUserGenerator implements ApplicationRunner {
         userService.createUser(UserDto.builder()
                 .email("tutor@tutor.com")
                 .password(Base64.getEncoder().encodeToString(DigestUtils.sha256("password")))
-                .firstname("Н")
+                .firstname("Н.")
                 .lastname("Наставник")
-                .surname("Н")
+                .surname("Н.")
                 .roles(new HashSet<>(List.of(new RoleDto(tutorRole.getId(), null, null))))
                 .build()
         );
