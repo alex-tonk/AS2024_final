@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile
       target: front
     environment:
-      baseUrl: http://localhost:8085
+      baseUrl: http://${REST_IP}:8085
       TZ: "Asia/Yekaterinburg"
     ports:
       - 4963:80
