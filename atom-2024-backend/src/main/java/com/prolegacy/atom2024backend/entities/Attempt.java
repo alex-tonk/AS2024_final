@@ -102,6 +102,7 @@ public class Attempt {
     }
 
     public void failByTime() {
+        endDate = Instant.now();
         status = AttemptStatus.DONE;
         tutorMark = Mark.FAILED;
         isNewTryAllowed = true;

@@ -167,7 +167,6 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
           });
         }
       }, 1000);
-      this.subscribeToSearchBarEvents();
     } finally {
       this.loading = false;
     }
@@ -248,6 +247,7 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
     try {
       this.taskAttempt = await lastValueFrom(this.attemptService.startNewAttempt(this.topic.id!, this.lesson.id!, this.task.id!));
       this.messageService.add({severity: 'info', summary: 'Внимание', detail: 'Вы начали выполнение задания'});
+      this.subscribeToSearchBarEvents();
     } finally {
       setTimeout(() => {
         this.loading = false
