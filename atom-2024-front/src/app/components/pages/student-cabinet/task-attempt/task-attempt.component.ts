@@ -166,7 +166,7 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
             detail: 'У вас осталось 2 минуты'
           });
         }
-      }, 1);
+      }, 1000);
       this.subscribeToSearchBarEvents();
     } finally {
       this.loading = false;
