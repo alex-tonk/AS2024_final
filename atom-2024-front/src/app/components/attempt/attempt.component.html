@@ -179,16 +179,17 @@
           [(visible)]="checkingDialogVisible"
           appendTo="body"
           (onHide)="getAttemptsFromApi()">
-  <p-tabView [scrollable]="true">
-    <p-tabPanel *ngFor="let file of checkingAttemptFiles" [header]="'Файл: ' + file.fileName">
-      <ng-template pTemplate="content">
+  <p-tabView [scrollable]="true" [(activeIndex)]="activeIndex">
+    <p-tabPanel #tabPanel *ngFor="let file of checkingAttemptFiles; index as index" [header]="'Файл: ' + file.fileName">
         <app-image-with-feedback-viewer [isTutorMode]="true"
                                         [file]="file"
                                         [features]="features"
                                         [attempt]="checkingAttempt"
+                                        [currentIndex]="index"
+                                        [activeIndex]="activeIndex"
+                                        [resultsAIBackup]="resultsAIBackup"
                                         (onNewErrorAdded)="onTutorErrorAdded($event)">
         </app-image-with-feedback-viewer>
-      </ng-template>
     </p-tabPanel>
   </p-tabView>
 

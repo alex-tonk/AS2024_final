@@ -15,7 +15,7 @@ export class TagStyleService {
       case 'Взято в работу':
         return {...this.defaultStyle, backgroundColor: 'var(--border-color)'};
       case 'Отправлено на проверку':
-        return {...this.defaultStyle, backgroundColor: '#009fe3'};
+        return {...this.defaultStyle, backgroundColor: 'rgba(0,159,227,0.75)'};
       case 'Проверено':
         return {...this.defaultStyle, backgroundColor: 'var(--green-color)'};
       case 'Прочитано':
@@ -30,7 +30,7 @@ export class TagStyleService {
       case 'Пропущено':
         return {...this.defaultStyle, backgroundColor: 'var(--border-color)'};
       case 'В обработке':
-        return {...this.defaultStyle, backgroundColor: '#009fe3'};
+        return {...this.defaultStyle, backgroundColor: 'rgba(0,159,227,0.75)'};
       case 'Ошибка':
         return {...this.defaultStyle, backgroundColor: 'var(--red-color)'};
       case 'Проверено':

@@ -14,20 +14,26 @@
            (mouseup)="onDrawEnd()">
         <div class="feedback" *ngFor="let feedback of results"
              [ngDraggable]="isTutorMode" [inBounds]="true" [bounds]="imgWrapper"
-             zIndex=1 zIndexMoving=999 [handle]="moveHandler"
+             zIndex=1 zIndexMoving=999
              [position]="{x: getScaledPx(feedback.x1), y: getScaledPx(feedback.y1)}"
              (endOffset)="onDragEndPro(feedback, $event)"
              [ngResizable]="isTutorMode"
+             (rzStop)="onResizeStop(feedback, $event)"
+             [rzContainment]="imgWrapper"
+             [rzAspectRatio]="true"
+             [preventDefaultEvent]="true"
              [style]="feedback.style"
-             [class.error]="true"
-             (click)="op.toggle($event)">
-          <div class="border"
+             [class.error]="true">
+          <div style="width: 100%; height: 100%" (click)="op.toggle($event)"></div>
+
+          <div #border class="border"
                [class.error]="true"
                [class.hovered]="hoveredFeedback == feedback"
           ></div>
 
-          <i #moveHandler class="pi pi-arrows-alt move-handler"
-             [class.error]="true"
+          <i class="pi pi-times remove-handler"
+             pTooltip="Удалить дефект"
+             [class.error]="true" (click)="delete(feedback); stopNativeEvent($event)"
              [class.display-none]="!isTutorMode"
           ></i>
 
@@ -67,11 +73,11 @@
           </p-overlayPanel>
         </div>
 
-        <div id="tutorSelection" [hidden]="true" [class.error]="true"></div>
+        <div [id]="'tutorSelection'+currentIndex" [hidden]="true" class="tutorSelection" [class.error]="true"></div>
 
         <img #imgSource [src]="baseUrl + '/tasks/files/' + file.fileId" alt="scan"
              (load)="onImageLoad(imgSource)"
-             style="pointer-events: none; user-select: none; opacity: 0.5">
+             style="pointer-events: none; user-select: none;">
       </div>
     </div>
 
@@ -85,9 +91,8 @@
              (mouseleave)="hoveredFeedback = null"
              (mouseenter)="onHoverFeedbackInList(feedback)">
           <div style="display: inline-flex; gap: 5px; padding: 5px">
-            <!--TODO реализовать сброс-->
             <i class="pi pi-trash" pTooltip="Удалить дефект" (click)="delete(feedback)"></i>
-            <i *ngIf="feedback.isAutomatic" class="pi pi-history"
+            <i *ngIf="feedback.isAutomatic" class="pi pi-history" (click)="restore(feedback)"
                pTooltip="Восстановить дефект до исходного состояния"></i>
           </div>
           <span style="width: 100%">
@@ -98,7 +103,7 @@
 
       <div style="width: 100%; padding: 10px">
         <div style="padding: 10px">Текущий масштаб {{ zoomValue }}%</div>
-        <p-slider [(ngModel)]="zoomValue" [max]="200" [min]="50"/>
+        <p-slider [(ngModel)]="zoomValue" [max]="200" [min]="100"/>
 
         <div style="display: inline-flex; gap: 5px; padding: 20px; justify-content: center; width: 100%">
           <p-button label="Добавить дефект"

@@ -8,7 +8,15 @@ import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
 import {MessageService, PrimeTemplate} from 'primeng/api';
 import {TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
-import {AttemptDto, AttemptFileDto, FeatureDto, LessonDto, TaskDto, TopicDto} from '../../gen/atom2024backend-dto';
+import {
+  AttemptCheckResultDto,
+  AttemptDto,
+  AttemptFileDto,
+  FeatureDto,
+  LessonDto,
+  TaskDto,
+  TopicDto
+} from '../../gen/atom2024backend-dto';
 import {Column} from '../common/table/Column';
 import {FormsModule} from '@angular/forms';
 import {ExportTable} from '../common/table/ExportTable';
@@ -59,6 +67,8 @@ import {MarkLocale} from '../../models/enum/locale/MarkLocale';
   styleUrl: './attempt.component.css'
 })
 export class AttemptComponent implements OnInit {
+  activeIndex = 0;
+  resultsAIBackup: AttemptCheckResultDto[];
 
   @Input()
   mode: AttemptListMode = AttemptListMode.TUTOR;
@@ -243,6 +253,13 @@ export class AttemptComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Внимание', detail: 'Работа не найдена в БД'});
         return;
       }
+      if (this.checkingAttempt.autoCheckResults && this.checkingAttempt.autoCheckResults.length > 0) {
+        this.resultsAIBackup = this.checkingAttempt.autoCheckResults.map(r => r)
+        this.resultsAIBackup.forEach(r => r.comment =  r.isAutomatic ? 'Дефект найденный ИИ' : r.comment);
+      }
+
+      this.checkingAttempt.tutorCheckResults = this.checkingAttempt.autoCheckResults ?? [];
+
       this.checkingAttemptFiles = this.checkingAttempt.files!;
       this.checkingDialogVisible = true;
     } finally {
@@ -273,11 +290,8 @@ export class AttemptComponent implements OnInit {
   }
 
   onTutorErrorAdded(newError: any) {
-    if (this.checkingAttempt.tutorCheckResults) {
-      this.checkingAttempt.tutorCheckResults.push(newError);
-    } else {
-      this.checkingAttempt.tutorCheckResults = [newError];
-    }
+    console.log('onAdded');
+    this.checkingAttempt.tutorCheckResults!.push(newError);
   }
 
   protected readonly AttemptListMode = AttemptListMode;

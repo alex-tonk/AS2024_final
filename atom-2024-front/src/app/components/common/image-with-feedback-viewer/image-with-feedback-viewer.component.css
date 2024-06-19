@@ -1,8 +1,8 @@
 .img-wrapper {
   margin: auto;
   position: relative;
-  width: 920px;
-  height: 600px;
+  width: 800px;
+  height: 460px;
 }
 
 .img-wrapper img {
@@ -45,18 +45,14 @@
 }
 
 .feedback .border.hovered {
-  border-color: black !important;
+  background: rgba(255, 69, 0, 0.63) !important;
 }
 
-.feedback .border.error, #tutorSelection.error {
-  border-color: var(--red-color);
+.feedback .border.error, .tutorSelection.error {
+  border-color: orangered;
 }
 
-.feedback .border.warn, #tutorSelection.warn {
-  border-color: var(--yellow-color);
-}
-
-#tutorSelection {
+.tutorSelection {
   border: 6px dotted var(--primary-color);
   position: absolute;
   background: rgba(255, 255, 255, 0.1);
@@ -124,7 +120,7 @@
 }
 
 .feedback.error .ng-resizable-diagonal {
-  border-bottom: 16px solid var(--red-color) !important;
+  border-bottom: 16px solid orangered !important;
   border-left: 16px solid transparent !important;
 }
 
@@ -133,24 +129,20 @@
   border-left: 16px solid transparent !important;
 }
 
-.move-handler {
+.remove-handler {
   text-align: right;
   font-size: larger;
   color: var(--primary-color);
   cursor: move;
   width: fit-content;
   position: absolute;
-  top: -16px;
-  right: -16px;
+  top: -18px;
+  right: -18px;
   z-index: 999999999;
 }
 
-.feedback .move-handler.error {
-  color: var(--red-color);
-}
-
-.feedback .move-handler.warn {
-  color: var(--yellow-color);
+.feedback .remove-handler.error {
+  color: orangered;
 }
 
 .display-none {
@@ -162,7 +154,7 @@
   flex: none;
   height: 100%;
   padding: 5px;
-  border-left: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
 }

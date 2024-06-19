@@ -41,6 +41,23 @@ import {MultiSelectModule} from 'primeng/multiselect';
   styleUrl: './image-with-feedback-viewer.component.css'
 })
 export class ImageWithFeedbackViewerComponent implements OnInit {
+  private _activeIndex: number;
+
+  @Input() get activeIndex(): number {
+    return this._activeIndex;
+  }
+
+  set activeIndex(value: number) {
+    this._activeIndex = value;
+    if (value === this.currentIndex && this.imgSource) {
+      this.onImageLoad(this.imgSource);
+    }
+    console.log(this.attempt);
+  }
+
+  @Input() currentIndex: number;
+  @Input() resultsAIBackup: AttemptCheckResultDto[];
+
   @Input() isTutorMode = true;
   @Input() attempt: AttemptDto;
   @Input() file: AttemptFileDto;
@@ -66,8 +83,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   lastCoordinates = {x1: 0, y1: 0, x2: 0, y2: 0};
   hoveredFeedback: any;
 
-  results: any [];
-  resultsAIBackup: AttemptCheckResultDto[];
+  results: any [] = [];
 
 
   // TODO Надо пофиксить ресайз, пока пофиг
@@ -93,27 +109,15 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   }
 
   async init() {
-    this.loading = true;
     try {
-      this.prepareData();
-      if (this.attempt.autoCheckResults) {
-        this.resultsAIBackup = this.attempt.autoCheckResults?.map(r => r);
+      if (!this.resultsAIBackup ||
+        this.resultsAIBackup.filter(r => r.fileId === this.file.fileId).length === 0) {
+        this.noAutoErrors = true;
+      } else {
+        this.results = this.attempt.tutorCheckResults!.filter(r => r.fileId === this.file.fileId);
       }
     } finally {
-      this.loading = false;
-    }
-  }
 
-  prepareData() {
-    this.results = [];
-    if (!this.attempt.autoCheckResults || this.attempt.autoCheckResults.filter(r => r.fileId === this.file.fileId).length === 0) {
-      this.noAutoErrors = true;
-    } else {
-      this.results = this.attempt.tutorCheckResults = this.attempt.autoCheckResults
-        .filter(r => r.fileId === this.file.fileId);
-      this.results.forEach(r => {
-        r.comment =  r.isAutomatic ? 'Дефект найденный ИИ' : r.comment;
-      });
     }
   }
 
@@ -122,9 +126,14 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     this.results.splice(idx, 1);
   }
 
+  restore(feedback: any) {
+    Object.assign(feedback, this.resultsAIBackup.find(f => f.id === feedback.id));
+    this.calculateStyles();
+  }
+
   addFeedback() {
     this.isDrawingNow = true;
-    this.tutorSelectionDiv = document.getElementById('tutorSelection')!;
+    this.tutorSelectionDiv = document.getElementById('tutorSelection' + this.currentIndex)!;
     this.messageService.add({
       severity: 'info',
       summary: 'Внимание',
@@ -224,6 +233,10 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
     this.tutorSelectionDiv.style.height = y4 - y3 + 'px';
 
     this.lastCoordinates = {x1: x3, y1: y3, x2: x4, y2: y4};
+  }
+
+  onResizeStop(feedback: any, event: any) {
+    feedback.style = event.size;
   }
 
   stopNativeEvent(event: MouseEvent) {
