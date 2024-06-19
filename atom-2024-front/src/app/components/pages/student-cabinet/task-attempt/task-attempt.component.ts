@@ -28,6 +28,7 @@ import {MessageServiceKey} from '../../../../app.component';
 import {TagModule} from 'primeng/tag';
 import {getField} from '../../../../services/field-accessor';
 import {TagStyleService} from '../../../../services/tag-style-service';
+import {InputTextModule} from 'primeng/inputtext';
 
 @Component({
   selector: 'app-task-attempt',
@@ -52,7 +53,8 @@ import {TagStyleService} from '../../../../services/tag-style-service';
     AsyncPipe,
     NgxMarkjsModule,
     NgTemplateOutlet,
-    TagModule
+    TagModule,
+    InputTextModule
   ],
   templateUrl: './task-attempt.component.html',
   styleUrl: './task-attempt.component.css',
@@ -145,6 +147,25 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
       }
       this.remainingTimeInterval = setInterval(() => {
         this.remainingTime = this.taskAttempt?.status === AttemptStatus.IN_PROGRESS ? this.calcRemainingTime(this.taskAttempt) : `${this.task.time} мин.`;
+        if (this.remainingTime === '0 мин. 0 сек.') {
+          this.messageService.add({
+            key: MessageServiceKey.OK,
+            sticky: true,
+            severity: 'error',
+            summary: 'Внимание',
+            detail: 'Задание было завершено автоматически по истечении времени'
+          });
+
+          this.visible = false;
+          this.taskAttemptClose.emit(!!this.taskAttempt);
+        }
+        if (this.remainingTime === '2 мин. 0 сек.') {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Внимание',
+            detail: 'У вас осталось 2 минуты'
+          });
+        }
       }, 1);
       this.subscribeToSearchBarEvents();
     } finally {
@@ -292,6 +313,20 @@ export class TaskAttemptComponent implements OnInit, OnDestroy {
     if (this.currentResult < 0) this.currentResult += this.searchResults.length;
     this.searchResults.item(this.currentResult)?.classList.add('current-mark');
     this.searchResults.item(this.currentResult)?.scrollIntoView({behavior: 'smooth'});
+  }
+
+  async downloadLessonFile(s: SupplementDto) {
+    if (s?.fileId == null) {
+      return;
+    }
+
+    this.loading = true;
+    try {
+      let blob = await lastValueFrom(this.fileService.getLessonFile(s.fileId));
+      FileSaver.saveAs(blob, s.title || s.fileName);
+    } finally {
+      this.loading = false;
+    }
   }
 
   protected readonly getField = getField;

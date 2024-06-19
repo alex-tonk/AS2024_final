@@ -9,16 +9,18 @@
           header="Просмотр содержания учебного материала «{{lesson.title}}»"
           [(visible)]="visible"
           (onHide)="lectureViewEnd.emit()">
-  <div *ngIf="stepperIndex == 0"
-       style="width: fit-content; position: absolute; right: 24px; transform: translate(-8px, 0px); display: flex; align-items: center; gap: 1em;">
-    <div
-      style="padding: 8px; display: inline-flex; align-items: center;">
-      <span style="padding-right: 1rem;">Исходный вид</span>
-      <p-inputSwitch [(ngModel)]="original"/>
-      <p-button (click)="scrollToNextResult()"></p-button>
-      <p-button (click)="scrollToPrevResult()"></p-button>
-      <input placeholder="Найти" #search type="text">
-      <p-inputSwitch [(ngModel)]="original" tooltipPosition="left" pTooltip="По умолчанию показывается улучшенный вид"/>
+  <div *ngIf="stepperIndex == 0" style="position: absolute; right: 0; top: 30px; transform: scale(0.75)">
+    <div style="padding: 8px; display: flex; flex-direction: column; gap: 5px;">
+      <div style="display: inline-flex; gap: 5px">
+        <input placeholder="Найти в уроке" #search type="text" pInputText>
+        <p-button (click)="scrollToNextResult()" styleClass="button-clear bordered" icon="pi pi-angle-down"></p-button>
+        <p-button (click)="scrollToPrevResult()" styleClass="button-clear bordered" icon="pi pi-angle-up"></p-button>
+      </div>
+
+      <div style="display: inline-flex; align-items: center; justify-content: right">
+        <span style="padding-right: 1rem;">Исходный вид</span>
+        <p-inputSwitch [(ngModel)]="original" tooltipPosition="left" pTooltip="По умолчанию показывается улучшенный вид"/>
+      </div>
     </div>
   </div>
   <div [class.content-disabled]="loading" class="full-size">

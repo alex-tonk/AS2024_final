@@ -20,7 +20,8 @@
           Ограничение по времени отсутствует
         </div>
         <div style="padding-top: 1rem; text-align: center;" *ngIf="task.difficultyLocale != null">
-          <p-tag severity="secondary" pTooltip="Сложность"
+          Сложность:
+          <p-tag severity="secondary"
                  [rounded]="true"
                  [style]="tagStyleService.getDifficultyStyle(task.difficultyLocale)">
             <div>
@@ -38,45 +39,33 @@
     </div>
   </div>
   <div class="full-size" *ngIf="taskAttempt" [class.content-disabled]="loading">
-    <div *ngIf="stepperIndex == 0"
-         style="width: fit-content; position: absolute; right: 24px; transform: translate(-8px, 0px); display: flex; align-items: center; gap: 1em;">
-      <div
-        style="padding: 8px; display: inline-flex; align-items: center;">
-        <ng-container [ngTemplateOutlet]="searchBar"></ng-container>
+    <div *ngIf="stepperIndex == 0" style="position: absolute; right: 0; top: 30px; transform: scale(0.75)">
+    <div style="padding: 8px; display: flex; flex-direction: column; gap: 5px;">
+      <div style="display: inline-flex; gap: 5px">
+        <input placeholder="Найти в тексте задания" #search type="text" pInputText>
+        <p-button (click)="scrollToNextResult()" styleClass="button-clear bordered" icon="pi pi-angle-down"></p-button>
+        <p-button (click)="scrollToPrevResult()" styleClass="button-clear bordered" icon="pi pi-angle-up"></p-button>
+      </div>
+
+      <div style="display: inline-flex; align-items: center; justify-content: right">
         <span style="padding-right: 1rem;">Исходный вид</span>
-        <p-inputSwitch [(ngModel)]="original" tooltipPosition="left"
-                       pTooltip="По умолчанию показывается улучшенный вид"/>
+        <p-inputSwitch [(ngModel)]="original" tooltipPosition="left" pTooltip="По умолчанию показывается улучшенный вид"/>
       </div>
     </div>
+  </div>
     <p-stepper [(activeStep)]="stepperIndex" (activeStepChange)="subscribeToSearchBarEvents()">
       <p-stepperPanel header="Задание">
         <ng-template pTemplate="content">
-          <div class="full-size" style="overflow: auto">
-            <markdown [markjsHighlight]="searchText$ | async"
-                      [markjsConfig]="searchConfig" [data]="!original ? beautifiedContent : content"></markdown>
-          </div>
-        </ng-template>
-      </p-stepperPanel>
-
-      <p-stepperPanel header="Учебный материал">
-        <ng-template pTemplate="content">
           <p-tabView [scrollable]="true" [class.tab-view]="true">
-            <p-tabPanel header="Лекция">
+            <p-tabPanel header="Задание">
               <ng-template pTemplate="content">
-                <div
-                  style="padding: 8px; display: inline-flex; align-items: center; position: absolute; right: 30px; top: 130px">
-                  <ng-container [ngTemplateOutlet]="searchBar"></ng-container>
-                  <span style="padding-right: 1rem;">Исходный вид</span>
-                  <p-inputSwitch [(ngModel)]="lessonOriginal"
-                                 tooltipPosition="left"
-                                 pTooltip="По умолчанию показывается улучшенный вид"/>
+                <div class="full-size" style="overflow: auto">
+                  <markdown [markjsHighlight]="searchText$ | async"
+                            [markjsConfig]="searchConfig" [data]="!original ? beautifiedContent : content"></markdown>
                 </div>
-                <markdown [markjsHighlight]="searchText$ | async"
-                          [markjsConfig]="searchConfig"
-                          [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
-                </markdown>
               </ng-template>
             </p-tabPanel>
+
             <p-tabPanel header="Доп. информация">
               <ng-template pTemplate="content">
                 <div class="form-row">
@@ -106,6 +95,74 @@
                     </div>
                   </div>
                   <div></div>
+                </div>
+              </ng-template>
+            </p-tabPanel>
+          </p-tabView>
+        </ng-template>
+      </p-stepperPanel>
+
+      <p-stepperPanel header="Учебный материал">
+        <ng-template pTemplate="content">
+          <p-tabView [scrollable]="true" [class.tab-view]="true">
+            <p-tabPanel header="Лекция">
+              <ng-template pTemplate="content">
+                <div style="position: absolute; right: 0; top: 30px; transform: scale(0.75)">
+                  <div style="padding: 8px; display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: inline-flex; gap: 5px">
+                      <input placeholder="Найти в уроке" #search type="text" pInputText>
+                      <p-button (click)="scrollToNextResult()" styleClass="button-clear bordered" icon="pi pi-angle-down"></p-button>
+                      <p-button (click)="scrollToPrevResult()" styleClass="button-clear bordered" icon="pi pi-angle-up"></p-button>
+                    </div>
+
+                    <div style="display: inline-flex; align-items: center; justify-content: right">
+                      <span style="padding-right: 1rem;">Исходный вид</span>
+                      <p-inputSwitch [(ngModel)]="lessonOriginal"
+                                     tooltipPosition="left"
+                                     pTooltip="По умолчанию показывается улучшенный вид"/>
+                    </div>
+                  </div>
+                </div>
+                <markdown [markjsHighlight]="searchText$ | async"
+                          [markjsConfig]="searchConfig"
+                          [data]="lessonOriginal ? lesson.content : lessonBeautifiedContent">
+                </markdown>
+              </ng-template>
+            </p-tabPanel>
+            <p-tabPanel header="Доп. информация">
+              <ng-template pTemplate="content">
+                <div class="full-size">
+                  <div class="form-row">
+                    <label>Наименование учебного материала:</label>
+                    <div>{{ lesson.title }}</div>
+                  </div>
+                  <div class="form-row">
+                    <label>Код учебного материала:</label>
+                    <div>{{ lesson.code }}</div>
+                  </div>
+                  <div class="form-row">
+                    <label>Автор:</label>
+                    <div>{{ lesson.author }}</div>
+                  </div>
+                  <div class="form-row">
+                    <label>Обьем:</label>
+                    <div>{{ lesson.content?.length }} символов</div>
+                  </div>
+
+                  <div class="form-row" style="align-items: flex-start" *ngIf="(lesson.supplements ?? []).length > 0">
+                    <label>Приложения:</label>
+                    <div style="display: flex; flex-flow: column; gap: 0.5rem;">
+                      <div class="uploaded-file" *ngFor="let s of lesson.supplements">
+                        <span>{{ s.title || s.fileName }}</span>
+                        <i class="pi pi-download download-uploaded-file-icon clickable-icon"
+                           style="padding-left: 1.5rem"
+                           pTooltip="Скачать файл"
+                           (click)="downloadLessonFile(s)"></i>
+                      </div>
+                    </div>
+                    <div></div>
+                  </div>
+
                 </div>
               </ng-template>
             </p-tabPanel>

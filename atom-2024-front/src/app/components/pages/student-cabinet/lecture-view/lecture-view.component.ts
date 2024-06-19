@@ -14,6 +14,7 @@ import {NgxMarkjsModule} from 'ngx-markjs';
 import {map} from 'rxjs/operators';
 import {Button} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
+import {InputTextModule} from 'primeng/inputtext';
 
 @Component({
   selector: 'app-lecture-view',
@@ -30,7 +31,8 @@ import {TooltipModule} from 'primeng/tooltip';
     NgForOf,
     NgxMarkjsModule,
     AsyncPipe,
-    Button
+    Button,
+    InputTextModule
   ],
   templateUrl: './lecture-view.component.html',
   styleUrl: './lecture-view.component.css',
