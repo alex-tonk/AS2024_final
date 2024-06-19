@@ -16,7 +16,11 @@
     <div class="table-toolbar">
       <div class="table-toolbar-left">
         <ng-container *ngIf="mode == AttemptListMode.STUDENT">
-          <div> Мои задания</div>
+          <div>Мои задания</div>
+          <div class="splitter"></div>
+        </ng-container>
+        <ng-container *ngIf="mode == AttemptListMode.TUTOR">
+          <div>Задания учеников</div>
           <div class="splitter"></div>
         </ng-container>
 

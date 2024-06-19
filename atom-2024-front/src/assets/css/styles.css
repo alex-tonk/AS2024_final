@@ -457,7 +457,7 @@ p-listbox > div {
 .clickable-card .p-card {
   cursor: pointer;
   height: 100%;
-  max-width: 300px;
+  max-width: 360px;
 }
 
 .clickable-card.full-width .p-card {

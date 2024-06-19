@@ -60,7 +60,7 @@ export class StudentCabinetComponent implements OnInit, OnDestroy {
   loading = false;
   activeIndex = 0;
 
-  systemTabsCount = 1;
+  systemTabsCount = 2;
   topics: TopicDto[] = [];
   openedTopics: { value: TopicDto, title: string }[] = [];
 

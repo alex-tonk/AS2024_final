@@ -100,6 +100,11 @@ export class AttemptComponent implements OnInit {
       type: 'status'
     },
     {
+      header: 'Оценка наставника',
+      field: 'tutorMarkLocale',
+      type: 'mark'
+    },
+    {
       header: 'Тема',
       field: 'topic.title',
       width: 10
@@ -137,11 +142,6 @@ export class AttemptComponent implements OnInit {
     {
       header: 'Оценка системы ИИ',
       field: 'autoMarkLocale',
-      type: 'mark'
-    },
-    {
-      header: 'Оценка наставника',
-      field: 'tutorMarkLocale',
       type: 'mark'
     },
     {
@@ -206,7 +206,16 @@ export class AttemptComponent implements OnInit {
       this.columns = this.allColumns;
       if (this.mode === AttemptListMode.STUDENT) {
         this.columns = this.columns
-          .filter(c => ['statusLocale', 'topic.title', 'lesson.title', 'task.title', 'tutorMarkLocale'].includes(c.field));
+          .filter(c => [
+            'statusLocale',
+            'topic.title',
+            'lesson.title',
+            'task.title',
+            'tutorMarkLocale',
+            'task.difficultyLocale',
+            'formattedStartDate',
+            'formattedEndDate']
+            .includes(c.field));
       }
       await this.getAttemptsFromApi();
       this.features = await lastValueFrom(this.featureService.getFeatures());
