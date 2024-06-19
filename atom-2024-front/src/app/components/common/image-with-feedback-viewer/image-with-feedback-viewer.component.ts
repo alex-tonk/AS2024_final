@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output
 import {TooltipModule} from 'primeng/tooltip';
 import {NgForOf, NgIf, NgStyle} from '@angular/common';
 import {ImageModule} from 'primeng/image';
-import {Button} from 'primeng/button';
+import {Button, ButtonDirective} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
@@ -10,11 +10,20 @@ import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SplitterModule} from 'primeng/splitter';
 import {AngularDraggableModule, IPosition} from 'angular2-draggable';
-import {AttemptCheckResultDto, AttemptDto, AttemptFileDto, FeatureDto} from '../../../gen/atom2024backend-dto';
+import {
+  AttemptCheckResultDto,
+  AttemptDto,
+  AttemptFileDto,
+  FeatureDto,
+  LessonDto
+} from '../../../gen/atom2024backend-dto';
 import {MessageService} from 'primeng/api';
 import {ConfigService} from '../../../services/config.service';
 import {SliderModule} from 'primeng/slider';
 import {MultiSelectModule} from 'primeng/multiselect';
+import {TaskService} from '../../../gen/atom2024backend-controllers';
+import {lastValueFrom} from 'rxjs';
+import {LectureViewComponent} from '../../pages/student-cabinet/lecture-view/lecture-view.component';
 
 @Component({
   selector: 'app-image-with-feedback-viewer',
@@ -35,7 +44,9 @@ import {MultiSelectModule} from 'primeng/multiselect';
     AngularDraggableModule,
     NgStyle,
     SliderModule,
-    MultiSelectModule
+    MultiSelectModule,
+    LectureViewComponent,
+    ButtonDirective
   ],
   templateUrl: './image-with-feedback-viewer.component.html',
   styleUrl: './image-with-feedback-viewer.component.css'
@@ -85,6 +96,10 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   results: any [] = [];
 
+  recommendations: LessonDto[];
+  recommendationViewVisible = false;
+  recommendationForLectureView?: LessonDto;
+
 
   // TODO Надо пофиксить ресайз, пока пофиг
   @HostListener('window:resize', ['$event'])
@@ -95,6 +110,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
   constructor(
     private messageService: MessageService,
     private configService: ConfigService,
+    private taskService: TaskService
   ) {
     this.baseUrl = this.configService.baseUrl;
   }
@@ -119,6 +135,7 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
         }
       } else {
         this.results = this.attempt.tutorCheckResults!.filter(r => r.fileId === this.file.fileId);
+        this.recommendations = await lastValueFrom(this.taskService.getRecommendations(this.attempt.lesson?.id!));
       }
     } finally {
 
@@ -251,5 +268,10 @@ export class ImageWithFeedbackViewerComponent implements OnInit {
 
   onHoverFeedbackInList(feedback: any) {
     this.hoveredFeedback = feedback;
+  }
+
+  openRecommendation(rec: LessonDto) {
+    this.recommendationForLectureView = rec;
+    this.recommendationViewVisible = true;
   }
 }

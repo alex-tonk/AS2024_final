@@ -66,8 +66,10 @@ public class LessonReader {
     public List<LessonDto> getRecommendations(LessonId lessonId) {
         QLesson lesson2 = new QLesson("lesson2");
         List<LessonDto> lessons = baseQuery()
+                .leftJoin(lesson2).on(lesson2.id.isNotNull())
                 .where(lesson.id.ne(lessonId))
-                .where(lesson.traits.any().in(queryFactory.select(lesson2.traits).from(lesson2).where(lesson2.id.eq(lessonId)).fetchFirst()))
+                .where(lesson.traits.any().id.eq(lesson2.traits.any().id))
+                .distinct()
                 .fetch();
         setTraits(lessons);
         return lessons;

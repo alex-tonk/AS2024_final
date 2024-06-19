@@ -158,3 +158,8 @@
   display: flex;
   flex-direction: column;
 }
+
+.recommendation:hover {
+  background: var(--primary-deep-alfa-color);
+
+}

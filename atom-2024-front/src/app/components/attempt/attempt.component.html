@@ -34,7 +34,7 @@
           <p-button [label]="selectedAttempt?.autoMark ? 'Уточнить оценку' : 'Проверить задание'"
                     [pTooltip]="selectedAttempt?.autoMark ? 'Уточнить оценку выставленную ИИ' : ''"
                     [icon]="selectedAttempt?.autoMark ? 'pi pi-check-square' : 'pi pi-check'"
-                    styleClass="button-primary" [disabled]="!selectedAttempt"
+                    styleClass="p-button-success" [disabled]="!selectedAttempt"
                     (click)="checkAttempt()">
           </p-button>
         </ng-container>

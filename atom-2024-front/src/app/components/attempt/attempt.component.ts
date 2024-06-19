@@ -332,7 +332,7 @@ export class AttemptComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Внимание', detail: 'Работа не найдена в БД'});
         return;
       }
-      if (!this.checkingAttempt.tutorCheckResults || this.checkingAttempt.tutorCheckResults.length === 0) {
+      if (this.checkingAttempt.status !== AttemptStatus.DONE) {
         this.messageService.add({severity: 'warn', summary: 'Внимание', detail: 'Работа не проверялась'});
         return;
       }

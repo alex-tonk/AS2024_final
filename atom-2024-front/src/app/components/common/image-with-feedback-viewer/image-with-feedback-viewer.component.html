@@ -1,10 +1,23 @@
 <div class="full-width-height" style="display: flex; flex-direction: column">
-  <div style="flex: none; padding: 20px">
-    <div>Обучающийся: <b>{{ attempt.user?.fullName }}</b></div>
-    <div>Комментарий к файлу: <b>{{ file.comment ? file.comment : 'комментарий отсутствует' }}</b></div>
-    <div *ngIf="!attempt.tutorMarkLocale">Оценка системы ИИ: <b>{{ attempt.autoMarkLocale }}</b></div>
-    <div *ngIf="attempt.tutorMarkLocale">Итоговая оценка: <b>{{ attempt.tutorMarkLocale }}</b></div>
-    <div>Комментарий наставника: <b>{{ attempt.tutorComment ? attempt.tutorComment : 'комментарий отсутствует' }}</b></div>
+  <div
+    style="padding: 20px; display: inline-flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
+    <div style="flex: none">
+      <div>Обучающийся: <b>{{ attempt.user?.fullName }}</b></div>
+      <div>Комментарий к файлу: <b>{{ file.comment ? file.comment : 'комментарий отсутствует' }}</b></div>
+      <div *ngIf="!attempt.tutorMarkLocale">Оценка системы ИИ: <b>{{ attempt.autoMarkLocale }}</b></div>
+      <div *ngIf="attempt.tutorMarkLocale">Итоговая оценка: <b>{{ attempt.tutorMarkLocale }}</b></div>
+      <div>Комментарий наставника: <b>{{ attempt.tutorComment ? attempt.tutorComment : 'комментарий отсутствует' }}</b>
+      </div>
+    </div>
+    <button icon="pi pi-lightbulb" pButton *ngIf="!!recommendations" class="button-clear" label="Рекомендации" style="margin-left: auto"
+            (click)="op.show($event)" pTooltip="Рекомендации основаны на тегах" tooltipPosition="left"></button>
+    <p-overlayPanel #op>
+      <div style="display: flex; flex-direction: column;">
+        <div *ngFor="let rec of recommendations" style="overflow: hidden; white-space: nowrap; cursor: pointer" class="recommendation"
+             (click)="op.hide(); openRecommendation(rec)">{{ rec.title }}
+        </div>
+      </div>
+    </p-overlayPanel>
   </div>
   <div style="flex: auto; display: inline-flex">
     <div style="overflow: auto; width: 100%; height: 100%; text-align: center; display: flex;">
@@ -109,7 +122,8 @@
           <b>Дефекты</b>
         </div>
         <div *ngIf="noAutoErrors" style="text-align: center">
-          {{attempt.autoCheckFailed ? 'ИИ не смог проверить' : 'ИИ дефектов не нашел'}}</div>
+          {{ attempt.autoCheckFailed ? 'ИИ не смог проверить' : 'ИИ дефектов не нашел' }}
+        </div>
         <div *ngFor="let feedback of results" class="feedback-in-list"
              (mouseleave)="hoveredFeedback = null"
              (mouseenter)="onHoverFeedbackInList(feedback)">
@@ -139,3 +153,8 @@
     </div>
   </div>
 </div>
+
+<app-lecture-view *ngIf="recommendationViewVisible"
+                  [lesson]="recommendationForLectureView!"
+                  (lectureViewEnd)="recommendationForLectureView = undefined; recommendationViewVisible = false;">
+</app-lecture-view>
