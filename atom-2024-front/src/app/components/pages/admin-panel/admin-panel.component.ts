@@ -4,7 +4,6 @@ import {UserListComponent} from "./user-list/user-list.component";
 import {UserListLazyComponent} from "./user-list-lazy/user-list-lazy.component";
 import {RestorePasswordComponent} from "../login/restore-password/restore-password.component";
 import {UserRegistrationComponent} from "../login/user-registration/user-registration.component";
-import {CourseListComponent} from "./course-list/course-list.component";
 import {NgIf} from '@angular/common';
 
 @Component({
@@ -16,7 +15,6 @@ import {NgIf} from '@angular/common';
     UserListLazyComponent,
     RestorePasswordComponent,
     UserRegistrationComponent,
-    CourseListComponent,
     NgIf
   ],
   templateUrl: './admin-panel.component.html',
