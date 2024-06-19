@@ -1,4 +1,4 @@
-<p-tabView [scrollable]="true" [(activeIndex)]="activeIndex">
+<p-tabView [scrollable]="true" [(activeIndex)]="activeIndex" (onClose)="closeCourse($event.index)">
   <p-tabPanel header="Все задания" leftIcon="pi pi-list-check">
     <ng-template pTemplate="content">
       <app-attempt [mode]="AttemptListMode.TUTOR"></app-attempt>
@@ -6,7 +6,56 @@
   </p-tabPanel>
   <p-tabPanel header="Учебные материалы" leftIcon="pi pi-graduation-cap">
     <ng-template pTemplate="content">
-<!--TODO-->
+      <p-dataView [value]="filteredCourses" layout="grid" class="clickable-card-grid"
+                  emptyMessage="Не найдено ни одной темы">
+        <ng-template pTemplate="grid" let-topics>
+          <div class="quick-search-wrapper">
+            <div class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Быстрый поиск"
+                     style="min-width: 320px"
+                     [(ngModel)]="filterValue"/>
+            </div>
+            <p-dropdown [options]="filterOptions"
+                        [(ngModel)]="filterOption"
+                        [style]="{width: '240px'}"
+                        appendTo="body">
+            </p-dropdown>
+          </div>
+          <div class="grid" style="justify-content: center; overflow: auto">
+            <div *ngFor="let topic of topics" style="padding: 0.5rem">
+              <p-card (click)="openTopic(topic)" class="clickable-card">
+                <h3 class="no-margin header">{{ topic.title }}</h3>
+                <hr>
+                <div>{{ topic.description }}</div>
+                <p-footer>
+                  <div
+                    style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 10px">
+                    <p-tag *ngFor="let trait of topic.traits" severity="secondary" [rounded]="true"
+                           [style]="{backgroundColor: 'var(--border-color)', color: 'var(--text-dark)', width: 'fit-content'}">
+                      <div style="padding: 2px; display: inline-flex; align-items: center; font-size: smaller;">
+                        <i class="pi pi-tag" style="padding-right: 0.5rem; font-size: small"></i>
+                        <span>{{ trait.name }}</span>
+                      </div>
+                    </p-tag>
+                  </div>
+                </p-footer>
+              </p-card>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+          <div>Всего доступно учебных тем: {{ topics ? topics.length : 0 }}</div>
+        </ng-template>
+      </p-dataView>
+    </ng-template>
+  </p-tabPanel>
+
+  <p-tabPanel *ngFor="let topic of openedTopics" [header]="topic.title" closable="true">
+    <ng-template pTemplate="content">
+      <app-course-panel [topic]="topic.value"
+                        [mode]="CoursePanelMode.TUTOR"></app-course-panel>
     </ng-template>
   </p-tabPanel>
 </p-tabView>

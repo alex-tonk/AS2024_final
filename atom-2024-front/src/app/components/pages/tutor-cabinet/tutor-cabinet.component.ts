@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PrimeTemplate} from 'primeng/api';
 import {TabViewModule} from 'primeng/tabview';
 import {VideoLessonsComponent} from '../student-cabinet/samples/video-lessons/video-lessons.component';
@@ -14,41 +14,136 @@ import {
   PresentationLessonsComponent
 } from '../student-cabinet/samples/presentation-lessons/presentation-lessons.component';
 import {SplitterModule} from 'primeng/splitter';
-import {CoursePanelComponent} from '../../forms/course-panel/course-panel.component';
+import {CoursePanelComponent, CoursePanelMode} from '../../forms/course-panel/course-panel.component';
 import {AttemptComponent, AttemptListMode} from '../../attempt/attempt.component';
+import {DropdownModule} from "primeng/dropdown";
+import {ProgressBarModule} from "primeng/progressbar";
+import {TagModule} from "primeng/tag";
+import {TooltipModule} from "primeng/tooltip";
+import {TopicDto} from '../../../gen/atom2024backend-dto';
+import {TopicService} from '../../../gen/atom2024backend-controllers';
+import {UserService} from '../../../services/user.service';
+import {lastValueFrom} from 'rxjs';
+import {setTimeout} from 'core-js';
 
 @Component({
   selector: 'app-tutor-cabinet',
   standalone: true,
-  imports: [
-    OnlineLessonsComponent,
-    PresentationLessonsComponent,
-    PrimeTemplate,
-    TabViewModule,
-    VideoLessonsComponent,
-    CardModule,
-    RouterLink,
-    StudyGroupCardComponent,
-    NgForOf,
-    DataViewModule,
-    InputTextModule,
-    FormsModule,
-    SplitterModule,
-    CoursePanelComponent,
-    AttemptComponent
-  ],
+    imports: [
+        OnlineLessonsComponent,
+        PresentationLessonsComponent,
+        PrimeTemplate,
+        TabViewModule,
+        VideoLessonsComponent,
+        CardModule,
+        RouterLink,
+        StudyGroupCardComponent,
+        NgForOf,
+        DataViewModule,
+        InputTextModule,
+        FormsModule,
+        SplitterModule,
+        CoursePanelComponent,
+        AttemptComponent,
+        DropdownModule,
+        ProgressBarModule,
+        TagModule,
+        TooltipModule
+    ],
   templateUrl: './tutor-cabinet.component.html',
   styleUrl: './tutor-cabinet.component.css'
 })
-export class TutorCabinetComponent implements OnInit {
-  activeIndex = 0;
+export class TutorCabinetComponent implements OnInit, OnDestroy {
   loading = false;
+  activeIndex = 0;
 
-  constructor() {
+  systemTabsCount = 2;
+  topics: TopicDto[] = [];
+  openedTopics: { value: TopicDto, title: string }[] = [];
+
+  filterValue: string;
+  filterOptions = [
+    {value: 'all', label: 'По всему содержимому'},
+    {value: 'lessons', label: 'По содержанию уроков'},
+    {value: 'tasks', label: 'По содержанию заданий'}
+  ];
+  filterOption = 'all';
+  topicRefreshInterval: number;
+
+  get filteredCourses() {
+    if (this.filterValue) {
+      if (this.filterOption === 'lessons') {
+        // TODO Воткнуть .map
+        return this.topics
+          .map(t => t)
+          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      }
+      if (this.filterOption === 'tasks') {
+        // TODO Воткнуть .map
+        return this.topics
+          .map(t => t)
+          .filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+      }
+      return this.topics.filter(g => JSON.stringify(g).toLowerCase().includes(this.filterValue.toLowerCase()));
+    } else {
+      return this.topics;
+    }
+  }
+
+  constructor(private topicService: TopicService,
+    protected userService: UserService) {
   }
 
   async ngOnInit() {
+    await this.init();
+
+    this.topicRefreshInterval = setInterval(
+      async () => {
+        const topics = await lastValueFrom(this.topicService.getTopics());
+        let topicsById: {[key: number]: TopicDto} = {};
+        topics.reduce((prev, cur) => {
+          prev[cur.id!] = cur;
+          return prev;
+        }, topicsById);
+        this.topics.forEach(t => {
+          const newTopic = topicsById[t.id!];
+          if (newTopic != null) {
+            t.taskPassedCount = newTopic.taskPassedCount;
+          }
+        })
+      }, 5000);
   }
 
-    protected readonly AttemptListMode = AttemptListMode;
+  ngOnDestroy() {
+    clearInterval(this.topicRefreshInterval);
+  }
+
+  async init() {
+    this.loading = true;
+    try {
+      this.topics = await lastValueFrom(this.topicService.getTopics());
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  openTopic(course: TopicDto) {
+    const idx = this.openedTopics.findIndex(g => g.value.id === course.id);
+    if (idx > -1) {
+      this.activeIndex = idx + this.systemTabsCount;
+    } else {
+      this.openedTopics.push({value: course, title: course.title!});
+      setTimeout(() => {
+        this.activeIndex = this.openedTopics.length + this.systemTabsCount - 1;
+      });
+    }
+  }
+
+  closeCourse(index: number) {
+    this.activeIndex = 0;
+    this.openedTopics.splice(index - this.systemTabsCount, 1);
+  }
+
+protected readonly AttemptListMode = AttemptListMode;
+  protected readonly CoursePanelMode = CoursePanelMode;
 }

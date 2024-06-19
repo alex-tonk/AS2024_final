@@ -6,7 +6,7 @@
   <ng-container *ngIf="userService.user">
     <div class="group" style="width: 100%">
       <ng-container *ngIf="!isMobileMode">
-        <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет ученика" styleClass="button-clear"
+        <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет обучающегося" styleClass="button-clear"
                   routerLink="student-cabinet"></p-button>
         <p-button *ngIf="userService.hasRole('ROLE_tutor')" label="Кабинет наставника" styleClass="button-clear"
                   routerLink="tutor-cabinet"></p-button>
@@ -48,7 +48,7 @@
 
 <p-overlayPanel #op>
   <div style="display: flex; flex-direction: column; gap: 5px" class="p-fluid">
-    <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет ученика" styleClass="button-clear"
+    <p-button *ngIf="userService.hasRole('ROLE_student')" label="Кабинет обучающегося" styleClass="button-clear"
               routerLink="student-cabinet"
               (click)="op.hide()"></p-button>
     <p-button *ngIf="userService.hasRole('ROLE_tutor')" label="Кабинет наставника" styleClass="button-clear"

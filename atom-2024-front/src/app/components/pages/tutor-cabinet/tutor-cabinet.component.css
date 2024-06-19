@@ -2,4 +2,7 @@
   width: 100%;
   text-align: right;
   padding: 20px;
+  display: inline-flex;
+  gap: 5px;
+  justify-content: flex-end;
 }
