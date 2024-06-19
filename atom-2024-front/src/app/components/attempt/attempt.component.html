@@ -39,6 +39,7 @@
           </p-button>
         </ng-container>
 
+        <div class="splitter"></div>
         <p-button label="Посмотреть результат"
                   styleClass="button-primary"
                   icon="pi pi-search"
@@ -46,10 +47,9 @@
                   [disabled]="!selectedAttempt">
         </p-button>
 
-        <ng-container *ngIf="mode == AttemptListMode.STUDENT">
+        <ng-container *ngIf="mode == AttemptListMode.STUDENT && selectedAttempt?.status == AttemptStatus.IN_PROGRESS">
           <div class="splitter"></div>
-          <p-button *ngIf="selectedAttempt?.status == AttemptStatus.IN_PROGRESS"
-                    label="Выполнить" styleClass="button-primary"
+          <p-button label="Продолжить выполнение" styleClass="button-primary"
                     (click)="continueAttempt()">
           </p-button>
         </ng-container>

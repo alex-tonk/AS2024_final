@@ -1,8 +1,10 @@
 <div class="full-width-height" style="display: flex; flex-direction: column">
   <div style="flex: none; padding: 20px">
     <div>Обучающийся: <b>{{ attempt.user?.fullName }}</b></div>
-    <div>Комментарий к файлу: <b>{{ file.comment ? file.comment : '-' }}</b></div>
-    <div>Автоматическая оценка: <b>{{ attempt.autoMarkLocale }}</b></div>
+    <div>Комментарий к файлу: <b>{{ file.comment ? file.comment : 'комментарий отсутствует' }}</b></div>
+    <div *ngIf="!attempt.tutorMarkLocale">Оценка системы ИИа: <b>{{ attempt.autoMarkLocale }}</b></div>
+    <div>Итоговая оценка: <b>{{ attempt.tutorMarkLocale }}</b></div>
+    <div>Комментарий наставника: <b>{{ attempt.tutorComment ? attempt.tutorComment : 'комментарий отсутствует' }}</b></div>
   </div>
   <div style="flex: auto; display: inline-flex">
     <div style="overflow: auto; width: 100%; height: 100%; text-align: center; display: flex;">
@@ -104,9 +106,10 @@
     <div class="control-panel">
       <div class="feedback-list">
         <div class="feedback-list-header">
-          <b>Замечания по заданию</b>
+          <b>Дефекты</b>
         </div>
-        <div *ngIf="noAutoErrors" style="text-align: center">ИИ дефектов не нашел</div>
+        <div *ngIf="noAutoErrors" style="text-align: center">
+          {{attempt.autoCheckFailed ? 'ИИ не смог проверить' : 'ИИ дефектов не нашел'}}</div>
         <div *ngFor="let feedback of results" class="feedback-in-list"
              (mouseleave)="hoveredFeedback = null"
              (mouseenter)="onHoverFeedbackInList(feedback)">
