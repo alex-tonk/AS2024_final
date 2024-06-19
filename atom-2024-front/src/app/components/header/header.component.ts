@@ -12,6 +12,8 @@ import {NotificationService} from '../../gen/atom2024backend-controllers';
 import {NotificationDto} from '../../gen/atom2024backend-dto';
 import {lastValueFrom} from 'rxjs';
 import {NotificationType} from '../../gen/entities-enums';
+import {ReportService} from '../../services/report.service';
+import FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-header',
@@ -62,7 +64,8 @@ export class HeaderComponent {
 
   constructor(public userService: UserService,
               private authService: AuthService,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private reportService: ReportService) {
     this.checkMobile();
     setInterval(async () => {
       if (this.userService.user == null) return;
@@ -92,5 +95,10 @@ export class HeaderComponent {
       }
     }
     return '';
+  }
+
+  async printDiploma() {
+    let blob = await lastValueFrom(this.reportService.printDiploma(1, 2));
+    FileSaver.saveAs(blob, `Диплом говна.pdf`);
   }
 }

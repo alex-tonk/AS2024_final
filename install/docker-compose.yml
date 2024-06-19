@@ -7,6 +7,7 @@ services:
     environment:
       spring.datasource.url: jdbc:postgresql://postgres:5432/postgres
       spring.jpa.properties.hibernate.default_schema: public
+      spring.datasource.hikari.schema: public
       spring.datasource.username: postgres
       spring.datasource.password: postgres
       TZ: "Asia/Yekaterinburg"

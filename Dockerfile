@@ -23,6 +23,7 @@ ARG DEPENDENCY=/workspace/app/target/dependency
 COPY --from=rest_build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=rest_build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=rest_build ${DEPENDENCY}/BOOT-INF/classes /app
+RUN apk --no-cache add msttcorefonts-installer fontconfig && update-ms-fonts && fc-cache -f
 ENTRYPOINT ["java","-cp","app:app/lib/*","com.prolegacy.atom2024backend.Atom2024BackendApplication"]
 EXPOSE 8085
 

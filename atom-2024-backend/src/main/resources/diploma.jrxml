@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8fda7b04-1e7a-4ac4-953c-a51082c0550b">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Style1" isDefault="true" fontName="" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="TNR.TTF" pdfEncoding="Cp1251" isPdfEmbedded="true"/>
+	<parameter name="background" class="java.awt.Image"/>
+	<parameter name="logo" class="java.awt.Image"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="topicId" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select u.firstname || coalesce(' ' || u.surname || ' ', ' ') || u.lastname as "fullName",
+       t.title                                                             as "topicName",
+       avg(case
+               when a.tutor_mark = 'EXCELLENT' then 5
+               when a.tutor_mark = 'GOOD' then 4
+               when a.tutor_mark = 'MEDIOCRE' then 3
+               when a.tutor_mark = 'FAILED' then 2 end)                    as "averageMark",
+               count(a.id) * 5 = avg(case
+                                 when a.tutor_mark = 'EXCELLENT' then 5
+                                 when a.tutor_mark = 'GOOD' then 4
+                                 when a.tutor_mark = 'MEDIOCRE' then 3
+                                 when a.tutor_mark = 'FAILED' then 2 end)  as "excellent"
+from "user" u
+         inner join attempt a on a.user_id = u.id
+    and case
+            when a.tutor_mark = 'EXCELLENT' then 5
+            when a.tutor_mark = 'GOOD' then 4
+            when a.tutor_mark = 'MEDIOCRE' then 3
+            when a.tutor_mark = 'FAILED' then 2 end >= 3
+    and a.is_last_attempt = true
+         inner join topic t on t.id = a.topic_id
+         where t.id = $P{topicId} and u.id = $P{userId} 
+group by u.id, u.firstname || coalesce(' ' || u.surname || ' ', ' ') || u.lastname, t.title]]>
+	</queryString>
+	<field name="fullName" class="java.lang.String"/>
+	<field name="topicName" class="java.lang.String"/>
+	<field name="averageMark" class="java.lang.Double"/>
+	<field name="excellent" class="java.lang.Boolean"/>
+	<background>
+		<band height="842" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="0" y="0" width="595" height="842" uuid="2e0a86ba-b64d-4efa-a4f7-b235144b97b2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{background}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="294" y="550" width="290" height="119" uuid="1f92af78-2117-4334-9422-2660587a57ec"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="842" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="Style1" x="0" y="110" width="300" height="69" uuid="c82a7395-ba60-4df1-b481-c5720c6d6eaf"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="50" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ДИПЛОМ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Style1" x="30" y="240" width="521" height="34" uuid="a3eee245-3fc8-4e22-b024-07cd33ed5b37"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="20"/>
+				</textElement>
+				<text><![CDATA[Настоящий диплом свидетельствует о том, что]]></text>
+			</staticText>
+			<textField textAdjust="ScaleFont">
+				<reportElement style="Style1" x="30" y="274" width="521" height="75" uuid="58464848-1201-4308-a657-2961b582d665">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fullName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Style1" x="30" y="349" width="521" height="34" uuid="5c7c3b9b-5421-4b81-90bd-e618219d5447">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="20"/>
+				</textElement>
+				<text><![CDATA[освоил(а) образовательную программу]]></text>
+			</staticText>
+			<textField textAdjust="ScaleFont">
+				<reportElement style="Style1" x="30" y="383" width="521" height="75" uuid="333edc2c-9af0-4148-94a2-f09e021f7e85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="26" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topicName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Style1" x="30" y="458" width="521" height="34" uuid="07ff85fa-3259-4cc8-b666-da77a01d1319">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="20"/>
+				</textElement>
+				<text><![CDATA[со средним баллом]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement style="Style1" x="30" y="492" width="521" height="75" uuid="f2faefd0-dd8a-4c1d-b5a1-da720930043c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="26" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{averageMark}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Style1" x="0" y="179" width="300" height="51" uuid="74f35675-a58f-4912-94f8-1f3492b948c8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{excellent}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="40" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[с отличием]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>
