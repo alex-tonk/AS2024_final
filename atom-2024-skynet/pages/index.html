@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сварилка</title>
+    <h2>Добро пожаловать. Выберите что вы хотите сделать</h2>
+</head>
+<body>
+    <h3>Загрузить изображение</h3>
+    <form method="post" action="http://127.0.0.1:8000/uploadimg/" enctype="multipart/form-data">
+        <input type="file" name="file_upload" accept="image/png, image/jpeg"/><br/>
+        <button type="submit">Подтвердить</button>
+    </form><br/>
+    <h3>Загрузить звук</h3>
+    <form method="post" action="http://127.0.0.1:8000/uploadsound/" enctype="multipart/form-data">
+        <input type="file" name="file_upload" accept="audio/*"/><br/>
+        <button type="submit">Подтвердить</button>
+    </form>
+    </br>
+    <h3>На форму регистрации</h3>
+    <a href = http://127.0.0.1:8000/registration>Зарегистрироваться</a>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    <a href = http://127.0.0.1:8000/here>Не нажимать</a>
+</body>
+</html>
