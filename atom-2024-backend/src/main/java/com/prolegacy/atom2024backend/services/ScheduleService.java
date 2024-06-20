@@ -1,6 +1,7 @@
 package com.prolegacy.atom2024backend.services;
 
 import com.prolegacy.atom2024backend.entities.Attempt;
+import com.prolegacy.atom2024backend.entities.ids.AttemptId;
 import com.prolegacy.atom2024backend.enums.AttemptStatus;
 import com.prolegacy.atom2024backend.repositories.AttemptRepository;
 import lombok.extern.log4j.Log4j2;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -17,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class ScheduleService {
     private final AttemptService attemptService;
     private final AttemptRepository attemptRepository;
+    private final Set<AttemptId> inProgressAttempts = new HashSet<>();
 
     public ScheduleService(AttemptService attemptService, AttemptRepository attemptRepository) {
         this.attemptService = attemptService;
@@ -28,10 +32,13 @@ public class ScheduleService {
         List<Attempt> uncheckedAttempts = attemptRepository.getAllByAutoMarkIsNullAndAutoCheckFailedIsFalseAndStatusEquals(AttemptStatus.VALIDATION);
         for (Attempt uncheckedAttempt : uncheckedAttempts) {
             try {
+                inProgressAttempts.add(uncheckedAttempt.getId());
                 attemptService.checkAttempt(uncheckedAttempt);
             } catch (Exception e) {
                 log.error("Ошибка автоматической проверки", e);
                 attemptService.setAutoCheckFailed(uncheckedAttempt);
+            } finally {
+                inProgressAttempts.remove(uncheckedAttempt.getId());
             }
         }
         attemptRepository.saveAll(uncheckedAttempts);
